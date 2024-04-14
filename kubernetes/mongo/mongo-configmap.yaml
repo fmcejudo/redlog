@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-init-script
+data:
+  mongo-init.js: |
+    db = db.getSiblingDB("redlog");
+
+    db.createUser({
+      user: "user",
+      pwd: "pass",
+      roles: [
+      {
+      role: "readWrite",
+      db: "redlog",
+      },
+      ],
+    });
+

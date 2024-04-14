@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vault
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vault
+  template:
+    metadata:
+      labels:
+        app: vault
+    spec:
+      containers:
+        - name: vault
+          image: vault:1.13.3
+          ports:
+            - containerPort: 8200 # Vault's default port
+          env:
+            - name: VAULT_DEV_ROOT_TOKEN_ID # Root token for development mode
+              value: "super-token"
+            # Add other environment variables as needed
+          # Add volume mounts if you need to provide custom configurations or data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vault
+spec:
+  selector:
+    app: vault
+  ports:
+    - protocol: TCP
+      port: 8200 # Vault's default port
+      targetPort: 8200
+  type: ClusterIP # Change to NodePort or LoadBalancer for external access if needed
+
