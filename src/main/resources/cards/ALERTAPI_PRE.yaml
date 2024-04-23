@@ -1,0 +1,11 @@
+common_query: '{stream_filter="ALERTAPI", level="ERROR", environment="pre", slot="default"}'
+
+queries:
+  - id: report_not_found
+    description: Report not found
+    type: COUNT
+    query: |
+      sum by (short_message)(count_over_time(
+        <common_query>
+        |~ `Report requested but not found with id` | json | line_format `- {{.level}} - {{.short_message}}`[24h]
+      ))

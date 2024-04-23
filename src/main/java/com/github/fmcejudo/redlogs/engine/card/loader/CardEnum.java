@@ -1,11 +1,16 @@
-package com.github.fmcejudo.redlogs.engine.card;
+package com.github.fmcejudo.redlogs.engine.card.loader;
+
+import com.github.fmcejudo.redlogs.engine.card.model.CardQueryRequest;
+import com.github.fmcejudo.redlogs.engine.card.model.CardType;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-enum CardEnum {
+public enum CardEnum {
 
+    /*
     ALERTHUB(new Card("ALERTHUB", "des", List.of(
-            /*new CardQuery(
+            new CardQueryRequest(
                     "Response with 4.x.x code",
                     "Response with 4.x.x code",
                     CardType.SERVICE,
@@ -15,32 +20,32 @@ enum CardEnum {
                         | json | line_format "- {{.level}} - {{.short_message}}"
                     """.formatted(CommonQueries.QUERY),
                     "alert"
-            ),*/ new CardQuery(
+            ), new CardQueryRequest(
                     "Response with 4.x.x code",
                     "Response with 4.x.x code",
                     CardType.SERVICE,
                     """
-                            sum(count_over_time(
+                            sum by (short_message)(count_over_time(
                                %s
                                |~ `422 Unprocessable Entity` | json | line_format `- {{.level}} - {{.short_message}}`[1m]
                             ))
                             """.formatted(CommonQueries.QUERY),
                     "alert"
             ),
-         /*   new CardQuery(
+            new CardQueryRequest(
                     "Gateway timeout",
                     "Gateway timeout",
                     CardType.SERVICE,
                     """
-                            sum by(platform) (count_over_time(
+                            sum by(platform,short_message) (count_over_time(
                                 %s
                                 |~ `504 Gateway Timeout from POST`
                                 | json | line_format `- {{.level}} - {{.short_message}}`[24h]
                             ))
                             """.formatted(CommonQueries.QUERY),
                     "alert"
-            ),*/
-            new CardQuery(
+            ),
+            new CardQueryRequest(
                     "Redis not connected",
                     "Redis not connected",
                     CardType.SERVICE,
@@ -53,7 +58,7 @@ enum CardEnum {
                             """.formatted(CommonQueries.QUERY),
                     "alert"
             ),
-            new CardQuery(
+            new CardQueryRequest(
                     "Number Format Exception",
                     "Number Format Exception",
                     CardType.COUNT,
@@ -66,7 +71,7 @@ enum CardEnum {
                             """.formatted(CommonQueries.QUERY),
                     "alert"
             ),
-            new CardQuery(
+            new CardQueryRequest(
                     "Network issues",
                     "Network issues",
                     CardType.SERVICE,
@@ -81,7 +86,7 @@ enum CardEnum {
                             """.formatted(CommonQueries.QUERY),
                     "alert"
             ),
-            new CardQuery(
+            new CardQueryRequest(
                     "tags-matching",
                     "tags matching queries",
                     CardType.COUNT,
@@ -95,7 +100,7 @@ enum CardEnum {
                             )""".formatted(CommonQueries.QUERY),
                     "def"
             ),
-            new CardQuery(
+            new CardQueryRequest(
                     "Alert Definitions in Quarantine",
                     "Alert Definitions in Quarantine",
                     CardType.COUNT,
@@ -112,7 +117,7 @@ enum CardEnum {
     ))),
 
     ALERTAPI(new Card("ALERTAPI", "des", List.of(
-            new CardQuery("tags-matching", "tags matching queries", CardType.COUNT, "{app=\"ALERTAPI\"}", "definition")
+            new CardQueryRequest("tags-matching", "tags matching queries", CardType.COUNT, "{app=\"ALERTAPI\"}", "definition")
     )));
 
     private final Card card;
@@ -129,9 +134,15 @@ enum CardEnum {
         return CardEnum.valueOf(name).getCard();
     }
 
+    @Override
+    public List<CardQueryRequest> load(String application) {
+        return CardEnum.valueOf(application).getCard().cardQueries();
+    }
+
     private static class CommonQueries {
         public static final String QUERY = """
-                {stream_filter="ALERTHUB", level="ERROR", environment="pro", slot="engine"} \
+                {stream_filter="ALERTHUB", level="ERROR", environment="pre", slot="engine"} \
                 """;
     }
+     */
 }
