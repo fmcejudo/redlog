@@ -35,8 +35,13 @@ class LokiCardProcessor implements CardProcessor {
             case COUNT -> LokiRequest.RequestType.INSTANT;
         };
 
-        LokiResponse lokiResponse = lokiClient.query(new LokiRequest(type, query));
-        return composeResult(cardQuery, lokiResponse);
+        try {
+            LokiResponse lokiResponse = lokiClient.query(new LokiRequest(type, query));
+            return composeResult(cardQuery, lokiResponse);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException("Error querying to loki", e);
+        }
     }
 
     private CardQueryResponse composeResult(final CardQueryRequest cardQuery, final LokiResponse lokiResponse) {

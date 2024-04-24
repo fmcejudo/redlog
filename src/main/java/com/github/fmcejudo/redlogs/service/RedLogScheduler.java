@@ -43,7 +43,7 @@ public class RedLogScheduler {
                      new CardExecutionService(CardLoader.getGithubLoader(githubToken), processor, cardResponseWriter)) {
             service.execute(applicationName);
         } catch (Exception e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e.getMessage());
         }
         System.out.println("execute tasks to extract logs");
     }

@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: mongo-redlog-service
 spec:
-  type: ClusterIP
+  type: LoadBalancer
   selector:
     app: mongo
   ports:

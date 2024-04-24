@@ -12,7 +12,8 @@ import java.util.Map;
 class GithubCardLoader implements CardLoader {
 
     public static final Map<String, String> URL_MAPPER = Map.of(
-            "ALERTAPI", "https://raw.githubusercontent.com/inditex/mic-alerthubapi/shifts/shifts/"
+            "ALERTAPI", "https://raw.githubusercontent.com/inditex/mic-alerthubapi/shifts/shifts/",
+            "ALERTHUB", "https://raw.githubusercontent.com/inditex/wsc-alerthub/shifts/shifts/"
     );
 
     private final GithubClient githubClient;

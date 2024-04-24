@@ -1,0 +1,146 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongodb-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: mongodb-storageclass
+  hostPath:
+    path: "/mnt/data/mongo"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-pvc
+spec:
+  storageClassName: mongodb-storageclass
+  accessModes:
+    - ReadWriteOnce
+  volumeMode: Filesystem
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mongodb-secret
+type: Opaque
+data:
+  MONGO_INITDB_USERNAME: YWRtaW4K
+  MONGO_INITDB_PASSWORD: YWRtaW4K
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongodb-configmap
+data:
+  mongo.conf: |
+    storage:
+      dbPath: /data/db
+  mongo-init.js: |
+    db = db.getSiblingDB('redlog');
+
+    db.createUser(
+        {
+            user: "user",
+            pwd: "pass",
+            roles: [
+                {
+                    role: "readWrite",
+                    db: "redlog"
+                }
+            ]
+        }
+    )
+
+    db.createCollection("card_report");
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-sfs
+spec:
+  serviceName: mongodb-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb
+  template:
+    metadata:
+      labels:
+        app: mongodb
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:latest
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          ports:
+            - containerPort: 27017
+          env:
+            - name: MONGO_INITDB_USERNAME
+              value: /etc/mongodb-secret/MONGO_INITDB_USERNAME
+            - name: MONGO_INITDB_PASSWORD
+              value: /etc/mongodb-secret/MONGO_INITDB_PASSWORD
+          volumeMounts:
+            - name: mongodb-secret
+              mountPath: /etc/mongodb-secret
+              readOnly: true
+            - name: mongodb-scripts
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
+            - name: mongodb-configmap
+              mountPath: /config
+              readOnly: true
+            - name: mongodb-data
+              mountPath: /data/db
+      volumes:
+        - name: mongodb-secret
+          secret:
+            secretName: mongodb-secret
+            items:
+              - key: MONGO_INITDB_USERNAME
+                path: MONGO_INITDB_USERNAME
+                mode: 0444
+              - key: MONGO_INITDB_PASSWORD
+                path: MONGO_INITDB_PASSWORD
+                mode: 0444
+        - name: mongodb-scripts
+          configMap:
+            name: mongodb-configmap
+            items:
+              - key: mongo-init.js
+                path: mongo-init.js
+        - name: mongodb-configmap
+          configMap:
+            name: mongodb-configmap
+            items:
+              - key: mongo.conf
+                path: mongo.conf
+        - name: mongodb-data
+          persistentVolumeClaim:
+            claimName: mongodb-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+
