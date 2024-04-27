@@ -40,7 +40,7 @@ class LokiCardProcessor implements CardProcessor {
             return composeResult(cardQuery, lokiResponse);
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            throw new RuntimeException("Error querying to loki", e);
+            throw new RuntimeException("Error querying to loki: " + cardQuery.id(), e);
         }
     }
 
@@ -48,15 +48,18 @@ class LokiCardProcessor implements CardProcessor {
 
         String id = cardQuery.id();
         String description = cardQuery.description();
-        String applicationName = cardQuery.applicationName();;
+        String applicationName = cardQuery.applicationName();
+        ;
         if (lokiResponse == null) {
-           return CardQueryResponse.failure(applicationName, id, description, "No report response found");
+            System.err.println("loki response is null");
+            return CardQueryResponse.failure(applicationName, id, description, "No report response found");
         }
 
         if (lokiResponse.isSuccess()) {
             return buildCardReportEntries(cardQuery, lokiResponse);
         }
-        return CardQueryResponse.failure(applicationName,id, description, "query ended up being failed");
+        System.err.println("loki response has failed");
+        return CardQueryResponse.failure(applicationName, id, description, "query ended up being failed");
     }
 
     private CardQueryResponse buildCardReportEntries(CardQueryRequest cardQuery, LokiResponse lokiResponse) {

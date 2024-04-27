@@ -1,7 +1,10 @@
 package com.github.fmcejudo.redlogs.engine.card.loader;
 
+import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
+import com.github.fmcejudo.redlogs.engine.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryRequest;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -9,18 +12,18 @@ import java.util.List;
 
 public class FileCardLoader implements CardLoader {
 
-    private static final String PATH_TO_CARDS = "cards/";
+    private final Resource resource;
 
-
-    public FileCardLoader() {
+    public FileCardLoader(final RedLogFileProperties redLogFileProperties) {
+        this.resource = new DefaultResourceLoader().getResource(redLogFileProperties.getFilesPath());
     }
 
     @Override
-    public List<CardQueryRequest> load(final String application) {
+    public List<CardQueryRequest> load(final String application, final CardConverter converter) {
         try {
-            File file = new ClassPathResource(PATH_TO_CARDS + application.toUpperCase() + ".yaml").getFile();
+            File file = resource.createRelative(application.toUpperCase() + ".yaml").getFile();
             String content = new String(Files.readAllBytes(file.toPath()));
-            return loadContent(content, application);
+            return converter.convert(content, application);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

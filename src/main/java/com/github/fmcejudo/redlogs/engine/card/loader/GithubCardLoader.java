@@ -1,5 +1,7 @@
 package com.github.fmcejudo.redlogs.engine.card.loader;
 
+import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
+import com.github.fmcejudo.redlogs.engine.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryRequest;
 
 import java.net.URI;
@@ -11,30 +13,27 @@ import java.util.Map;
 
 class GithubCardLoader implements CardLoader {
 
-    public static final Map<String, String> URL_MAPPER = Map.of(
-            "ALERTAPI", "https://raw.githubusercontent.com/inditex/mic-alerthubapi/shifts/shifts/",
-            "ALERTHUB", "https://raw.githubusercontent.com/inditex/wsc-alerthub/shifts/shifts/"
-    );
+    public final Map<String, String> urlMapper;
 
     private final GithubClient githubClient;
 
-    public GithubCardLoader(final String githubToken) {
-        this.githubClient = new GithubClient(githubToken);
+    public GithubCardLoader(final RedLogGithubProperties redLogGithubProperties) {
+        this.githubClient = new GithubClient(redLogGithubProperties.getGithubToken());
+        this.urlMapper = redLogGithubProperties.getUrlMapper();
     }
 
     @Override
-    public List<CardQueryRequest> load(String application) {
+    public List<CardQueryRequest> load(String application, final CardConverter cardConverter) {
         try {
             String content = githubClient.download(repoUrl(application) + application + ".yaml");
-            System.out.println(content);
-            return loadContent(content, application);
+            return cardConverter.convert(content, application);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
     private String repoUrl(final String application) {
-        return URL_MAPPER.entrySet().stream()
+        return urlMapper.entrySet().stream()
                 .filter(e -> application.startsWith(e.getKey()))
                 .findFirst()
                 .orElseThrow().getValue();

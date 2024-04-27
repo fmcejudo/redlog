@@ -9,11 +9,11 @@ queries:
         <common_query>
         |~ `422 Unprocessable Entity` | json | line_format `- {{.level}} - {{.short_message}}`[1m]
       ))
-  - id: Gateway timeout
-    description: Gateway timeout
-    type: SERVICE
+  - id: Heavy Definition
+    description: Heavy Definitions
+    type: COUNT
     query: |
-      sum by(platform,short_message) (count_over_time(
+      sum by(alert) (count_over_time(
           <common_query>
           |~ `504 Gateway Timeout from POST`
           | json | line_format `- {{.level}} - {{.short_message}}`[24h]
@@ -55,7 +55,7 @@ queries:
            | json | line_format "- {{.level}} - {{.short_message}}" [24h]
       ))
   - id: tags-matching
-    description: tags matching queries
+    description: Tags Matching Queries
     type: COUNT
     query: |
       sum by(alert,short_message)(

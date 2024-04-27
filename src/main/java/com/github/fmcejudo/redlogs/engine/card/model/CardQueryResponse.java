@@ -1,15 +1,14 @@
 package com.github.fmcejudo.redlogs.engine.card.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 public record CardQueryResponse(
         String applicationName,
-        LocalDateTime dateTime,
+        LocalDate date,
         String id,
         String description,
         List<CardQueryResponseEntry> currentEntries,
-        List<CardQueryResponseEntry> previousEntries,
         String link,
         String error) {
 
@@ -23,11 +22,10 @@ public record CardQueryResponse(
 
         return new CardQueryResponse(
                 applicationName,
-                LocalDateTime.now().withMinute(0).withSecond(0).withNano(0),
-                String.join(".", applicationName, id),
+                LocalDate.now(),
+                id,
                 description,
                 entries,
-                List.of(),
                 link,
                 null
         );
@@ -39,27 +37,14 @@ public record CardQueryResponse(
             String description,
             String error) {
 
-        return new CardQueryResponse(applicationName, LocalDateTime.now().withMinute(0).withSecond(0).withNano(0),
-                String.join(".", applicationName, id),
+        return new CardQueryResponse(
+                applicationName,
+                LocalDate.now(),
+                id,
                 description,
-                List.of(),
                 List.of(),
                 null,
                 error);
     }
 
-    public CardQueryResponse addPreviousEntries(List<CardQueryResponseEntry> previousEntries) {
-        if (previousEntries.isEmpty()) {
-            return this;
-        }
-        return new CardQueryResponse(
-                applicationName,
-                LocalDateTime.now().withMinute(0).withSecond(0).withNano(0),
-                id,
-                description,
-                currentEntries,
-                previousEntries,
-                link,
-                null);
-    }
 }

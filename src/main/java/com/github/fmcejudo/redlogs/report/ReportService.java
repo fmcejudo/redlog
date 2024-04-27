@@ -1,7 +1,7 @@
 package com.github.fmcejudo.redlogs.report;
 
-public interface ReportService<T> {
+public interface ReportService {
 
-    T get(String applicationName);
+    String get(String applicationName);
 
 }

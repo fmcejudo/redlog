@@ -5,18 +5,18 @@ import org.asciidoctor.Attributes;
 import org.asciidoctor.Options;
 import org.asciidoctor.Placement;
 import org.asciidoctor.SafeMode;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+
 
 @Component
-@Qualifier("asciidoctorReportService")
-class AsciiDoctorReportService implements ReportService<String> {
+class AsciiDoctorReportService implements ReportService {
 
     private static final String ALERTHUB_PRO_URL =
             "https://sscc.central.inditex.grp/alerthui/web/alerthub/alert-definitions/summary/pro/";
@@ -29,7 +29,7 @@ class AsciiDoctorReportService implements ReportService<String> {
 
     @Override
     public String get(final String applicationName) {
-        List<Report> reports = reportRepository.findByApplicationName(applicationName);
+        List<Report> reports = reportRepository.getReportCompareWithDate(applicationName, LocalDate.now().minusDays(1));
         return createAsciiReport(applicationName, reports);
     }
 
@@ -39,7 +39,7 @@ class AsciiDoctorReportService implements ReportService<String> {
         }
         StringBuilder documentBuilder = new StringBuilder("= ")
                 .append(applicationName).append(" - ")
-                .append(reports.getFirst().lastUpdated().format(ISO_LOCAL_DATE_TIME))
+                .append(reports.getFirst().lastUpdated().format(ISO_LOCAL_DATE))
                 .append("\n:icons: font").append("\n\n");
         for (Report report : reports) {
             documentBuilder.append(createReportItemHeader(report));
@@ -55,7 +55,7 @@ class AsciiDoctorReportService implements ReportService<String> {
                     .attributes(Attributes.builder()
                             .icons(Attributes.FONT_ICONS)
                             .experimental(true)
-                            .tableOfContents(true)
+                            //.tableOfContents(true)
                             .tableOfContents(Placement.LEFT)
                             .sectNumLevels(3)
                             .sectionNumbers(true)
@@ -67,9 +67,10 @@ class AsciiDoctorReportService implements ReportService<String> {
     private String createReportItemHeader(final Report report) {
         return """
                 == %s
-                link:%s[%s]
+                link:%s[%s] +
+                Found %s elements
                 
-                """.formatted(report.description(), report.link(), report.description());
+                """.formatted(report.description(), report.link(), report.description(), report.items().size());
     }
 
     private String createReportDetails(final ReportItem reportItem, final List<ReportItem> previousItems) {

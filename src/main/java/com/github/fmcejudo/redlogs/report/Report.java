@@ -1,21 +1,18 @@
 package com.github.fmcejudo.redlogs.report;
 
-import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-@Document(collection = "card_report")
-record Report(String id,
-              String applicationName,
-              @Field("dateTime") LocalDateTime lastUpdated,
+record Report(String reportId,
+              @Field("date") LocalDate lastUpdated,
               String link,
               String description,
-              @Field("currentEntries") List<ReportItem> items,
-              @Field("previousEntries") List<ReportItem> previousItems) {
+              @Field("items") List<ReportItem> items,
+              @Field("previousItem") List<ReportItem> previousItems) {
 }
 
 record ReportItem(Map<String, String> labels, long count){
