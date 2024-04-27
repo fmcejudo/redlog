@@ -22,7 +22,6 @@ import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-@Service
 public class CardExecutionService implements Closeable {
 
     private final Logger logger = LoggerFactory.getLogger(CardExecutionService.class);
@@ -49,24 +48,19 @@ public class CardExecutionService implements Closeable {
     public void execute(final String applicationName) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        final Instant start = Instant.now();
         //process
         CardQueryExecution.withProvider(() -> cardLoader.load(applicationName, cardConverter))
                 .withProcessor(processor, executor)
-                .execute(response -> {
-                            CardQueryResponse write = writer.write(response);
-                            long timeTaken = Instant.now().toEpochMilli() - start.toEpochMilli();
-                            System.out.println(write.id() + " took " + timeTaken + "ms");
+                .execute(writer::write,
+                        t -> {
+                            throw new RuntimeException(t);
                         },
-                        t -> System.err.println(t.getMessage()),
-                        () -> System.out.println("complete")
+                        () -> {
+                            stopWatch.stop();
+                            logger.warn("time to execute method: {}", stopWatch.prettyPrint());
+                        }
                 );
 
-        //end process
-        stopWatch.stop();
-        logger.warn("time to execute method: {} in thread: {}",
-                stopWatch.prettyPrint(), Thread.currentThread().getName()
-        );
     }
 
     @Override

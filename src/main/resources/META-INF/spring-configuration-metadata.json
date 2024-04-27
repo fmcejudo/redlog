@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "redlog.source-type",
+      "type": "com.github.fmcejudo.redlogs.config.SourceType",
+      "description": "Where the card are taken from.",
+      "defaultValue": "file"
+    },
+    {
+      "name": "redlog.file.files-path",
+      "type": "java.lang.String",
+      "description": "path to files",
+      "defaultValue": "any"
+    },
+    {
+      "name": "redlog.github.github-token",
+      "type": "java.lang.String",
+      "description": "Token to connect to github where the cards are",
+      "defaultValue": "any"
+    },
+    {
+      "name": "redlog.github.url-mapper",
+      "type": "java.util.Map",
+      "description": "define for each application, where is the path in github",
+      "defaultValue": "any"
+    }
+  ]
+}

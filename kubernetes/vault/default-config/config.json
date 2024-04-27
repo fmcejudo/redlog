@@ -1,9 +1,0 @@
-{
-  "loki.url" : "http://localhost:3100",
-  "loki.username" : "",
-  "loki.password" : "",
-  "spring.data.mongodb.uri" : "mongodb://mongo-redlog-service:27017/redlog",
-  "spring.data.mongodb.username" : "user",
-  "spring.data.mongodb.password" : "pass"
-}
-

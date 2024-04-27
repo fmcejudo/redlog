@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.github.fmcejudo.redlogs.engine.card.loader.CardConfiguration,\
+  com.github.fmcejudo.redlogs.engine.card.converter.CardConverterConfig,\
+  com.github.fmcejudo.redlogs.engine.card.writer.CardResponseWriterConfig
