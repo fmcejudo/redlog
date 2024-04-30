@@ -33,7 +33,7 @@ class CardResponseMongoWriter implements CardResponseWriter {
                 cardQueryResponse.currentEntries()
         );
 
-        Query query = query(where("id").is(cardMongoRecord.id()));
+        Query query = query(where("id").is(cardMongoRecord.getId()));
         CardMongoRecord cardRecord = mongoTemplate.findOne(query, CardMongoRecord.class, collectionName);
         if (cardRecord != null) {
             mongoTemplate.remove(query, collectionName);
@@ -45,13 +45,74 @@ class CardResponseMongoWriter implements CardResponseWriter {
     }
 
 
-    record CardMongoRecord(String id, String reportId, String description, String link,
-                           LocalDate date, List<CardQueryResponseEntry> items) {
+    static final class CardMongoRecord {
+        private String id;
+        private String reportId;
+        private String description;
+        private String link;
+        private LocalDate date;
+        private List<CardQueryResponseEntry> items;
+
+        public CardMongoRecord() {
+        }
 
         CardMongoRecord(String reportId, String description, String link,
                         LocalDate date, List<CardQueryResponseEntry> items) {
 
-            this(String.join(".", reportId, date.format(ISO_DATE)), reportId, description, link, date, items);
+            this.id = String.join(".", reportId, date.format(ISO_DATE));
+            this.reportId = reportId;
+            this.description = description;
+            this.link = link;
+            this.date = date;
+            this.items = items;
+        }
+
+        public LocalDate getDate() {
+            return date;
+        }
+
+        public void setDate(LocalDate date) {
+            this.date = date;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+
+        public List<CardQueryResponseEntry> getItems() {
+            return items;
+        }
+
+        public void setItems(List<CardQueryResponseEntry> items) {
+            this.items = items;
+        }
+
+        public String getLink() {
+            return link;
+        }
+
+        public void setLink(String link) {
+            this.link = link;
+        }
+
+        public String getReportId() {
+            return reportId;
+        }
+
+        public void setReportId(String reportId) {
+            this.reportId = reportId;
         }
     }
 }

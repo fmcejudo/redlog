@@ -4,7 +4,6 @@ import com.github.fmcejudo.redlogs.client.loki.query.QueryInstantClient;
 import com.github.fmcejudo.redlogs.client.loki.range.QueryRangeClient;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
@@ -13,7 +12,6 @@ import java.time.Duration;
 
 import static org.apache.logging.log4j.util.Base64Util.encode;
 
-@Component
 public class DefaultLokiClient implements LokiClient {
 
     private final WebClient.Builder webClientBuilder;

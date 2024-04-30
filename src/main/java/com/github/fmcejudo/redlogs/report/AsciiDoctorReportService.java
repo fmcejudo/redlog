@@ -1,21 +1,31 @@
 package com.github.fmcejudo.redlogs.report;
 
+import org.apache.commons.io.IOUtils;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;
+import org.asciidoctor.AttributesBuilder;
 import org.asciidoctor.Options;
 import org.asciidoctor.Placement;
 import org.asciidoctor.SafeMode;
-import org.springframework.stereotype.Component;
+import org.springframework.util.ResourceUtils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 
-@Component
 class AsciiDoctorReportService implements ReportService {
 
     private static final String ALERTHUB_PRO_URL =
@@ -48,19 +58,47 @@ class AsciiDoctorReportService implements ReportService {
         }
         String string = documentBuilder.toString();
         try (var asciidoctor = Asciidoctor.Factory.create()) {
+
+
+            AttributesBuilder attributesBuilder = Attributes.builder()
+                    .icons(Attributes.FONT_ICONS)
+                    .experimental(true)
+                    .tableOfContents(true)
+                    .tableOfContents(Placement.LEFT)
+                    .sectNumLevels(3)
+                    .sectionNumbers(true)
+                    .hardbreaks(true)
+                    .setAnchors(true);
+
+            String cssFile = loadCss();
+            if (cssFile != null) {
+                attributesBuilder.styleSheetName(cssFile);
+            }
+
+
+            Attributes attributes = attributesBuilder.build();
+
             return asciidoctor.convert(string, Options.builder().backend("html5")
                     .standalone(true)
-                    .safe(SafeMode.UNSAFE)
+                    .safe(SafeMode.SAFE)
                     .docType("book")
-                    .attributes(Attributes.builder()
-                            .icons(Attributes.FONT_ICONS)
-                            .experimental(true)
-                            //.tableOfContents(true)
-                            .tableOfContents(Placement.LEFT)
-                            .sectNumLevels(3)
-                            .sectionNumbers(true)
-                            .hardbreaks(true)
-                            .setAnchors(true).build()).build());
+                    .attributes(attributes).build());
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+        }
+    }
+
+    private String loadCss() {
+        try {
+            File file = ResourceUtils.getFile("classpath:./css/custom.css");
+            if (!file.exists()) {
+                return null;
+            }
+            return Paths.get(file.toURI()).toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -69,7 +107,7 @@ class AsciiDoctorReportService implements ReportService {
                 == %s
                 link:%s[%s] +
                 Found %s elements
-                
+                                
                 """.formatted(report.description(), report.link(), report.description(), report.items().size());
     }
 
@@ -78,8 +116,7 @@ class AsciiDoctorReportService implements ReportService {
         Map<String, String> labels = reportItem.labels();
         boolean hasPreviousItem = previousItems.contains(reportItem);
         if (!hasPreviousItem) {
-            builder.append("icon:fire[1x,role=red] **New**\n\n")
-                    .append("WARNING: ");
+            builder.append("WARNING: ");
         }
         boolean isFirstLine = true;
         for (Map.Entry<String, String> entry : labels.entrySet()) {

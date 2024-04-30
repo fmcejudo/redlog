@@ -6,7 +6,6 @@ import com.github.fmcejudo.redlogs.client.loki.LokiResponse;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryResponse;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryResponseEntry;
-import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
@@ -18,7 +17,6 @@ import java.util.function.ToLongFunction;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.ZoneOffset.UTC;
 
-@Component
 class LokiCardProcessor implements CardProcessor {
 
     private final LokiClient lokiClient;
@@ -76,7 +74,7 @@ class LokiCardProcessor implements CardProcessor {
     }
 
     private String createLokiLink(CardQueryRequest cardQuery) {
-        LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 0, 0));
+        LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(10, 0, 0));
         String datasource = "MeVqGIp7z";
         return LokiLinkBuilder.builder()
                 .query(cardQuery.query())

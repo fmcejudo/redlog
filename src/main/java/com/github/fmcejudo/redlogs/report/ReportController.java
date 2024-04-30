@@ -1,7 +1,6 @@
-package com.github.fmcejudo.redlogs.api;
+package com.github.fmcejudo.redlogs.report;
 
 import com.github.fmcejudo.redlogs.engine.card.CardExecutionService;
-import com.github.fmcejudo.redlogs.report.ReportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/report")
-public class ReportController {
+class ReportController {
 
     private final ReportService reportService;
     private final CardExecutionService cardExecutionService;
