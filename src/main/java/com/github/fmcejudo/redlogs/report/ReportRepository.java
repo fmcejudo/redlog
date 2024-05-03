@@ -43,6 +43,8 @@ class ReportRepository {
                 result.add(
                         new Report(r1.reportId(), r1.lastUpdated(), r1.link(), r1.description(), r1.items(), r2.items())
                 );
+                i++;
+                j++;
             }
         }
 
