@@ -11,18 +11,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/report")
 class ReportController {
 
-    private final ReportService reportService;
+    private final ReportServiceProxy reportServiceProxy;
     private final CardExecutionService cardExecutionService;
 
-    public ReportController(final ReportService reportService,
+    public ReportController(final ReportServiceProxy reportServiceProxy,
                             final CardExecutionService cardExecutionService) {
-        this.reportService = reportService;
+        this.reportServiceProxy = reportServiceProxy;
         this.cardExecutionService = cardExecutionService;
     }
 
     @GetMapping("/{applicationName}")
     public ResponseEntity<String> getAdocReport(@PathVariable String applicationName) {
-        return ResponseEntity.ok(reportService.get(applicationName));
+        return ResponseEntity.ok(reportServiceProxy.content(applicationName));
     }
 
     @GetMapping("/trigger/{applicationName}")

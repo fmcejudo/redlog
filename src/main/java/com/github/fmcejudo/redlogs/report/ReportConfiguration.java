@@ -5,8 +5,11 @@ import com.github.fmcejudo.redlogs.engine.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.engine.card.loader.CardLoader;
 import com.github.fmcejudo.redlogs.engine.card.process.CardProcessor;
 import com.github.fmcejudo.redlogs.engine.card.writer.CardResponseWriter;
+import com.github.fmcejudo.redlogs.report.asciidoctor.AsciiDoctorContent;
+import com.github.fmcejudo.redlogs.report.asciidoctor.AsciiDoctorReportService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -19,10 +22,21 @@ public class ReportConfiguration {
     }
 
     @Bean
-    ReportService reportService(ReportRepository reportRepository) {
-        return new AsciiDoctorReportService(reportRepository);
+    @ConditionalOnMissingBean(AsciiDoctorContent.class)
+    AsciiDoctorContent asciiDoctorContent() {
+        return reports -> "content";
     }
 
+    @Bean
+    @ConditionalOnMissingBean(ReportService.class)
+    AsciiDoctorReportService reportService(final AsciiDoctorContent asciiDoctorContent) {
+        return new AsciiDoctorReportService(asciiDoctorContent);
+    }
+
+    @Bean
+    ReportServiceProxy reportServiceProxy(final ReportRepository reportRepository, final ReportService reportService) {
+        return new ReportServiceProxy(reportRepository, reportService);
+    }
 
     @Bean
     @ConditionalOnBean(value = {
@@ -36,7 +50,7 @@ public class ReportConfiguration {
     }
 
     @Bean
-    ReportController reportController(ReportService reportService, CardExecutionService cardExecutionService) {
-        return new ReportController(reportService, cardExecutionService);
+    ReportController reportController(ReportServiceProxy reportServiceProxy, CardExecutionService cardExecutionService) {
+        return new ReportController(reportServiceProxy, cardExecutionService);
     }
 }

@@ -76,7 +76,7 @@ class LokiCardProcessor implements CardProcessor {
     private String createLokiLink(CardQueryRequest cardQuery) {
         LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(10, 0, 0));
         String datasource = "MeVqGIp7z";
-        return LokiLinkBuilder.builder()
+        return LokiLinkBuilder.builder(lokiClient.getLokiUrl())
                 .query(cardQuery.query())
                 .from(today.minusDays(1))
                 .to(today).datasource(datasource).build();
@@ -86,18 +86,19 @@ class LokiCardProcessor implements CardProcessor {
 
 final class LokiLinkBuilder {
 
-    private static final String URL_BASE = "https://inditex.grafana.net/explore";
 
+    private final String lokiExploreUrl;
     private String query;
     private LocalDateTime from;
     private LocalDateTime to;
     private String dataSource;
 
-    private LokiLinkBuilder() {
+    private LokiLinkBuilder(final String lokiUrl) {
+        this.lokiExploreUrl = String.join("/", lokiUrl, "explore");
     }
 
-    public static LokiLinkBuilder builder() {
-        return new LokiLinkBuilder();
+    public static LokiLinkBuilder builder(final String lokiUrl) {
+        return new LokiLinkBuilder(lokiUrl);
     }
 
     public LokiLinkBuilder datasource(String dataSource) {
@@ -123,7 +124,7 @@ final class LokiLinkBuilder {
     public String build() {
 
         String left = new LeftPart(dataSource, List.of(new QueryPart("A", query)), new RangePart(from, to)).toString();
-        return UriComponentsBuilder.fromHttpUrl(URL_BASE)
+        return UriComponentsBuilder.fromHttpUrl(lokiExploreUrl)
                 .queryParam("orgId", 1)
                 .queryParam("left", left)
                 .build().encode(UTF_8).toUriString();

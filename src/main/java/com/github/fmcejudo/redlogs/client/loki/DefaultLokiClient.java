@@ -45,4 +45,9 @@ public class DefaultLokiClient implements LokiClient {
             case RANGE, POINT_IN_TIME -> new QueryRangeClient(webClientBuilder).query(lokiRequest);
         };
     }
+
+    @Override
+    public String getLokiUrl() {
+        return lokiConfig.getUrl();
+    }
 }
