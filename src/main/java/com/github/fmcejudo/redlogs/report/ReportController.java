@@ -27,14 +27,14 @@ class ReportController {
 
     @GetMapping("/{applicationName}")
     public ResponseEntity<String> getAdocReport(@PathVariable String applicationName,
-                                                @RequestParam("date") String date) {
+                                                @RequestParam(value = "date", required = false) String date) {
         LocalDate reportDate = parseToDate(date);
         return ResponseEntity.ok(reportServiceProxy.content(applicationName, reportDate));
     }
 
     @GetMapping("/trigger/{applicationName}")
     public ResponseEntity<String> triggerReport(@PathVariable String applicationName,
-                                                @RequestParam("date") String date) {
+                                                @RequestParam(value = "date", required = false) String date) {
 
         LocalDate reportDate = parseToDate(date);
         cardExecutionService.execute(applicationName, reportDate);
