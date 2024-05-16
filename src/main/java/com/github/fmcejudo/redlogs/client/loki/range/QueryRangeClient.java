@@ -9,7 +9,6 @@ import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -31,10 +30,7 @@ public class QueryRangeClient implements LokiClient {
     @Override
     public LokiResponse query(LokiRequest lokiRequest) {
 
-        System.out.println("Query range: ");
-        System.out.println(lokiRequest.query());
-
-        LocalDateTime now = LocalDateTime.of(LocalDate.now(), LocalTime.of(6, 0, 0));
+        LocalDateTime now = LocalDateTime.of(lokiRequest.reportDate(), LocalTime.of(7, 0, 0));
         long start = TimeUnit.MILLISECONDS.toNanos(now.minusHours(24).toInstant(ZoneOffset.UTC).toEpochMilli());
         long end = TimeUnit.MILLISECONDS.toNanos(now.toInstant(ZoneOffset.UTC).toEpochMilli());
         return queryRangeClientSupplier.get().queryService(lokiRequest.query(), 1000, start, end, "1m");

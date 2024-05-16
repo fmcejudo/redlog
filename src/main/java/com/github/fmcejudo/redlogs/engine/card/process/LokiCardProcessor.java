@@ -25,7 +25,7 @@ class LokiCardProcessor implements CardProcessor {
         this.lokiClient = lokiClient;
     }
 
-    public CardQueryResponse process(final CardQueryRequest cardQuery) {
+    public CardQueryResponse process(final CardQueryRequest cardQuery, final LocalDate reportDate) {
         String query = cardQuery.query();
 
         var type = switch (cardQuery.cardType()) {
@@ -34,10 +34,9 @@ class LokiCardProcessor implements CardProcessor {
         };
 
         try {
-            LokiResponse lokiResponse = lokiClient.query(new LokiRequest(type, query));
+            LokiResponse lokiResponse = lokiClient.query(new LokiRequest(type, query, reportDate));
             return composeResult(cardQuery, lokiResponse);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new RuntimeException("Error querying to loki: " + cardQuery.id(), e);
         }
     }

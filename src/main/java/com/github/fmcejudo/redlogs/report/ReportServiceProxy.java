@@ -13,8 +13,8 @@ class ReportServiceProxy {
         this.reportService = reportService;
     }
 
-    public String content(String applicationName) {
-        List<Report> reports = reportRepository.getReportCompareWithDate(applicationName, LocalDate.now());
+    public String content(final String applicationName, final LocalDate reportDate) {
+        List<Report> reports = reportRepository.getReportCompareWithDate(applicationName, reportDate);
         return reportService.get(applicationName, reports);
     }
 }

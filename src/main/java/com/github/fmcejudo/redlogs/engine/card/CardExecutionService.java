@@ -13,6 +13,7 @@ import org.springframework.util.StopWatch;
 
 import java.io.Closeable;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -45,12 +46,12 @@ public class CardExecutionService implements Closeable {
         this.cardConverter = cardConverter;
     }
 
-    public void execute(final String applicationName) {
+    public void execute(final String applicationName, final LocalDate reportDate) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         //process
         CardQueryExecution.withProvider(() -> cardLoader.load(applicationName, cardConverter))
-                .withProcessor(processor, executor)
+                .withProcessor(processor, executor, reportDate)
                 .execute(writer::write,
                         t -> {
                             throw new RuntimeException(t);
@@ -85,13 +86,13 @@ interface CardQueryProvider {
 
     List<CardQueryRequest> provide();
 
-    default CardQueryExecution withProcessor(CardProcessor processor, Executor executor) {
+    default CardQueryExecution withProcessor(CardProcessor processor, Executor executor, LocalDate reportDate) {
         return (onNext, onError, onComplete) -> {
             List<CardQueryRequest> queryRequests = this.provide();
             List<CompletableFuture<Void>> futures = new ArrayList<>();
             for (CardQueryRequest cardQueryRequest : queryRequests) {
                 CompletableFuture<Void> future = CompletableFuture
-                        .supplyAsync(() -> processor.process(cardQueryRequest), executor)
+                        .supplyAsync(() -> processor.process(cardQueryRequest, reportDate), executor)
                         .thenAcceptAsync(onNext, executor)
                         .exceptionally(t -> {
                             onError.accept(t);
