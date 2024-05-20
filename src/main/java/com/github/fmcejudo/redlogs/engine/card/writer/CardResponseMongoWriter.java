@@ -1,7 +1,9 @@
 package com.github.fmcejudo.redlogs.engine.card.writer;
 
+import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryResponse;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryResponseEntry;
+import com.github.fmcejudo.redlogs.util.MongoNamingUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -17,14 +19,19 @@ class CardResponseMongoWriter implements CardResponseWriter {
 
     private final MongoTemplate mongoTemplate;
 
-    public CardResponseMongoWriter(final MongoTemplate mongoTemplate) {
+    private final RedLogMongoProperties redLogMongoConfigProperties;
+
+    public CardResponseMongoWriter(final MongoTemplate mongoTemplate, RedLogMongoProperties redLogMongoConfigProperties) {
         this.mongoTemplate = mongoTemplate;
+        this.redLogMongoConfigProperties = redLogMongoConfigProperties;
     }
 
     @Override
     public CardQueryResponse write(final CardQueryResponse cardQueryResponse) {
-
-        final String collectionName = cardQueryResponse.applicationName();
+        String collectionName = MongoNamingUtils.composeCollectionName(
+                redLogMongoConfigProperties.getCollectionNamePrefix(),
+                cardQueryResponse.applicationName()
+        );
         var cardMongoRecord = new CardMongoRecord(
                 cardQueryResponse.id(),
                 cardQueryResponse.description(),

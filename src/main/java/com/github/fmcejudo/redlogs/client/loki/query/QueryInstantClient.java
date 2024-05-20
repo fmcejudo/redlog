@@ -2,7 +2,7 @@ package com.github.fmcejudo.redlogs.client.loki.query;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fmcejudo.redlogs.client.loki.LokiClient;
-import com.github.fmcejudo.redlogs.client.loki.LokiConfig;
+import com.github.fmcejudo.redlogs.config.RedLogLokiConfig;
 import com.github.fmcejudo.redlogs.client.loki.LokiRequest;
 import com.github.fmcejudo.redlogs.client.loki.LokiResponse;
 import org.springframework.http.HttpHeaders;
@@ -25,10 +25,10 @@ import static org.apache.logging.log4j.util.Base64Util.encode;
 public final class QueryInstantClient implements LokiClient {
 
 
-    private final LokiConfig config;
+    private final RedLogLokiConfig config;
     private final ObjectMapper objectMapper;
 
-    public QueryInstantClient(final LokiConfig config) {
+    public QueryInstantClient(final RedLogLokiConfig config) {
         this.config = config;
         this.objectMapper = new ObjectMapper();
     }

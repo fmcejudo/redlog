@@ -2,6 +2,7 @@ package com.github.fmcejudo.redlogs.client.loki;
 
 import com.github.fmcejudo.redlogs.client.loki.query.QueryInstantClient;
 import com.github.fmcejudo.redlogs.client.loki.range.QueryRangeClient;
+import com.github.fmcejudo.redlogs.config.RedLogLokiConfig;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -16,9 +17,9 @@ public class DefaultLokiClient implements LokiClient {
 
     private final WebClient.Builder webClientBuilder;
 
-    private final LokiConfig lokiConfig;
+    private final RedLogLokiConfig lokiConfig;
 
-    public DefaultLokiClient(final LokiConfig lokiConfig) {
+    public DefaultLokiClient(final RedLogLokiConfig lokiConfig) {
 
         this.lokiConfig = lokiConfig;
 

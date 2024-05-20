@@ -1,5 +1,7 @@
 package com.github.fmcejudo.redlogs.report;
 
+import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
+import com.github.fmcejudo.redlogs.util.MongoNamingUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -13,15 +15,23 @@ import java.util.List;
 class ReportRepository {
 
     private final MongoTemplate mongoTemplate;
+    private final RedLogMongoProperties redLogMongoConfigProperties;
 
-    public ReportRepository(MongoTemplate mongoTemplate) {
+    public ReportRepository(final MongoTemplate mongoTemplate,
+                            final RedLogMongoProperties redLogMongoConfigProperties) {
         this.mongoTemplate = mongoTemplate;
+        this.redLogMongoConfigProperties = redLogMongoConfigProperties;
     }
 
     List<Report> getReportCompareWithDate(final String applicationName, final LocalDate date) {
 
-        final List<Report> latestReports = findByApplicationName(applicationName);
-        final List<Report> previousReports = findByApplicationAndDate(applicationName, date);
+        final String collectionName = MongoNamingUtils.composeCollectionName(
+                redLogMongoConfigProperties.getCollectionNamePrefix(),
+                applicationName
+        );
+
+        final List<Report> latestReports = findByApplicationName(collectionName);
+        final List<Report> previousReports = findByApplicationAndDate(collectionName, date);
 
         int i = 0;
         int j = 0;
@@ -60,14 +70,14 @@ class ReportRepository {
         return result;
     }
 
-    private List<Report> findByApplicationName(String applicationName) {
+    private List<Report> findByApplicationName(String collectionName) {
         Query query = Query.query(Criteria.where("date").is(LocalDate.now()));
-        return mongoTemplate.find(query, Report.class, applicationName);
+        return mongoTemplate.find(query, Report.class, collectionName);
     }
 
-    private List<Report> findByApplicationAndDate(String applicationName, LocalDate date) {
+    private List<Report> findByApplicationAndDate(String collectionName, LocalDate date) {
         Query query = Query.query(Criteria.where("date").is(date));
-        return mongoTemplate.find(query, Report.class, applicationName);
+        return mongoTemplate.find(query, Report.class, collectionName);
     }
 
 

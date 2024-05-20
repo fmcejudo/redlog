@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.report;
 
+import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
 import com.github.fmcejudo.redlogs.engine.card.CardExecutionService;
 import com.github.fmcejudo.redlogs.engine.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.engine.card.loader.CardLoader;
@@ -10,15 +11,19 @@ import com.github.fmcejudo.redlogs.report.asciidoctor.AsciiDoctorReportService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+
+@ConfigurationPropertiesScan
 @AutoConfiguration(after = MongoTemplate.class)
 public class ReportConfiguration {
 
     @Bean
-    ReportRepository reportRepository(final MongoTemplate mongoTemplate) {
-        return new ReportRepository(mongoTemplate);
+    ReportRepository reportRepository(final MongoTemplate mongoTemplate,
+                                      final RedLogMongoProperties redLogMongoProperties) {
+        return new ReportRepository(mongoTemplate, redLogMongoProperties);
     }
 
     @Bean
@@ -50,7 +55,8 @@ public class ReportConfiguration {
     }
 
     @Bean
-    ReportController reportController(ReportServiceProxy reportServiceProxy, CardExecutionService cardExecutionService) {
+    ReportController reportController(ReportServiceProxy reportServiceProxy,
+                                      CardExecutionService cardExecutionService) {
         return new ReportController(reportServiceProxy, cardExecutionService);
     }
 }

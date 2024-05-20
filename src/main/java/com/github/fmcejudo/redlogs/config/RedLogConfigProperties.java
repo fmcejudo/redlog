@@ -5,13 +5,15 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationPropertiesScan
 @ConfigurationProperties(prefix = "redlog")
 public class RedLogConfigProperties {
 
     private SourceType sourceType;
 
     private RedLogGithubProperties github;
+
+    private RedLogMongoProperties mongo;
+
 
     public RedLogGithubProperties getGithub() {
         return github;
@@ -27,5 +29,13 @@ public class RedLogConfigProperties {
 
     public void setSourceType(SourceType sourceType) {
         this.sourceType = sourceType;
+    }
+
+    public RedLogMongoProperties getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(RedLogMongoProperties mongo) {
+        this.mongo = mongo;
     }
 }

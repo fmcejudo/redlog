@@ -1,15 +1,16 @@
-package com.github.fmcejudo.redlogs.client.loki;
+package com.github.fmcejudo.redlogs.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@ConfigurationProperties(prefix = "loki")
-public class LokiConfig {
+@ConfigurationProperties(prefix = "redlog.loki")
+public class RedLogLokiConfig {
 
     private String url;
     private String username;
     private String password;
+
+    private String dashboardUrl;
+    private String datasourceName;
 
     public String getUrl() {
         return url;
@@ -33,5 +34,21 @@ public class LokiConfig {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getDashboardUrl() {
+        return dashboardUrl;
+    }
+
+    public void setDashboardUrl(String dashboardUrl) {
+        this.dashboardUrl = dashboardUrl;
+    }
+
+    public String getDatasourceName() {
+        return datasourceName;
+    }
+
+    public void setDatasourceName(String datasourceName) {
+        this.datasourceName = datasourceName;
     }
 }

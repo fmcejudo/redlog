@@ -2,6 +2,7 @@ package com.github.fmcejudo.redlogs.engine.card.loader;
 
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
+import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -10,7 +11,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@EnableConfigurationProperties({RedLogGithubProperties.class,RedLogFileProperties.class})
+@EnableConfigurationProperties({RedLogGithubProperties.class,RedLogFileProperties.class, RedLogMongoProperties.class})
 class CardConfiguration {
 
     @Bean

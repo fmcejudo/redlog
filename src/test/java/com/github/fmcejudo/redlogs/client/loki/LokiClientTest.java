@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.client.loki;
 
+import com.github.fmcejudo.redlogs.config.RedLogLokiConfig;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,10 @@ import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
 
 @ExtendWith(SpringExtension.class)
-@EnableConfigurationProperties(value = LokiConfig.class)
+@EnableConfigurationProperties(value = RedLogLokiConfig.class)
 @ContextConfiguration(classes = {
         DefaultLokiClient.class,
-        LokiConfig.class
+        RedLogLokiConfig.class
 })
 @Testcontainers
 @TestPropertySource(properties = {
@@ -34,7 +35,7 @@ class LokiClientTest {
     LokiClient lokiClient;
 
     @Autowired
-    LokiConfig lokiConfig;
+    RedLogLokiConfig lokiConfig;
 
     @Container
     static GenericContainer<?> lokiContainer = new GenericContainer<>(DockerImageName.parse("grafana/loki:2.9.5"))

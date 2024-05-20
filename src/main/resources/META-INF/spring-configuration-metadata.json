@@ -1,6 +1,36 @@
 {
   "properties": [
     {
+      "name": "redlog.loki.url",
+      "type": "String",
+      "description": "loki url to query",
+      "defaultValue" : "http://localhost:3100"
+    },
+    {
+      "name": "redlog.loki.user",
+      "type": "String",
+      "description": "loki username",
+      "defaultValue" : ""
+    },
+    {
+      "name": "redlog.loki.password",
+      "type": "String",
+      "description": "loki password",
+      "defaultValue" : ""
+    },
+    {
+      "name": "redlog.loki.dashboardUrl",
+      "type": "String",
+      "description": "grafana loki explorer",
+      "defaultValue" : "http://localhost:9090"
+    },
+    {
+      "name": "redlog.loki.datasource",
+      "type": "String",
+      "description": "grafana datasource identifier",
+      "defaultValue" : "default"
+    },
+    {
       "name": "redlog.source-type",
       "type": "com.github.fmcejudo.redlogs.config.SourceType",
       "description": "Where the card are taken from.",
@@ -23,6 +53,12 @@
       "type": "java.util.Map",
       "description": "define for each application, where is the path in github",
       "defaultValue": "any"
+    },
+    {
+      "name": "redlog.mongo.collection-name-prefix",
+      "type": "string",
+      "description": "define the prefix for collection used by red-log",
+      "defaultValue": ""
     }
   ]
 }
