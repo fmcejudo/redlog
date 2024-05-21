@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Repository
@@ -32,7 +33,7 @@ class ReportRepository {
 
         final List<Report> latestReports = findByApplicationAndDate(collectionName, date);
         final List<Report> previousReports = findByApplicationAndDate(collectionName, date.minusDays(1));
-
+        
         int i = 0;
         int j = 0;
         Report[] latestReportIt = latestReports.toArray(Report[]::new);
@@ -72,7 +73,8 @@ class ReportRepository {
 
     private List<Report> findByApplicationAndDate(String collectionName, LocalDate date) {
         Query query = Query.query(Criteria.where("date").is(date));
-        return mongoTemplate.find(query, Report.class, collectionName);
+        return mongoTemplate.find(query, Report.class, collectionName)
+                .stream().sorted(Comparator.comparing(Report::reportId)).toList();
     }
 
 
