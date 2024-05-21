@@ -35,13 +35,14 @@ class LokiCardProcessor implements CardProcessor {
 
         try {
             LokiResponse lokiResponse = lokiClient.query(new LokiRequest(type, query, reportDate));
-            return composeResult(cardQuery, lokiResponse);
+            return composeResult(cardQuery, lokiResponse, reportDate);
         } catch (Exception e) {
             throw new RuntimeException("Error querying to loki: " + cardQuery.id(), e);
         }
     }
 
-    private CardQueryResponse composeResult(final CardQueryRequest cardQuery, final LokiResponse lokiResponse) {
+    private CardQueryResponse composeResult(final CardQueryRequest cardQuery, final LokiResponse lokiResponse,
+                                            final LocalDate reportDate) {
 
         String id = cardQuery.id();
         String description = cardQuery.description();
@@ -49,17 +50,18 @@ class LokiCardProcessor implements CardProcessor {
         ;
         if (lokiResponse == null) {
             System.err.println("loki response is null");
-            return CardQueryResponse.failure(applicationName, id, description, "No report response found");
+            return CardQueryResponse.failure(applicationName, reportDate, id, description, "No report response found");
         }
 
         if (lokiResponse.isSuccess()) {
-            return buildCardReportEntries(cardQuery, lokiResponse);
+            return buildCardReportEntries(cardQuery, lokiResponse, reportDate);
         }
         System.err.println("loki response has failed");
-        return CardQueryResponse.failure(applicationName, id, description, "query ended up being failed");
+        return CardQueryResponse.failure(applicationName,reportDate, id, description, "query ended up being failed");
     }
 
-    private CardQueryResponse buildCardReportEntries(CardQueryRequest cardQuery, LokiResponse lokiResponse) {
+    private CardQueryResponse buildCardReportEntries(final CardQueryRequest cardQuery, final LokiResponse lokiResponse,
+                                                     final LocalDate reportDate) {
         String id = cardQuery.id();
         String description = cardQuery.description();
         String applicationName = cardQuery.applicationName();
@@ -69,7 +71,7 @@ class LokiCardProcessor implements CardProcessor {
                 .map(result -> new CardQueryResponseEntry(result.labels(), result.count()))
                 .toList();
 
-        return CardQueryResponse.success(applicationName, id, description, link, entries);
+        return CardQueryResponse.success(applicationName, reportDate, id, description, link, entries);
     }
 
     private String createLokiLink(CardQueryRequest cardQuery) {

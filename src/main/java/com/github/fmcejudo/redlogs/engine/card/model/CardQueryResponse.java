@@ -15,6 +15,7 @@ public record CardQueryResponse(
 
     public static CardQueryResponse success(
             String applicationName,
+            LocalDate date,
             String id,
             String description,
             String link,
@@ -22,7 +23,7 @@ public record CardQueryResponse(
 
         return new CardQueryResponse(
                 applicationName,
-                LocalDate.now(),
+                date,
                 id,
                 description,
                 entries,
@@ -33,13 +34,14 @@ public record CardQueryResponse(
 
     public static CardQueryResponse failure(
             String applicationName,
+            LocalDate date,
             String id,
             String description,
             String error) {
 
         return new CardQueryResponse(
                 applicationName,
-                LocalDate.now(),
+                date,
                 id,
                 description,
                 List.of(),
