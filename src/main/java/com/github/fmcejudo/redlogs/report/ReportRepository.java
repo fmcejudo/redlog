@@ -30,8 +30,8 @@ class ReportRepository {
                 applicationName
         );
 
-        final List<Report> latestReports = findByApplicationName(collectionName);
-        final List<Report> previousReports = findByApplicationAndDate(collectionName, date);
+        final List<Report> latestReports = findByApplicationAndDate(collectionName, date);
+        final List<Report> previousReports = findByApplicationAndDate(collectionName, date.minusDays(1));
 
         int i = 0;
         int j = 0;
@@ -68,11 +68,6 @@ class ReportRepository {
         }
 
         return result;
-    }
-
-    private List<Report> findByApplicationName(String collectionName) {
-        Query query = Query.query(Criteria.where("date").is(LocalDate.now()));
-        return mongoTemplate.find(query, Report.class, collectionName);
     }
 
     private List<Report> findByApplicationAndDate(String collectionName, LocalDate date) {
