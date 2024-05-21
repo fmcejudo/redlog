@@ -7,7 +7,7 @@
       "defaultValue" : "http://localhost:3100"
     },
     {
-      "name": "redlog.loki.user",
+      "name": "redlog.loki.username",
       "type": "String",
       "description": "loki username",
       "defaultValue" : ""

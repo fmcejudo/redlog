@@ -17,11 +17,11 @@ public class DefaultLokiClient implements LokiClient {
 
     private final WebClient.Builder webClientBuilder;
 
-    private final RedLogLokiConfig lokiConfig;
+    private final RedLogLokiConfig redLogLokiConfig;
 
-    public DefaultLokiClient(final RedLogLokiConfig lokiConfig) {
+    public DefaultLokiClient(final RedLogLokiConfig redLogLokiConfig) {
 
-        this.lokiConfig = lokiConfig;
+        this.redLogLokiConfig = redLogLokiConfig;
 
         final ExchangeStrategies strategies = ExchangeStrategies.builder()
                 .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))
@@ -32,23 +32,23 @@ public class DefaultLokiClient implements LokiClient {
                 .defaultHeader("X-Grafana-Org-Id", "1")
                 .defaultHeader(
                         HttpHeaders.AUTHORIZATION,
-                        "Basic " + encode(String.join(":", lokiConfig.getUsername(), lokiConfig.getPassword()))
+                        "Basic " + encode(String.join(":", redLogLokiConfig.getUsername(), redLogLokiConfig.getPassword()))
                 )
                 .exchangeStrategies(strategies)
                 .clientConnector(new ReactorClientHttpConnector(client))
-                .baseUrl(lokiConfig.getUrl());
+                .baseUrl(redLogLokiConfig.getUrl());
     }
 
     @Override
     public LokiResponse query(LokiRequest lokiRequest) {
         return switch (lokiRequest.requestType()) {
-            case INSTANT -> new QueryInstantClient(lokiConfig).query(lokiRequest);
+            case INSTANT -> new QueryInstantClient(redLogLokiConfig).query(lokiRequest);
             case RANGE, POINT_IN_TIME -> new QueryRangeClient(webClientBuilder).query(lokiRequest);
         };
     }
 
     @Override
     public String getLokiUrl() {
-        return lokiConfig.getUrl();
+        return redLogLokiConfig.getUrl();
     }
 }
