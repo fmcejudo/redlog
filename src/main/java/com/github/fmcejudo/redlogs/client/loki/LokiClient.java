@@ -9,5 +9,8 @@ public interface LokiClient {
         throw new IllegalStateException("there is no implementation to get loki url");
     }
 
+    default String getLokiDataSource() {
+        throw new IllegalStateException("there is no implementation to get loki datasource");
+    }
 }
 

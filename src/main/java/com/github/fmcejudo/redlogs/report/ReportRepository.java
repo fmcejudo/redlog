@@ -33,7 +33,7 @@ class ReportRepository {
 
         final List<Report> latestReports = findByApplicationAndDate(collectionName, date);
         final List<Report> previousReports = findByApplicationAndDate(collectionName, date.minusDays(1));
-        
+
         int i = 0;
         int j = 0;
         Report[] latestReportIt = latestReports.toArray(Report[]::new);

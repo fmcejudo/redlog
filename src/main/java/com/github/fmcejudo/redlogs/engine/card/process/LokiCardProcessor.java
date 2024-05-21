@@ -76,7 +76,7 @@ class LokiCardProcessor implements CardProcessor {
 
     private String createLokiLink(CardQueryRequest cardQuery) {
         LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(10, 0, 0));
-        String datasource = "MeVqGIp7z";
+        String datasource = lokiClient.getLokiDataSource();
         return LokiLinkBuilder.builder(lokiClient.getLokiUrl())
                 .query(cardQuery.query())
                 .from(today.minusDays(1))

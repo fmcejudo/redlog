@@ -10,6 +10,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
+import java.util.Optional;
 
 import static org.apache.logging.log4j.util.Base64Util.encode;
 
@@ -49,6 +50,11 @@ public class DefaultLokiClient implements LokiClient {
 
     @Override
     public String getLokiUrl() {
-        return redLogLokiConfig.getUrl();
+        return Optional.ofNullable(redLogLokiConfig.getDashboardUrl()).orElse(redLogLokiConfig.getUrl());
+    }
+
+    @Override
+    public String getLokiDataSource() {
+        return Optional.ofNullable(redLogLokiConfig.getDatasourceName()).orElse("default");
     }
 }
