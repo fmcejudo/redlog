@@ -9,8 +9,9 @@ public class RedLogLokiConfig {
     private String username;
     private String password;
 
-    private String dashboardUrl;
-    private String datasourceName;
+    private String dashboardUrl = "http://localhost:9000";
+
+    private String datasourceName = "default";
 
     public String getUrl() {
         return url;

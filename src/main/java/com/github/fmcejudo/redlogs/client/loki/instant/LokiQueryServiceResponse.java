@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.client.loki.query;
+package com.github.fmcejudo.redlogs.client.loki.instant;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.fmcejudo.redlogs.client.loki.LokiResponse;

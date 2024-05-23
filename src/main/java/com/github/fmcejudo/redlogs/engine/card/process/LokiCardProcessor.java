@@ -3,7 +3,7 @@ package com.github.fmcejudo.redlogs.engine.card.process;
 import com.github.fmcejudo.redlogs.client.loki.LokiClient;
 import com.github.fmcejudo.redlogs.client.loki.LokiRequest;
 import com.github.fmcejudo.redlogs.client.loki.LokiResponse;
-import com.github.fmcejudo.redlogs.client.loki.query.QueryInstantClient;
+import com.github.fmcejudo.redlogs.client.loki.instant.QueryInstantClient;
 import com.github.fmcejudo.redlogs.client.loki.range.QueryRangeClient;
 import com.github.fmcejudo.redlogs.config.RedLogLokiConfig;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryRequest;
@@ -18,8 +18,6 @@ import reactor.netty.http.client.HttpClient;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 import static org.apache.logging.log4j.util.Base64Util.encode;
@@ -28,8 +26,12 @@ class LokiCardProcessor implements CardProcessor {
 
     private final LokiClientFactory lokiClientFactory;
 
+    private final LokiLinkBuilder lokiLinkBuilder;
+
     public LokiCardProcessor(RedLogLokiConfig redLogLokiConfig) {
         this.lokiClientFactory = LokiClientFactory.createInstance(redLogLokiConfig);
+        this.lokiLinkBuilder =
+                LokiLinkBuilder.builder(redLogLokiConfig.getDashboardUrl(), redLogLokiConfig.getDatasourceName());
     }
 
     public CardQueryResponse process(final CardQueryRequest cardQuery) {
@@ -67,23 +69,19 @@ class LokiCardProcessor implements CardProcessor {
         String id = cardQuery.id();
         String description = cardQuery.description();
         String applicationName = cardQuery.applicationName();
-        //String link = createLokiLink(cardQuery);
+        String link = lokiLinkBuilder.query(cardQuery.query())
+                .from(cardQuery.reportDate().minusDays(1))
+                .to(cardQuery.reportDate())
+                .build();
 
         List<CardQueryResponseEntry> entries = lokiResponse.result().stream()
                 .map(result -> new CardQueryResponseEntry(result.labels(), result.count()))
                 .toList();
 
-        return CardQueryResponse.success(applicationName, reportDate, id, description, null, entries);
+        return CardQueryResponse.success(applicationName, reportDate, id, description, link, entries);
     }
 
-  /*  private String createLokiLink(CardQueryRequest cardQuery) {
-        LocalDateTime today = LocalDateTime.of(LocalDate.now(), LocalTime.of(10, 0, 0));
-        String datasource = lokiClient.getLokiDataSource();
-        return LokiLinkBuilder.builder(lokiClient.getLokiUrl())
-                .query(cardQuery.query())
-                .from(today.minusDays(1))
-                .to(today).datasource(datasource).build();
-    }*/
+
 }
 
 @FunctionalInterface

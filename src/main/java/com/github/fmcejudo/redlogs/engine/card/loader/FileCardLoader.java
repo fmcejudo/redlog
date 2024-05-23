@@ -27,7 +27,7 @@ public class FileCardLoader implements CardLoader {
         try {
             File file = resource.createRelative(application.toUpperCase() + ".yaml").getFile();
             String content = new String(Files.readAllBytes(file.toPath()));
-            return cardConverter.convert(content, application);
+            return cardConverter.convert(content, application).stream().map(s -> s.withReportDate(reportDate)).toList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

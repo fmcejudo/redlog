@@ -2,7 +2,9 @@ package com.github.fmcejudo.redlogs.engine.card.process;
 
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.function.ToLongFunction;
 
@@ -11,27 +13,25 @@ import static java.time.ZoneOffset.UTC;
 
 final class LokiLinkBuilder {
 
+    private final LocalTime localTime;
     private final String lokiExploreUrl;
     private String query;
     private LocalDateTime from;
     private LocalDateTime to;
     private String dataSource;
 
-    private LokiLinkBuilder(final String lokiUrl) {
+    private LokiLinkBuilder(final String lokiUrl, final String dataSource) {
         this.lokiExploreUrl = String.join("/", lokiUrl, "explore");
-    }
-
-    public static LokiLinkBuilder builder(final String lokiUrl) {
-        return new LokiLinkBuilder(lokiUrl);
-    }
-
-    public LokiLinkBuilder datasource(String dataSource) {
         this.dataSource = dataSource;
-        return this;
+        this.localTime = LocalTime.of(7, 0, 0);
     }
 
-    public LokiLinkBuilder from(LocalDateTime from) {
-        this.from = from;
+    public static LokiLinkBuilder builder(final String lokiUrl, final String dataSource) {
+        return new LokiLinkBuilder(lokiUrl, dataSource);
+    }
+
+    public LokiLinkBuilder from(LocalDate from) {
+        this.from = LocalDateTime.of(from, localTime);
         return this;
     }
 
@@ -40,8 +40,8 @@ final class LokiLinkBuilder {
         return this;
     }
 
-    public LokiLinkBuilder to(LocalDateTime to) {
-        this.to = to;
+    public LokiLinkBuilder to(LocalDate to) {
+        this.to = LocalDateTime.of(to, localTime);
         return this;
     }
 

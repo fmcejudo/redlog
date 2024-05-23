@@ -17,9 +17,10 @@ import java.util.stream.Stream;
 
 import static java.time.ZoneOffset.*;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static java.util.concurrent.TimeUnit.*;
 
 @JsonSerialize
-record QueryRangeResponse(String status, Data data) implements LokiResponse {
+public record QueryRangeResponse(String status, Data data) implements LokiResponse {
 
     @Override
     public boolean isSuccess() {
@@ -36,7 +37,7 @@ record QueryRangeResponse(String status, Data data) implements LokiResponse {
 
         return mapResult.entrySet().stream().sorted(Map.Entry.comparingByKey())
                 .map(e -> {
-                    Instant instant = Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(Long.parseLong(e.getKey())));
+                    Instant instant = Instant.ofEpochMilli(MINUTES.toMillis(Long.parseLong(e.getKey())));
                     String time = LocalDateTime.ofInstant(instant, ofHours(2)).format(ISO_LOCAL_DATE_TIME);
                     return new LokiResult(Map.of("time", time), e.getValue().size());
                 })
@@ -48,7 +49,7 @@ record QueryRangeResponse(String status, Data data) implements LokiResponse {
             List<StreamsValue> value = r.streamsResult().values();
             return value.stream().map(v -> {
                 Map<String, String> customLabels = new HashMap<>();
-                long minute = TimeUnit.NANOSECONDS.toMinutes(Long.parseLong(v.nanoSeconds()));
+                long minute = NANOSECONDS.toMinutes(Long.parseLong(v.nanoSeconds()));
                 customLabels.put("time", String.valueOf(minute));
                 return new LokiResult(customLabels, 1L);
             });
@@ -68,7 +69,7 @@ record QueryRangeResponse(String status, Data data) implements LokiResponse {
         long rangeStart = -1;
         long rangeEnd = -1;
         for (MatrixValue matrixValue : value) {
-            long minute = TimeUnit.SECONDS.toMinutes(matrixValue.seconds());
+            long minute = SECONDS.toMinutes(matrixValue.seconds());
             if (rangeStart == -1) {
                 rangeStart = minute;
                 rangeEnd = minute;
@@ -89,10 +90,14 @@ record QueryRangeResponse(String status, Data data) implements LokiResponse {
     }
 
     private Map<String, String> serviceLabels(long rangeStart, long rangeEnd, String service) {
-        String start = LocalDateTime.ofInstant(Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(rangeStart)), ZoneId.of("Europe/Madrid"))
-                .format(ISO_LOCAL_DATE_TIME);
-        String end = LocalDateTime.ofInstant(Instant.ofEpochMilli(TimeUnit.MINUTES.toMillis(rangeEnd)), ZoneId.of("Europe/Madrid"))
-                .format(ISO_LOCAL_DATE_TIME);
+        String start = LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(MINUTES.toMillis(rangeStart)), ZoneId.of("Europe/Madrid")
+        ).format(ISO_LOCAL_DATE_TIME);
+
+        String end = LocalDateTime.ofInstant(
+                Instant.ofEpochMilli(MINUTES.toMillis(rangeEnd)), ZoneId.of("Europe/Madrid")
+        ).format(ISO_LOCAL_DATE_TIME);
+
         return Map.of("start", start, "end", end, "service", service);
     }
 

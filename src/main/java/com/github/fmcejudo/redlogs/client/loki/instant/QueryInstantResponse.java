@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.client.loki.query;
+package com.github.fmcejudo.redlogs.client.loki.instant;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.github.fmcejudo.redlogs.client.loki.LokiResponse;
@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonSerialize
-record QueryInstantResponse(String status, Data data) implements LokiResponse {
+public record QueryInstantResponse(String status, Data data) implements LokiResponse {
 
     @Override
     public boolean isSuccess() {

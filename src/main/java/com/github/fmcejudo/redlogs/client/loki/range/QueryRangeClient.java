@@ -13,18 +13,15 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
 public class QueryRangeClient implements LokiClient {
 
-    private final Supplier<HttpQueryRangeClient> queryRangeClientSupplier;
+    private final HttpQueryRangeClient queryRangeClient;
 
     public QueryRangeClient(final WebClient.Builder webClientBuilder) {
-        queryRangeClientSupplier = () -> {
-            WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
-            return HttpServiceProxyFactory.builderFor(webClientAdapter).build()
-                    .createClient(HttpQueryRangeClient.class);
-        };
+        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+        this.queryRangeClient = HttpServiceProxyFactory.builderFor(webClientAdapter).build()
+                .createClient(HttpQueryRangeClient.class);
     }
 
     @Override
@@ -33,16 +30,18 @@ public class QueryRangeClient implements LokiClient {
         LocalDateTime now = LocalDateTime.of(lokiRequest.reportDate(), LocalTime.of(7, 0, 0));
         long start = TimeUnit.MILLISECONDS.toNanos(now.minusHours(24).toInstant(ZoneOffset.UTC).toEpochMilli());
         long end = TimeUnit.MILLISECONDS.toNanos(now.toInstant(ZoneOffset.UTC).toEpochMilli());
-        return queryRangeClientSupplier.get().queryService(lokiRequest.query(), 1000, start, end, "1m");
+        return queryRangeClient.queryService(lokiRequest.query(), 1000, start, end, "1m");
+    }
+
+    public interface HttpQueryRangeClient {
+
+        @GetExchange(url = "/loki/api/v1/query_range")
+        public abstract QueryRangeResponse queryService(@RequestParam(name = "query") String query,
+                                                        @RequestParam(name = "limit") int limit,
+                                                        @RequestParam(name = "start") long start,
+                                                        @RequestParam(name = "end") long end,
+                                                        @RequestParam(name = "step") String step);
     }
 }
 
-interface HttpQueryRangeClient {
 
-    @GetExchange(url = "/loki/api/v1/query_range")
-    public abstract QueryRangeResponse queryService(@RequestParam(name = "query") String query,
-                                                    @RequestParam(name = "limit") int limit,
-                                                    @RequestParam(name = "start") long start,
-                                                    @RequestParam(name = "end") long end,
-                                                    @RequestParam(name = "step") String step);
-}

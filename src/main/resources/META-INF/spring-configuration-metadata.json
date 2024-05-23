@@ -25,7 +25,7 @@
       "defaultValue" : "http://localhost:9090"
     },
     {
-      "name": "redlog.loki.datasource",
+      "name": "redlog.loki.datasourceName",
       "type": "String",
       "description": "grafana datasource identifier",
       "defaultValue" : "default"
