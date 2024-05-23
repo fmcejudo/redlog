@@ -21,7 +21,6 @@ import org.testcontainers.utility.DockerImageName;
 @ExtendWith(SpringExtension.class)
 @EnableConfigurationProperties(value = RedLogLokiConfig.class)
 @ContextConfiguration(classes = {
-        DefaultLokiClient.class,
         RedLogLokiConfig.class
 })
 @Testcontainers
@@ -30,9 +29,6 @@ import org.testcontainers.utility.DockerImageName;
 })
 @Disabled
 class LokiClientTest {
-
-    @Autowired
-    LokiClient lokiClient;
 
     @Autowired
     RedLogLokiConfig lokiConfig;
@@ -58,12 +54,6 @@ class LokiClientTest {
                 .extracting("url", "username", "password")
                 .containsExactly(getLokiUrl(lokiContainer), "username", "password");
 
-    }
-
-    @Test
-    void shouldCreateAClient() {
-        //Given When Then
-        Assertions.assertThat(lokiClient).isNotNull();
     }
 
     private static String getLokiUrl(final GenericContainer<?> lokiContainer) {

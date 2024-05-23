@@ -1,11 +1,15 @@
 package com.github.fmcejudo.redlogs.client.loki.query;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fmcejudo.redlogs.client.loki.LokiClient;
-import com.github.fmcejudo.redlogs.config.RedLogLokiConfig;
 import com.github.fmcejudo.redlogs.client.loki.LokiRequest;
 import com.github.fmcejudo.redlogs.client.loki.LokiResponse;
+import org.apache.logging.log4j.util.Supplier;
 import org.springframework.http.HttpHeaders;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.support.WebClientAdapter;
+import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -25,43 +29,30 @@ import static org.apache.logging.log4j.util.Base64Util.encode;
 public final class QueryInstantClient implements LokiClient {
 
 
-    private final RedLogLokiConfig config;
-    private final ObjectMapper objectMapper;
+    private final Supplier<HttpQueryInstantClient> queryInstantClientSupplier;
 
-    public QueryInstantClient(final RedLogLokiConfig config) {
-        this.config = config;
-        this.objectMapper = new ObjectMapper();
+    public QueryInstantClient(final WebClient.Builder webClientBuilder) {
+
+        queryInstantClientSupplier = () -> {
+            WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
+            HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+            return factory.createClient(HttpQueryInstantClient.class);
+        };
     }
 
     @Override
     public LokiResponse query(LokiRequest lokiRequest) {
 
-        long epochMilli = LocalDateTime.of(LocalDate.now(), LocalTime.of(7, 0, 0)).toInstant(UTC).toEpochMilli();
-
-        try (HttpClient httpClient = HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build()) {
-
-            long time = TimeUnit.MILLISECONDS.toNanos(epochMilli);
-            URI uri = UriComponentsBuilder.fromHttpUrl(config.getUrl())
-                    .path("/loki/api/v1/query")
-                    .queryParam("query", lokiRequest.query(), StandardCharsets.UTF_8)
-                    .queryParam("time", time).build().toUri();
-
-            HttpRequest request = HttpRequest.newBuilder().uri(uri)
-                    .header("X-Grafana-Org-Id", "1")
-                    .header(HttpHeaders.AUTHORIZATION,
-                            "Basic " + encode(String.join(":", config.getUsername(), config.getPassword()))
-                    ).GET().build();
-
-            HttpResponse<String> response =
-                    httpClient.send(request, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
-
-            if (response.statusCode() != 200) {
-                throw new RuntimeException(response.body());
-            }
-            return objectMapper.readValue(response.body(), LokiQueryResponse.class);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            throw new RuntimeException(e);
-        }
+        long epochMilli = LocalDateTime.of(lokiRequest.reportDate(), LocalTime.of(7, 0, 0)).toInstant(UTC).toEpochMilli();
+        long time = TimeUnit.MILLISECONDS.toNanos(epochMilli);
+        return queryInstantClientSupplier.get().queryService(lokiRequest.query(), time);
     }
+
+}
+
+interface HttpQueryInstantClient {
+
+    @GetExchange(url = "/loki/api/v1/query")
+    public abstract QueryInstantResponse queryService(@RequestParam(name = "query") String query,
+                                                      @RequestParam(name = "time") long time);
 }

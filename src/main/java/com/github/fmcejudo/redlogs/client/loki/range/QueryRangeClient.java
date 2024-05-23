@@ -40,16 +40,9 @@ public class QueryRangeClient implements LokiClient {
 interface HttpQueryRangeClient {
 
     @GetExchange(url = "/loki/api/v1/query_range")
-    public abstract QueryRangeResponse query(@RequestParam(name = "query") String query,
-                                       @RequestParam(name = "limit") int limit,
-                                       @RequestParam(name = "start") long start,
-                                       @RequestParam(name = "end") long end,
-                                       @RequestParam(name = "step") String step);
-
-    @GetExchange(url = "/loki/api/v1/query_range")
-    public abstract QueryRangeServiceResponse queryService(@RequestParam(name = "query") String query,
-                                              @RequestParam(name = "limit") int limit,
-                                              @RequestParam(name = "start") long start,
-                                              @RequestParam(name = "end") long end,
-                                              @RequestParam(name = "step") String step);
+    public abstract QueryRangeResponse queryService(@RequestParam(name = "query") String query,
+                                                    @RequestParam(name = "limit") int limit,
+                                                    @RequestParam(name = "start") long start,
+                                                    @RequestParam(name = "end") long end,
+                                                    @RequestParam(name = "step") String step);
 }

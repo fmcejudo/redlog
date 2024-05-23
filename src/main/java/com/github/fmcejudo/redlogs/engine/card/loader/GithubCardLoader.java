@@ -8,6 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -17,13 +18,16 @@ class GithubCardLoader implements CardLoader {
 
     private final GithubClient githubClient;
 
-    public GithubCardLoader(final RedLogGithubProperties redLogGithubProperties) {
+    private final CardConverter cardConverter;
+
+    public GithubCardLoader(final RedLogGithubProperties redLogGithubProperties, final CardConverter cardConverter) {
         this.githubClient = new GithubClient(redLogGithubProperties.getGithubToken());
         this.urlMapper = redLogGithubProperties.getUrlMapper();
+        this.cardConverter = cardConverter;
     }
 
     @Override
-    public List<CardQueryRequest> load(String application, final CardConverter cardConverter) {
+    public List<CardQueryRequest> load(final String application, final LocalDate reportDate) {
         try {
             String content = githubClient.download(repoUrl(application) + application + ".yaml");
             return cardConverter.convert(content, application);

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 @JsonSerialize
-record LokiQueryResponse(String status, Data data) implements LokiResponse {
+record QueryInstantResponse(String status, Data data) implements LokiResponse {
 
     @Override
     public boolean isSuccess() {
