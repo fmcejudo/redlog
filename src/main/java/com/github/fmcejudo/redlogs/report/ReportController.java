@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @RestController
-@RequestMapping("/report")
+@RequestMapping("/${redlog.report.controller-path:report}")
 class ReportController {
 
     private final ReportServiceProxy reportServiceProxy;
