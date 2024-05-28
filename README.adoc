@@ -177,7 +177,7 @@ Also both of them define a query parameter named `date` which select from which 
 
 == How the document looks like
 
-The generated document is a customized document based on an interface which the team needs to implement based on their stored items.
+The generated document is a customized document behind an interface which the team needs to implement to create ascii content from stored items.
 
 [source,java]
 ----
@@ -224,4 +224,23 @@ public record ReportItem(Map<String, String> labels, long count) {
 
 To ease the burdens of creating this AsciiDoctor content, a simple `API` has been created, but not required to be used.
 
+As an example:
 
+[source, java]
+----
+class CustomAsciiDoctorContent implements AsciiDoctorContent {
+
+    @Override
+    public String content(final List<Report> reports) {
+        return reports.stream().map(this::contentSingleReport).collect(Collectors.joining("\n\n"));
+    }
+
+    private String contentSingleReport(final Report report) {
+        return "== " + report.description() + "+ \n" + report.items().size() + " elements";
+    }
+}
+----
+
+And document with it looks like:
+
+image:images/document.png[generated document]
