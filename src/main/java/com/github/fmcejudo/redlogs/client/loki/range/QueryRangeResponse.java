@@ -7,17 +7,19 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.time.ZoneOffset.*;
+import static java.time.ZoneOffset.ofHours;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import static java.util.concurrent.TimeUnit.*;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @JsonSerialize
 public record QueryRangeResponse(String status, Data data) implements LokiResponse {
@@ -61,9 +63,9 @@ public record QueryRangeResponse(String status, Data data) implements LokiRespon
     }
 
     private Stream<LokiResult> evaluateMatrixResult(final Result r) {
+        Map<String, String> metric = r.matrixResult().metric();
         List<MatrixValue> value = r.matrixResult().value()
                 .stream().sorted(Comparator.comparing(MatrixValue::seconds)).toList();
-        String service = tryFindServiceURL(r);
 
         List<LokiResult> result = new ArrayList<>();
         long rangeStart = -1;
@@ -78,18 +80,18 @@ public record QueryRangeResponse(String status, Data data) implements LokiRespon
             if (minute == rangeEnd + 1) {
                 rangeEnd = minute;
             } else {
-                result.add(new LokiResult(serviceLabels(rangeStart, rangeEnd, service), 1));
+                result.add(new LokiResult(serviceLabels(rangeStart, rangeEnd, metric), 1));
                 rangeStart = -1;
                 rangeEnd = -1;
             }
         }
         if (rangeEnd != -1) {
-            result.add(new LokiResult(serviceLabels(rangeStart, rangeEnd, service), 1));
+            result.add(new LokiResult(serviceLabels(rangeStart, rangeEnd, metric), 1));
         }
         return result.stream();
     }
 
-    private Map<String, String> serviceLabels(long rangeStart, long rangeEnd, String service) {
+    private Map<String, String> serviceLabels(long rangeStart, long rangeEnd, final Map<String, String> metricMap) {
         String start = LocalDateTime.ofInstant(
                 Instant.ofEpochMilli(MINUTES.toMillis(rangeStart)), ZoneId.of("Europe/Madrid")
         ).format(ISO_LOCAL_DATE_TIME);
@@ -98,18 +100,11 @@ public record QueryRangeResponse(String status, Data data) implements LokiRespon
                 Instant.ofEpochMilli(MINUTES.toMillis(rangeEnd)), ZoneId.of("Europe/Madrid")
         ).format(ISO_LOCAL_DATE_TIME);
 
-        return Map.of("start", start, "end", end, "service", service);
+        Map<String, String> map = new HashMap<>(metricMap);
+        map.put("start", start);
+        map.put("end", end);
+
+        return Collections.unmodifiableMap(map);
     }
 
-    private String tryFindServiceURL(Result r) {
-        Map<String, String> metric = r.matrixResult().metric();
-        String shortMessage = metric.get("short_message");
-        if (shortMessage == null) {
-            return "unknown";
-        }
-        int httpIndex = shortMessage.indexOf("https:");
-        int spaceUpToIndex = shortMessage.indexOf(" ", httpIndex);
-        int enterUpToIndex = shortMessage.indexOf("\n", httpIndex);
-        return shortMessage.substring(httpIndex, Math.min(spaceUpToIndex, enterUpToIndex));
-    }
 }
