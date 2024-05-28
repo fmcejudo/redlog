@@ -1,33 +1,25 @@
-= REDLOG
+= REDLOG User Guide
 
 == Introduction
 
-RedLog is a `Spring Boot starter` whose aim is to load a templated card, executes what is in it and writes the resulted report items to a sink.
+RedLog is a `Spring Boot starter` designed to load a templated card, execute its contents, and write the resulting report items to a sink.
 
-Because developers write logs as part of the observability to trace the path of operations or write the errors which their apps raise,
-when an issue comes up, they can query those logs to have an insight of the root of their problems. At least this is the way we have been doing for a while.
-
-With this tool we want to have a helper which bring us part of those common issues without querying them every time to the source and by sharing them with our team, letting them grow.
+Developers write logs as part of the observability to trace operations or capture errors raised by their applications. When issues arise, they query these logs to gain insight into the root causes. RedLog aims to assist by capturing common issues and sharing them with the team, reducing the need to query the logs repeatedly.
 
 [IMPORTANT]
 .Disclaimer
 ====
-As a disclaimer, the logs source at the moment is only for `Grafana Loki` and queries are `Logql`, but the plan is to extend to other sources.
-
-Also, the sink for the report result is in a MongoDB, as an example of how this writes towards.
+Currently, the logs source is `Grafana Loki`, and queries are `LogQL`. There are plans to extend support to other sources. The sink for the report result is MongoDB, serving as an example of how data can be stored.
 ====
 
-== How this works
+== How It Works
 
-Developers or members who have to observe the logs, go the dashboard and query for those logs, trying to get the information required to point to an eventual problem.
+Developers or team members query the logs on a dashboard to extract information pointing to potential issues. Once a useful query is identified, it is added to a templated card, which extracts that information and reports it to the team.
 
-Once this query is good enough to be used for others, the person writes a section in the templated card which will extract that information and report it in the document for the team.
-
-The card template looks like something similar to:
+=== Card Template Example
 
 [source,yaml]
 ----
-
 queries:
   - id: null_pointer_exception
     description: Null Pointer Exception
@@ -37,18 +29,15 @@ queries:
         |~ `java.lang.NullPointerException`
 ----
 
-NOTE: The example above is very naive way to tell the application is generating `NPE`, but where? we will keep growing examples :)
+NOTE: The above example is a simple way to indicate the application is generating `NullPointerException` errors.
 
+Reports can be triggered for the current date or another date for which logs are available. The execution populates a MongoDB collection with extracted items. Users can then request reports to see how their application behaved based on team observations, without needing to gather individual queries.
 
-Now on, the report is trigger for the current date or another date for which we have logs.
+== Configuration
 
-The previous execution populates our mongo collection with the items extracted from it.
+=== Dependency
 
-Finally, users ask for reports, and they will get the information about how their application behaved based on team observation and without the need to gather all those queries what individually were found.
-
-== How to configure it
-
-To include this starter in our Spring application, we need to include the follow dependency in our `pom.xml`:
+To include this starter in a Spring application, add the following dependency to your `pom.xml`:
 
 [source,xml]
 ----
@@ -59,81 +48,30 @@ To include this starter in our Spring application, we need to include the follow
 </dependency>
 ----
 
-To config this starter we have available a set of properties, which customize it:
+=== Properties
+
+RedLog offers several properties for customization:
 
 [%header,cols="2,3,2"]
 |===
-|Property | Description | Default Value
+| Property | Description | Default Value
 
-3+| Config templated cards source
-|`redlog.source-type`
-|Define where the find templated cards. Valid options are:
-
-- **FILE**: to define the path of cards in the project
-
-- **GITHUB**: to store those cards in a github repository
-
-|`FILE`
-
-
-3+|When `FILE` source is selected
-|`redlog.file.files-path`
-|Where those files are located in the host where the application is deployed
-
-We can set an absolute path with `file:/` or `classpath:` route.
-|No predefined path
-
-3+|When `GITHUB` source is selected
-|`redlog.github.url-mapper`
-|Defines the path for each templated card where is located.
-Check information underneath to see how this is configured
-|
-
-|`redlog.github.github-token`
-|token to connect to github and retrieve templated card content
-|
-
-3+|Configure `loki` source to query
-|`redlog.loki.url`
-|url where `Grafana Loki` is located
-|http://localhost:3100
-
-|`redlog.loki.username`
-|username if required to connect to `Grafana Loki`
-|
-
-|`redlog.loki.password`
-|password if required to connect to `Grafana Loki`
-|
-
-|`redlog.loki.dashboard-url`
-|`required`
-
-to create a link where the user can see the executed query from where the data were generated.
-
-Usually this is a `Grafana` Dashboard
-|http://localhost:3000
-
-|`redlog.loki.datasource-name`
-|The datasource name configured in grafana to explore the `loki` results configured above
-|`default`
-
-3+|Configure `Mongo` collections name
-| `redlog.mongo.collection-name-prefix`
-| It assumes that a `mongoTemplate` is configured and this property will prefix the `collection names` to identify from
-the rest of collection in our schema.
-
-So let say our application is named `ACME` and our prefix `redlog`, this will create a collection named `redlogAcme` to
-store information about our `ACME` project.
-| Empty prefix
-
-3+| Configure Report controller path
-|`redlog.report.controller-path`
-|The available context path for `Report` controller, which executes the report and generate the document from previous data
-|`report`, which end up in `/report/**` endpoints
+| `redlog.source-type` | Define where to find templated cards. Valid options are `FILE` or `GITHUB`. | `FILE`
+| `redlog.file.files-path` | Path where files are located (absolute path with `file:/` or `classpath:`). | No predefined path
+| `redlog.github.url-mapper` | Path for each templated card. |
+| `redlog.github.github-token` | Token to connect to GitHub. |
+| `redlog.loki.url` | URL where `Grafana Loki` is located. | `http://localhost:3100`
+| `redlog.loki.username` | Username for connecting to `Grafana Loki`. |
+| `redlog.loki.password` | Password for connecting to `Grafana Loki`. |
+| `redlog.loki.dashboard-url` | URL to a `Grafana` dashboard showing the executed query. | `http://localhost:3000`
+| `redlog.loki.datasource-name` | Datasource name configured in Grafana. | `default`
+| `redlog.mongo.collection-name-prefix` | Prefix for MongoDB collection names. | Empty prefix
+| `redlog.report.controller-path` | Context path for the `Report` controller. | `report` (resulting in `/report/**` endpoints)
 |===
 
-As an example of it for a file:
+=== Configuration Examples
+
+==== File-Based Configuration
 
 [source,properties]
 ----
@@ -145,8 +83,7 @@ redlog.loki.dashboardUrl=http://localhost:3000
 redlog.loki.datasourceName=redlog-datasource
 ----
 
-
-As an example of it for github:
+==== GitHub-Based Configuration
 
 [source,properties]
 ----
@@ -159,84 +96,62 @@ redlog.loki.dashboardUrl=http://localhost:9090
 redlog.loki.datasourceName=default
 ----
 
-Up to now, with this config we are able to store the items in the database.
-
-If we want to generate a document, we need to define how the report will look like based on the report items which were stored.
-
 == Generating Report Document
 
-Within the `starter` the application have available a couple of endpoints, one of them to execute cards and another to see an `AsciiDoctor` document from the gathered information.
+The starter provides endpoints to execute cards and generate `AsciiDoctor` documents from gathered information. The default path for these endpoints is `/report`.
 
-This path is configured in property `redlog.report.controller-path` whose default value is `/report`, so by default these two endpoints are:
+* `/report/trigger/<CARD_ID>`: Executes the card and populates the database.
+* `/report/<CARD_ID>`: Reads from the database and generates the document.
 
-* `/report/trigger/<CARD_ID`: to take the card, execute and populate database
+Both endpoints accept a `date` query parameter to specify the date for which the report should be generated.
 
-* `/report/<CARD_ID>`: to read information from database and show the document.
+== Document Structure
 
-Also both of them define a query parameter named `date` which select from which day we want to execute or generate the document.
+The generated document is a custom document implemented by the team using the `AsciiDoctorContent` interface.
 
-== How the document looks like
-
-The generated document is a customized document behind an interface which the team needs to implement to create ascii content from stored items.
+=== AsciiDoctorContent Interface
 
 [source,java]
 ----
 @FunctionalInterface
 public interface AsciiDoctorContent {
-
     String content(final List<Report> reports);
 }
 ----
 
-This is a `@Bean` which is available in the `Spring Context`, by default a document is generated without content. And it is part of the development compose the `asciidoctor content` bearing in mind they will have available in there the items to represent.
-
-The report model is defined as follow:
+=== Report Model
 
 [source,java]
 ----
 public record Report(String reportId,
-              @Field("date") LocalDate lastUpdated,
-              String link,
-              String description,
-              @Field("items") List<ReportItem> items,
-              @Field("previousItem") List<ReportItem> previousItems) {
+                     @Field("date") LocalDate lastUpdated,
+                     String link,
+                     String description,
+                     @Field("items") List<ReportItem> items,
+                     @Field("previousItem") List<ReportItem> previousItems) {
 }
 ----
 
-Based on the `cardId`
-
-* **reportId**: with the identifier of each section or part of the app to observe
-* **lastUpdated**: from which date is the document
-* **link**: to open in dashboard the query executed which gave the information to build the section.
-* **items**: elements in each section
-* **previousItems**: elements from immediate previous date to compare to with the current.
+=== ReportItem Model
 
 [source,java]
 ----
 public record ReportItem(Map<String, String> labels, long count) {
-
 }
 ----
 
-* **labels**: which the query extracted and to show in attributes which defines the item.
-* **count**: number of encountered logs with the pattern in that date.
+=== Custom AsciiDoctor Content Example
 
-
-To ease the burdens of creating this AsciiDoctor content, a simple `API` has been created, but not required to be used.
-
-As an example:
-
-[source, java]
+[source,java]
 ----
 class CustomAsciiDoctorContent implements AsciiDoctorContent {
-
     @Override
     public String content(final List<Report> reports) {
         return reports.stream().map(this::contentSingleReport).collect(Collectors.joining("\n\n"));
     }
 
     private String contentSingleReport(final Report report) {
-        return "== " + report.description() + "+ \n" + report.items().size() + " elements";
+        return "== " + report.description() + "\n" + report.items().size() + " elements";
     }
 }
 ----
