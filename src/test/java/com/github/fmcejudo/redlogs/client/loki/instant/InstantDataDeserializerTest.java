@@ -8,11 +8,16 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-class DataDeserializerTest {
+class InstantDataDeserializerTest {
+
+    ObjectMapper mapper;
 
     @BeforeEach
     void setUp() {
-
+        mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Data.class, new DataDeserializer());
+        mapper.registerModules(module);
     }
 
     @Test
@@ -43,10 +48,6 @@ class DataDeserializerTest {
                 """;
 
         //When
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Data.class, new DataDeserializer());
-        mapper.registerModules(module);
 
         QueryInstantResponse response = mapper.readValue(result, QueryInstantResponse.class);
 
@@ -58,12 +59,41 @@ class DataDeserializerTest {
     }
 
     @Test
-    void shouldDeserializeAStreamResult() {
+    void shouldDeserializeAStreamResult() throws Exception {
         //Given
+        String json = """
+                 {
+                  "status": "success",
+                  "data": {
+                    "resultType": "streams",
+                    "result": [{
+                        "stream": {
+                          "level": "warn"
+                        },
+                        "values": [
+                          "1588889221000000",
+                          "1267.1266666666666"
+                        ]
+                      }]
+                  }
+                }
+                """;
 
         //When
+        QueryInstantResponse response = mapper.readValue(json, QueryInstantResponse.class);
+
 
         //Then
+        Assertions.assertThat(response.isSuccess()).isTrue();
+        Assertions.assertThat(response.data().resultType()).isEqualTo("streams");
+        Assertions.assertThat(response.data().result()).hasSize(1).first().satisfies(result -> {
+            Assertions.assertThat(result.streamsResult().stream()).containsEntry("level", "warn");
+            Assertions.assertThat(result.streamsResult().values()).hasSize(1).first().satisfies(sv -> {
+                Assertions.assertThat(sv.nanoSeconds()).isEqualTo("1588889221000000");
+                Assertions.assertThat(sv.value()).isEqualTo("1267.1266666666666");
+            });
+        });
+
     }
 
 }

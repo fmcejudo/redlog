@@ -50,12 +50,13 @@ class DataDeserializer extends StdDeserializer<Data> {
     }
 
     private Result streamsResult(final JsonNode resultNode) {
-        Iterator<Map.Entry<String, JsonNode>> streams = resultNode.get("streams").fields();
+        Iterator<Map.Entry<String, JsonNode>> streams = resultNode.get("stream").fields();
         Map<String, String> streamMap = getLabelValuePair(streams);
         List<StreamsValue> streamsValues = new ArrayList<>();
-        resultNode.get("values").elements().forEachRemaining(j -> {
-            streamsValues.add(new StreamsValue("5", j.textValue()));
-        });
+        Iterator<JsonNode> values = resultNode.get("values").elements();
+        String nanoseconds = values.next().asText();
+        String value = values.next().textValue();
+        streamsValues.add(new StreamsValue(nanoseconds, value));
         return new StreamsResult(streamMap, streamsValues);
     }
 
