@@ -18,7 +18,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 public class CardExecutionService implements Closeable {
 

@@ -1,12 +1,10 @@
 package com.github.fmcejudo.redlogs.engine.card.loader;
 
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
-import com.github.fmcejudo.redlogs.engine.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.engine.card.converter.CardConverterConfiguration;
 import com.github.fmcejudo.redlogs.engine.card.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.engine.card.model.CardType;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
