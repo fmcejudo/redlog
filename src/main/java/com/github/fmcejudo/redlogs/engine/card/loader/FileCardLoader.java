@@ -8,22 +8,26 @@ import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.List;
 
 public class FileCardLoader implements CardLoader {
 
     private final Resource resource;
 
-    public FileCardLoader(final RedLogFileProperties redLogFileProperties) {
+    private final CardConverter cardConverter;
+
+    public FileCardLoader(final RedLogFileProperties redLogFileProperties, final CardConverter cardConverter) {
         this.resource = new DefaultResourceLoader().getResource(redLogFileProperties.getFilesPath());
+        this.cardConverter = cardConverter;
     }
 
     @Override
-    public List<CardQueryRequest> load(final String application, final CardConverter converter) {
+    public List<CardQueryRequest> load(final String application, final LocalDate reportDate) {
         try {
             File file = resource.createRelative(application.toUpperCase() + ".yaml").getFile();
             String content = new String(Files.readAllBytes(file.toPath()));
-            return converter.convert(content, application);
+            return cardConverter.convert(content, application).stream().map(s -> s.withReportDate(reportDate)).toList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

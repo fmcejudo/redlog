@@ -5,12 +5,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "redlog.loki")
 public class RedLogLokiConfig {
 
-    private String url;
+    private String url="http://localhost:3100";
     private String username;
     private String password;
 
-    private String dashboardUrl;
-    private String datasourceName;
+    private String dashboardUrl = "http://localhost:3000";
+
+    private String datasourceName = "default";
 
     public String getUrl() {
         return url;

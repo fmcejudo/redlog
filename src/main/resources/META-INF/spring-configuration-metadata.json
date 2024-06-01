@@ -19,13 +19,13 @@
       "defaultValue" : ""
     },
     {
-      "name": "redlog.loki.dashboardUrl",
+      "name": "redlog.loki.dashboard-url",
       "type": "String",
       "description": "grafana loki explorer",
       "defaultValue" : "http://localhost:9090"
     },
     {
-      "name": "redlog.loki.datasource",
+      "name": "redlog.loki.datasource-name",
       "type": "String",
       "description": "grafana datasource identifier",
       "defaultValue" : "default"
@@ -40,7 +40,7 @@
       "name": "redlog.file.files-path",
       "type": "java.lang.String",
       "description": "path to files",
-      "defaultValue": "any"
+      "defaultValue": "classpath:."
     },
     {
       "name": "redlog.github.github-token",
@@ -59,6 +59,12 @@
       "type": "string",
       "description": "define the prefix for collection used by red-log",
       "defaultValue": ""
+    },
+    {
+      "name": "redlog.report.controller-path",
+      "type": "string",
+      "description": "define the prefix for collection used by red-log",
+      "defaultValue": "/report"
     }
   ]
 }

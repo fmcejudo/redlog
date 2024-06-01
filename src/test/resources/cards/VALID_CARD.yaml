@@ -1,0 +1,16 @@
+common_query: '{app="redlog-sample"}'
+
+queries:
+  - id: coffee
+    description: People who like COFFEE
+    type: COUNT
+    query: |
+        <common_query>
+        |~ `likes coffee`
+
+  - id: chocolate
+    description: People who like CHOCOLATE
+    type: SUMMARY
+    query: |
+        <common_query>
+        |~ `likes chocolate`

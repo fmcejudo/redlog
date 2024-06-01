@@ -52,7 +52,7 @@ class DataDeserializer extends StdDeserializer<Data> {
             String valueString = values.next().asText();
             matrixValueList.add(new MatrixValue(seconds, valueString));
         });
-        return new MatricResult(metrics, matrixValueList);
+        return new MatrixResult(metrics, matrixValueList);
     }
 
     private Result streamsResult(final JsonNode resultNode) {

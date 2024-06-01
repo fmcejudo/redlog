@@ -5,12 +5,5 @@ public interface LokiClient {
 
     LokiResponse query(LokiRequest lokiRequest);
 
-    default String getLokiUrl() {
-        throw new IllegalStateException("there is no implementation to get loki url");
-    }
-
-    default String getLokiDataSource() {
-        throw new IllegalStateException("there is no implementation to get loki datasource");
-    }
 }
 

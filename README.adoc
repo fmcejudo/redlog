@@ -1,0 +1,161 @@
+= REDLOG User Guide
+
+== Introduction
+
+RedLog is a `Spring Boot starter` designed to load a templated card, execute its contents, and write the resulting report items to a sink.
+
+Developers write logs as part of the observability to trace operations or capture errors raised by their applications. When issues arise, they query these logs to gain insight into the root causes. RedLog aims to assist by capturing common issues and sharing them with the team, reducing the need to query the logs repeatedly.
+
+[IMPORTANT]
+.Disclaimer
+====
+Currently, the logs source is `Grafana Loki`, and queries are `LogQL`. There are plans to extend support to other sources. The sink for the report result is MongoDB, serving as an example of how data can be stored.
+====
+
+== How It Works
+
+Developers or team members query the logs on a dashboard to extract information pointing to potential issues. Once a useful query is identified, it is added to a templated card, which extracts that information and reports it to the team.
+
+=== Card Template Example
+
+[source,yaml]
+----
+queries:
+  - id: null_pointer_exception
+    description: Null Pointer Exception
+    type: COUNT
+    query: |
+        {app="my-app", service="my-service", level="ERROR"}
+        |~ `java.lang.NullPointerException`
+----
+
+NOTE: The above example is a simple way to indicate the application is generating `NullPointerException` errors.
+
+Reports can be triggered for the current date or another date for which logs are available. The execution populates a MongoDB collection with extracted items. Users can then request reports to see how their application behaved based on team observations, without needing to gather individual queries.
+
+== Configuration
+
+=== Dependency
+
+To include this starter in a Spring application, add the following dependency to your `pom.xml`:
+
+[source,xml]
+----
+<dependency>
+    <groupId>com.github.fmcejudo.redlogs</groupId>
+    <artifactId>red-log</artifactId>
+    <version>0.0.2-SNAPSHOT</version>
+</dependency>
+----
+
+=== Properties
+
+RedLog offers several properties for customization:
+
+[%header,cols="2,3,2"]
+|===
+| Property | Description | Default Value
+
+| `redlog.source-type` | Define where to find templated cards. Valid options are `FILE` or `GITHUB`. | `FILE`
+| `redlog.file.files-path` | Path where files are located (absolute path with `file:/` or `classpath:`). | No predefined path
+| `redlog.github.url-mapper` | Path for each templated card. |
+| `redlog.github.github-token` | Token to connect to GitHub. |
+| `redlog.loki.url` | URL where `Grafana Loki` is located. | `http://localhost:3100`
+| `redlog.loki.username` | Username for connecting to `Grafana Loki`. |
+| `redlog.loki.password` | Password for connecting to `Grafana Loki`. |
+| `redlog.loki.dashboard-url` | URL to a `Grafana` dashboard showing the executed query. | `http://localhost:3000`
+| `redlog.loki.datasource-name` | Datasource name configured in Grafana. | `default`
+| `redlog.mongo.collection-name-prefix` | Prefix for MongoDB collection names. | Empty prefix
+| `redlog.report.controller-path` | Context path for the `Report` controller. | `report` (resulting in `/report/**` endpoints)
+|===
+
+=== Configuration Examples
+
+==== File-Based Configuration
+
+[source,properties]
+----
+redlog.source-type=FILE
+redlog.file.files-path=cards/
+redlog.mongo.collection-name-prefix=redlog
+redlog.loki.url=http://localhost:3101
+redlog.loki.dashboardUrl=http://localhost:3000
+redlog.loki.datasourceName=redlog-datasource
+----
+
+==== GitHub-Based Configuration
+
+[source,properties]
+----
+redlog.source-type=GITHUB
+redlog.github.github-token=${GITHUB_TOKEN}
+redlog.github.url-mapper.MY_APP=https://github.com/<username>/<repo>/<route_in_repo>
+redlog.mongo.collection-name-prefix=sample
+redlog.loki.url=http://localhost:3101
+redlog.loki.dashboardUrl=http://localhost:9090
+redlog.loki.datasourceName=default
+----
+
+== Generating Report Document
+
+The starter provides endpoints to execute cards and generate `AsciiDoctor` documents from gathered information. The default path for these endpoints is `/report`.
+
+* `/report/trigger/<CARD_ID>`: Executes the card and populates the database.
+* `/report/<CARD_ID>`: Reads from the database and generates the document.
+
+Both endpoints accept a `date` query parameter to specify the date for which the report should be generated.
+
+== Document Structure
+
+The generated document is a custom document implemented by the team using the `AsciiDoctorContent` interface.
+
+=== AsciiDoctorContent Interface
+
+[source,java]
+----
+@FunctionalInterface
+public interface AsciiDoctorContent {
+    String content(final List<Report> reports);
+}
+----
+
+=== Report Model
+
+[source,java]
+----
+public record Report(String reportId,
+                     @Field("date") LocalDate lastUpdated,
+                     String link,
+                     String description,
+                     @Field("items") List<ReportItem> items,
+                     @Field("previousItem") List<ReportItem> previousItems) {
+}
+----
+
+=== ReportItem Model
+
+[source,java]
+----
+public record ReportItem(Map<String, String> labels, long count) {
+}
+----
+
+=== Custom AsciiDoctor Content Example
+
+[source,java]
+----
+class CustomAsciiDoctorContent implements AsciiDoctorContent {
+    @Override
+    public String content(final List<Report> reports) {
+        return reports.stream().map(this::contentSingleReport).collect(Collectors.joining("\n\n"));
+    }
+
+    private String contentSingleReport(final Report report) {
+        return "== " + report.description() + "\n" + report.items().size() + " elements";
+    }
+}
+----
+
+And document with it looks like:
+
+image:images/document.png[generated document]
