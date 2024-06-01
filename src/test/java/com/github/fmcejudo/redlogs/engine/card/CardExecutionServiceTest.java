@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 class CardExecutionServiceTest {
 
@@ -24,7 +25,7 @@ class CardExecutionServiceTest {
         final String applicationName = "TEST";
 
         CardLoader executionLoader = new TestCardLoader();
-        CardProcessor cardProcessor = new TestCardProcessor();
+        CardProcessor cardProcessor = new TestCardProcessor(r -> r);
         CardResponseWriter assertWriter = new TestCardWriter(result -> {
             Assertions.assertThat(result).satisfies(r -> {
                 Assertions.assertThat(r.applicationName()).isEqualTo(applicationName);
@@ -37,6 +38,28 @@ class CardExecutionServiceTest {
         )){
             //When && Then
             cardExecutionService.execute(applicationName, LocalDate.now());
+        }
+    }
+
+    @Test
+    void shouldFailOnAnExecution() {
+        //Given
+        final String applicationName = "TEST";
+
+        CardLoader executionLoader = new TestCardLoader();
+        CardProcessor cardProcessor = new TestCardProcessor(r -> {
+            throw new RuntimeException("error");
+        });
+        CardResponseWriter assertWriter = new TestCardWriter(result -> {
+        });
+
+
+        try (CardExecutionService cardExecutionService = new CardExecutionService(
+                executionLoader, cardProcessor, assertWriter
+        )){
+            //When && Then
+            Assertions.assertThatThrownBy(() -> cardExecutionService.execute(applicationName, LocalDate.now()))
+                    .isInstanceOf(RuntimeException.class).hasMessageContaining("error");
         }
     }
 
@@ -53,6 +76,12 @@ class TestCardLoader implements CardLoader {
 
 class TestCardProcessor implements CardProcessor {
 
+    public final Function<CardQueryResponse, CardQueryResponse> transformResponse;
+
+    TestCardProcessor(Function<CardQueryResponse, CardQueryResponse> transformResponse) {
+        this.transformResponse = transformResponse;
+    }
+
     @Override
     public CardQueryResponse process(CardQueryRequest cardQuery) {
         String appName = cardQuery.applicationName();
@@ -60,7 +89,9 @@ class TestCardProcessor implements CardProcessor {
         String description = cardQuery.description();
 
         CardQueryResponseEntry responseEntry = new CardQueryResponseEntry(Map.of("test", "test"), 1L);
-        return new CardQueryResponse(appName, LocalDate.now(), id, description, List.of(responseEntry), "", null);
+        CardQueryResponse response =
+                new CardQueryResponse(appName, LocalDate.now(), id, description, List.of(responseEntry), "", null);
+        return transformResponse.apply(response);
     }
 }
 
