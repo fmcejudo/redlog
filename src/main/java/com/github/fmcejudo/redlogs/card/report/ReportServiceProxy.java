@@ -11,8 +11,8 @@ class ReportServiceProxy {
     private final ReportService reportService;
 
     public ReportServiceProxy(final ReportRepository reportRepository, final ReportService reportService) {
-        this.reportRepository = reportRepository;
         this.reportService = reportService;
+        this.reportRepository = reportRepository;
     }
 
     public String content(final CardContext cardContext) {

@@ -16,12 +16,12 @@ import java.util.Map;
 class ReportController {
 
     private final ReportServiceProxy reportServiceProxy;
-    private final CardRunner cardExecutionService;
+    private final CardRunner cardRunner;
 
     public ReportController(final ReportServiceProxy reportServiceProxy,
-                            final CardRunner cardExecutionService) {
+                            final CardRunner cardRunner) {
         this.reportServiceProxy = reportServiceProxy;
-        this.cardExecutionService = cardExecutionService;
+        this.cardRunner = cardRunner;
     }
 
     @GetMapping("/{applicationName}")
@@ -36,7 +36,7 @@ class ReportController {
                                                 @RequestParam(required = false) Map<String, String> params) {
 
         CardContext cardContext = CardContext.from(applicationName,params);
-        cardExecutionService.run(cardContext);
+        cardRunner.run(cardContext);
         return ResponseEntity.ok("ok");
     }
 

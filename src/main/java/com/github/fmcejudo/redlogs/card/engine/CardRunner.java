@@ -29,15 +29,18 @@ public class CardRunner implements Closeable {
     private final CardLoader cardLoader;
     private final CardProcessor processor;
     private final CardResponseWriter writer;
+    private final RedlogExecutionService redlogExecutionService;
 
     public CardRunner(final CardLoader cardLoader,
                       final CardProcessor processor,
-                      final CardResponseWriter writer) {
+                      final CardResponseWriter writer,
+                      final RedlogExecutionService redlogExecutionService) {
 
         this.executor = Executors.newVirtualThreadPerTaskExecutor();
         this.cardLoader = cardLoader;
         this.processor = processor;
         this.writer = writer;
+        this.redlogExecutionService = redlogExecutionService;
     }
 
     public void run(final CardContext cardContext) {
@@ -46,6 +49,7 @@ public class CardRunner implements Closeable {
         CardQueryExecution.withProvider(() -> cardLoader.load(cardContext))
                 .onCardRequestsReady(uuid -> {
                     System.out.println("run with execution id " + uuid);
+                    redlogExecutionService.saveExecution(uuid, cardContext);
                 })
                 .withProcessor(processor, executor)
                 .execute(writer::write,

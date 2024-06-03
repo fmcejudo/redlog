@@ -38,10 +38,11 @@ class CardRunnerTest {
                 Assertions.assertThat(r.executionId()).isNotNull();
             });
         });
+        RedlogExecutionService redlogExecutionService = new TestRedlogExecutionService();
 
         try (CardRunner cardExecutionService = new CardRunner(
-                executionLoader, cardProcessor, assertWriter
-        )){
+                executionLoader, cardProcessor, assertWriter, redlogExecutionService
+        )) {
             //When && Then
             cardExecutionService.run(cardExecutionContext);
         }
@@ -60,10 +61,11 @@ class CardRunnerTest {
         });
         CardResponseWriter assertWriter = new TestCardWriter(result -> {
         });
+        RedlogExecutionService redlogExecutionService = new TestRedlogExecutionService();
 
 
         try (CardRunner cardExecutionService = new CardRunner(
-                executionLoader, cardProcessor, assertWriter
+                executionLoader, cardProcessor, assertWriter, redlogExecutionService
         )){
             //When && Then
             Assertions.assertThatThrownBy(() -> cardExecutionService.run(cardExecutionContext))
@@ -108,5 +110,19 @@ record TestCardWriter(Consumer<CardQueryResponse> assertResponseConsumer) implem
     public CardQueryResponse write(CardQueryResponse cardTaskResult) {
         assertResponseConsumer.accept(cardTaskResult);
         return cardTaskResult;
+    }
+}
+
+record TestRedlogExecutionService() implements RedlogExecutionService {
+
+
+    @Override
+    public void updateExecution(String executionId, String status) {
+
+    }
+
+    @Override
+    public void saveExecution(String executionId, CardContext cardContext) {
+
     }
 }

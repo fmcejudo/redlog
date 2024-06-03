@@ -48,4 +48,5 @@ public class AsciiDoctorReportService implements ReportService {
             throw new RuntimeException(e);
         }
     }
+
 }

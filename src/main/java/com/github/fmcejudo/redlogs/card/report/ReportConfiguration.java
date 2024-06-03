@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.card.report;
 
+import com.github.fmcejudo.redlogs.card.engine.RedlogExecutionService;
 import com.github.fmcejudo.redlogs.card.report.asciidoctor.AsciiDoctorContent;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
 import com.github.fmcejudo.redlogs.card.engine.CardRunner;
@@ -48,8 +49,9 @@ public class ReportConfiguration {
     })
     CardRunner cardExecutionService(final CardLoader cardLoader,
                                     final CardProcessor processor,
-                                    final CardResponseWriter writer) {
-        return new CardRunner(cardLoader, processor, writer);
+                                    final CardResponseWriter writer,
+                                    final RedlogExecutionService redlogExecutionService) {
+        return new CardRunner(cardLoader, processor, writer, redlogExecutionService);
     }
 
     @Bean
