@@ -12,16 +12,15 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import static java.time.format.DateTimeFormatter.*;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
-class CardExecutionServiceTest {
-
+class CardRunnerTest {
 
     @Test
     void shouldCreateAnExecution() {
@@ -36,14 +35,15 @@ class CardExecutionServiceTest {
             Assertions.assertThat(result).satisfies(r -> {
                 Assertions.assertThat(r.applicationName()).isEqualTo(applicationName);
                 Assertions.assertThat(r.id()).isEqualTo("test");
+                Assertions.assertThat(r.executionId()).isNotNull();
             });
         });
 
-        try (CardExecutionService cardExecutionService = new CardExecutionService(
+        try (CardRunner cardExecutionService = new CardRunner(
                 executionLoader, cardProcessor, assertWriter
         )){
             //When && Then
-            cardExecutionService.execute(cardExecutionContext);
+            cardExecutionService.run(cardExecutionContext);
         }
     }
 
@@ -62,11 +62,11 @@ class CardExecutionServiceTest {
         });
 
 
-        try (CardExecutionService cardExecutionService = new CardExecutionService(
+        try (CardRunner cardExecutionService = new CardRunner(
                 executionLoader, cardProcessor, assertWriter
         )){
             //When && Then
-            Assertions.assertThatThrownBy(() -> cardExecutionService.execute(cardExecutionContext))
+            Assertions.assertThatThrownBy(() -> cardExecutionService.run(cardExecutionContext))
                     .isInstanceOf(RuntimeException.class).hasMessageContaining("error");
         }
     }
@@ -79,28 +79,25 @@ class TestCardLoader implements CardLoader {
     public List<CardQueryRequest> load(final CardContext cardExecutionContext) {
 
         String application = cardExecutionContext.applicationName();
-        var cardQueryRequest = new CardQueryRequest(application, "test", "section test", CardType.SUMMARY, "query");
+        var cardQueryRequest = new CardQueryRequest(application, "test", "section test", CardType.SUMMARY, "query")
+                .withExecutionId(UUID.randomUUID().toString());
         return List.of(cardQueryRequest);
     }
 }
 
-class TestCardProcessor implements CardProcessor {
-
-    public final Function<CardQueryResponse, CardQueryResponse> transformResponse;
-
-    TestCardProcessor(Function<CardQueryResponse, CardQueryResponse> transformResponse) {
-        this.transformResponse = transformResponse;
-    }
+record TestCardProcessor(Function<CardQueryResponse, CardQueryResponse> transformResponse) implements CardProcessor {
 
     @Override
     public CardQueryResponse process(CardQueryRequest cardQuery) {
         String appName = cardQuery.applicationName();
         String id = cardQuery.id();
         String description = cardQuery.description();
+        String executionId = cardQuery.executionId();
 
         CardQueryResponseEntry responseEntry = new CardQueryResponseEntry(Map.of("test", "test"), 1L);
-        CardQueryResponse response =
-                new CardQueryResponse(appName, LocalDate.now(), id, description, List.of(responseEntry), "", null);
+        CardQueryResponse response = new CardQueryResponse(
+                appName, LocalDate.now(), id, executionId, description, List.of(responseEntry), "", null
+        );
         return transformResponse.apply(response);
     }
 }

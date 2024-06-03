@@ -12,6 +12,7 @@ import java.net.http.HttpResponse;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 class GithubCardLoader implements CardLoader {
 
@@ -34,7 +35,9 @@ class GithubCardLoader implements CardLoader {
         LocalDate reportDate = cardContext.reportDate();
         try {
             String content = githubClient.download(repoUrl(application) + application + ".yaml");
-            return cardConverter.convert(content, application);
+            return cardConverter.convert(content, application).stream()
+                    .map(cq -> cq.withReportDate(reportDate))
+                    .toList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

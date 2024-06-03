@@ -34,6 +34,7 @@ class CardResponseMongoWriter implements CardResponseWriter {
         );
         var cardMongoRecord = new CardMongoRecord(
                 cardQueryResponse.id(),
+                cardQueryResponse.executionId(),
                 cardQueryResponse.description(),
                 cardQueryResponse.link(),
                 cardQueryResponse.date(),
@@ -58,12 +59,13 @@ class CardResponseMongoWriter implements CardResponseWriter {
         private String description;
         private String link;
         private LocalDate date;
+        private String executionId;
         private List<CardQueryResponseEntry> items;
 
         public CardMongoRecord() {
         }
 
-        CardMongoRecord(String reportId, String description, String link,
+        CardMongoRecord(String reportId, String executionId, String description, String link,
                         LocalDate date, List<CardQueryResponseEntry> items) {
 
             this.id = String.join(".", reportId, date.format(ISO_DATE));
@@ -72,6 +74,8 @@ class CardResponseMongoWriter implements CardResponseWriter {
             this.link = link;
             this.date = date;
             this.items = items;
+            this.executionId = executionId;
+
         }
 
         public LocalDate getDate() {
@@ -120,6 +124,14 @@ class CardResponseMongoWriter implements CardResponseWriter {
 
         public void setReportId(String reportId) {
             this.reportId = reportId;
+        }
+
+        public String getExecutionId() {
+            return executionId;
+        }
+
+        public void setExecutionId(String executionId) {
+            this.executionId = executionId;
         }
     }
 }

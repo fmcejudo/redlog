@@ -51,17 +51,18 @@ class LokiCardProcessor implements CardProcessor {
         String description = cardQuery.description();
         String applicationName = cardQuery.applicationName();
         LocalDate reportDate = cardQuery.reportDate();
+        String executionId = cardQuery.executionId();
 
         if (lokiResponse == null) {
             System.err.println("loki response is null");
-            return CardQueryResponse.failure(applicationName, reportDate, id, description, "No report response found");
+            return CardQueryResponse.failure(applicationName, reportDate, id,executionId, description, "No report response found");
         }
 
         if (lokiResponse.isSuccess()) {
             return buildCardReportEntries(cardQuery, lokiResponse, reportDate);
         }
         System.err.println("loki response has failed");
-        return CardQueryResponse.failure(applicationName, reportDate, id, description, "query ended up being failed");
+        return CardQueryResponse.failure(applicationName, reportDate, id,executionId, description, "query ended up being failed");
     }
 
     private CardQueryResponse buildCardReportEntries(final CardQueryRequest cardQuery, final LokiResponse lokiResponse,
@@ -69,6 +70,7 @@ class LokiCardProcessor implements CardProcessor {
         String id = cardQuery.id();
         String description = cardQuery.description();
         String applicationName = cardQuery.applicationName();
+        String executionId = cardQuery.executionId();
         String link = lokiLinkBuilder.query(cardQuery.query())
                 .from(cardQuery.reportDate().minusDays(1))
                 .to(cardQuery.reportDate())
@@ -78,7 +80,7 @@ class LokiCardProcessor implements CardProcessor {
                 .map(result -> new CardQueryResponseEntry(result.labels(), result.count()))
                 .toList();
 
-        return CardQueryResponse.success(applicationName, reportDate, id, description, link, entries);
+        return CardQueryResponse.success(applicationName, reportDate, id, executionId, description, link, entries);
     }
 
 

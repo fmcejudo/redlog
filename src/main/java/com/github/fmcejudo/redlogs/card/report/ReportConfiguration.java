@@ -2,7 +2,7 @@ package com.github.fmcejudo.redlogs.card.report;
 
 import com.github.fmcejudo.redlogs.card.report.asciidoctor.AsciiDoctorContent;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
-import com.github.fmcejudo.redlogs.card.engine.CardExecutionService;
+import com.github.fmcejudo.redlogs.card.engine.CardRunner;
 import com.github.fmcejudo.redlogs.card.engine.loader.CardLoader;
 import com.github.fmcejudo.redlogs.card.engine.process.CardProcessor;
 import com.github.fmcejudo.redlogs.card.engine.writer.CardResponseWriter;
@@ -46,15 +46,15 @@ public class ReportConfiguration {
     @ConditionalOnBean(value = {
             CardLoader.class, CardProcessor.class, CardResponseWriter.class
     })
-    CardExecutionService cardExecutionService(final CardLoader cardLoader,
-                                              final CardProcessor processor,
-                                              final CardResponseWriter writer) {
-        return new CardExecutionService(cardLoader, processor, writer);
+    CardRunner cardExecutionService(final CardLoader cardLoader,
+                                    final CardProcessor processor,
+                                    final CardResponseWriter writer) {
+        return new CardRunner(cardLoader, processor, writer);
     }
 
     @Bean
     ReportController reportController(ReportServiceProxy reportServiceProxy,
-                                      CardExecutionService cardExecutionService) {
+                                      CardRunner cardExecutionService) {
         return new ReportController(reportServiceProxy, cardExecutionService);
     }
 }

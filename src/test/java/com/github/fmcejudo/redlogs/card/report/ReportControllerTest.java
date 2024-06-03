@@ -1,7 +1,7 @@
 package com.github.fmcejudo.redlogs.card.report;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
-import com.github.fmcejudo.redlogs.card.engine.CardExecutionService;
+import com.github.fmcejudo.redlogs.card.engine.CardRunner;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -33,7 +33,7 @@ class ReportControllerTest {
     ReportServiceProxy reportServiceProxy;
 
     @MockBean
-    CardExecutionService cardExecutionService;
+    CardRunner cardExecutionService;
 
     @Autowired
     WebTestClient webTestClient;
@@ -81,7 +81,7 @@ class ReportControllerTest {
             Assertions.assertThat(context.reportDate()).isEqualTo(now().format(ISO_LOCAL_DATE));
 
             return null;
-        }).when(cardExecutionService).execute(any(CardContext.class));
+        }).when(cardExecutionService).run(any(CardContext.class));
 
         //When
         var response = webTestClient.get()
@@ -96,7 +96,7 @@ class ReportControllerTest {
         //Then
         response.expectStatus().isOk();
 
-        Mockito.verify(cardExecutionService, Mockito.times(1)).execute(any(CardContext.class));
+        Mockito.verify(cardExecutionService, Mockito.times(1)).run(any(CardContext.class));
     }
 
 }

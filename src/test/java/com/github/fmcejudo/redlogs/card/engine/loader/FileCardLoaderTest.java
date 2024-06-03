@@ -52,6 +52,7 @@ class FileCardLoaderTest {
         Assertions.assertThat(cardQueryRequest).hasSize(2);
         Assertions.assertThat(cardQueryRequest).filteredOn(cq -> cq.id().equals("coffee")).first().satisfies(cqr -> {
             Assertions.assertThat(cqr.cardType()).isEqualTo(CardType.COUNT);
+            Assertions.assertThat(cqr.executionId()).isNull();
             Assertions.assertThat(cqr.query())
                     .contains("{app=\"redlog-sample\"}").contains("|~ `likes coffee`");
         });

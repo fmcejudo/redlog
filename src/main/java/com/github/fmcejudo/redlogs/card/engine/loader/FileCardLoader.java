@@ -11,6 +11,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public class FileCardLoader implements CardLoader {
 
@@ -31,7 +32,10 @@ public class FileCardLoader implements CardLoader {
         try {
             File file = resource.createRelative(application.toUpperCase() + ".yaml").getFile();
             String content = new String(Files.readAllBytes(file.toPath()));
-            return cardConverter.convert(content, application).stream().map(s -> s.withReportDate(reportDate)).toList();
+            //TODO: update content, replacing parameters applied in context.
+            return cardConverter.convert(content, application).stream()
+                    .map(s -> s.withReportDate(reportDate))
+                    .toList();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

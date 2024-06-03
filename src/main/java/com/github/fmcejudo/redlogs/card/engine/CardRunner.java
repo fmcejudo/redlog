@@ -13,15 +13,16 @@ import org.springframework.util.StopWatch;
 import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
 
-public class CardExecutionService implements Closeable {
+public class CardRunner implements Closeable {
 
-    private final Logger logger = LoggerFactory.getLogger(CardExecutionService.class);
+    private final Logger logger = LoggerFactory.getLogger(CardRunner.class);
 
     private final ExecutorService executor;
 
@@ -29,9 +30,9 @@ public class CardExecutionService implements Closeable {
     private final CardProcessor processor;
     private final CardResponseWriter writer;
 
-    public CardExecutionService(final CardLoader cardLoader,
-                                final CardProcessor processor,
-                                final CardResponseWriter writer) {
+    public CardRunner(final CardLoader cardLoader,
+                      final CardProcessor processor,
+                      final CardResponseWriter writer) {
 
         this.executor = Executors.newVirtualThreadPerTaskExecutor();
         this.cardLoader = cardLoader;
@@ -39,10 +40,13 @@ public class CardExecutionService implements Closeable {
         this.writer = writer;
     }
 
-    public void execute(final CardContext cardContext) {
+    public void run(final CardContext cardContext) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
         CardQueryExecution.withProvider(() -> cardLoader.load(cardContext))
+                .onCardRequestsReady(uuid -> {
+                    System.out.println("run with execution id " + uuid);
+                })
                 .withProcessor(processor, executor)
                 .execute(writer::write,
                         t -> {
@@ -64,6 +68,47 @@ public class CardExecutionService implements Closeable {
 }
 
 @FunctionalInterface
+interface CardQueryProvider {
+
+    List<CardQueryRequest> provide();
+
+    default CardQueryProvider onCardRequestsReady(final Consumer<String> onExecutionStart) {
+        return () -> {
+            List<CardQueryRequest> cardQueryRequests = this.provide();
+            String uuid = UUID.randomUUID().toString();
+            onExecutionStart.accept(uuid);
+            return cardQueryRequests.stream().map(cqr -> cqr.withExecutionId(uuid)).toList();
+        };
+    }
+
+    default CardQueryExecution withProcessor(CardProcessor processor, Executor executor) {
+        return (onNext, onError, onComplete) -> {
+            List<CardQueryRequest> queryRequests = this.provide();
+
+            List<CompletableFuture<Void>> futures = new ArrayList<>();
+            for (CardQueryRequest cardQueryRequest : queryRequests) {
+                var future = evaluateCardRequest(processor, executor, onNext, onError, cardQueryRequest);
+                futures.add(future);
+            }
+            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
+            onComplete.run();
+        };
+    }
+
+    private CompletableFuture<Void> evaluateCardRequest(CardProcessor processor, Executor executor,
+                                                        Consumer<CardQueryResponse> onNext, Consumer<Throwable> onError,
+                                                        CardQueryRequest cardQueryRequest) {
+        return CompletableFuture
+                .supplyAsync(() -> processor.process(cardQueryRequest), executor)
+                .thenAcceptAsync(onNext, executor)
+                .exceptionally(t -> {
+                    onError.accept(t);
+                    return null;
+                });
+    }
+}
+
+@FunctionalInterface
 interface CardQueryExecution {
 
     void execute(Consumer<CardQueryResponse> onNext, Consumer<Throwable> onError, Runnable onComplete);
@@ -73,30 +118,9 @@ interface CardQueryExecution {
     }
 }
 
-@FunctionalInterface
-interface CardQueryProvider {
 
-    List<CardQueryRequest> provide();
 
-    default CardQueryExecution withProcessor(CardProcessor processor, Executor executor) {
-        return (onNext, onError, onComplete) -> {
-            List<CardQueryRequest> queryRequests = this.provide();
 
-            List<CompletableFuture<Void>> futures = new ArrayList<>();
-            for (CardQueryRequest cardQueryRequest : queryRequests) {
-                CompletableFuture<Void> future = CompletableFuture
-                        .supplyAsync(() -> processor.process(cardQueryRequest), executor)
-                        .thenAcceptAsync(onNext, executor)
-                        .exceptionally(t -> {
-                            onError.accept(t);
-                            return null;
-                        });
-                futures.add(future);
-            }
 
-            CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new)).join();
 
-            onComplete.run();
-        };
-    }
-}
+

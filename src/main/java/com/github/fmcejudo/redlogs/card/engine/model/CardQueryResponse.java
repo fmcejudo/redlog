@@ -7,6 +7,7 @@ public record CardQueryResponse(
         String applicationName,
         LocalDate date,
         String id,
+        String executionId,
         String description,
         List<CardQueryResponseEntry> currentEntries,
         String link,
@@ -17,6 +18,7 @@ public record CardQueryResponse(
             String applicationName,
             LocalDate date,
             String id,
+            String executionId,
             String description,
             String link,
             List<CardQueryResponseEntry> entries) {
@@ -25,6 +27,7 @@ public record CardQueryResponse(
                 applicationName,
                 date,
                 id,
+                executionId,
                 description,
                 entries,
                 link,
@@ -36,6 +39,7 @@ public record CardQueryResponse(
             String applicationName,
             LocalDate date,
             String id,
+            String executionId,
             String description,
             String error) {
 
@@ -43,6 +47,7 @@ public record CardQueryResponse(
                 applicationName,
                 date,
                 id,
+                executionId,
                 description,
                 List.of(),
                 null,
