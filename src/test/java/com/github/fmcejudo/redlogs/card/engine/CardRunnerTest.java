@@ -10,6 +10,7 @@ import com.github.fmcejudo.redlogs.card.engine.process.CardProcessor;
 import com.github.fmcejudo.redlogs.card.engine.writer.CardResponseWriter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +20,11 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 class CardRunnerTest {
 
@@ -38,7 +44,13 @@ class CardRunnerTest {
                 Assertions.assertThat(r.executionId()).isNotNull();
             });
         });
-        RedlogExecutionService redlogExecutionService = new TestRedlogExecutionService();
+        RedlogExecutionService redlogExecutionService = mock(RedlogExecutionService.class);
+        Mockito.doNothing().when(redlogExecutionService).saveOrReplaceExecution(anyString(), any(CardContext.class));
+        Mockito.doAnswer(a -> {
+            String status = a.getArgument(1);
+            Assertions.assertThat(status).isEqualTo("SUCCESS");
+            return null;
+        }).when(redlogExecutionService).updateExecution(anyString(), anyString());
 
         try (CardRunner cardExecutionService = new CardRunner(
                 executionLoader, cardProcessor, assertWriter, redlogExecutionService
@@ -46,6 +58,9 @@ class CardRunnerTest {
             //When && Then
             cardExecutionService.run(cardExecutionContext);
         }
+
+        verify(redlogExecutionService, times(1)).saveOrReplaceExecution(anyString(), any(CardContext.class));
+        verify(redlogExecutionService, times(1)).updateExecution(anyString(), anyString());
     }
 
     @Test
@@ -61,8 +76,13 @@ class CardRunnerTest {
         });
         CardResponseWriter assertWriter = new TestCardWriter(result -> {
         });
-        RedlogExecutionService redlogExecutionService = new TestRedlogExecutionService();
-
+        RedlogExecutionService redlogExecutionService = mock(RedlogExecutionService.class);
+        Mockito.doNothing().when(redlogExecutionService).saveOrReplaceExecution(anyString(), any(CardContext.class));
+        Mockito.doAnswer(a -> {
+            String status = a.getArgument(1);
+            Assertions.assertThat(status).isEqualTo("ERROR");
+            return null;
+        }).when(redlogExecutionService).updateExecution(anyString(), anyString());
 
         try (CardRunner cardExecutionService = new CardRunner(
                 executionLoader, cardProcessor, assertWriter, redlogExecutionService
@@ -110,19 +130,5 @@ record TestCardWriter(Consumer<CardQueryResponse> assertResponseConsumer) implem
     public CardQueryResponse write(CardQueryResponse cardTaskResult) {
         assertResponseConsumer.accept(cardTaskResult);
         return cardTaskResult;
-    }
-}
-
-record TestRedlogExecutionService() implements RedlogExecutionService {
-
-
-    @Override
-    public void updateExecution(String executionId, String status) {
-
-    }
-
-    @Override
-    public void saveExecution(String executionId, CardContext cardContext) {
-
     }
 }

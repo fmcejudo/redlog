@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.card.engine;
+package com.github.fmcejudo.redlogs.card.engine.exception;
 
 public class CardException extends RuntimeException {
 

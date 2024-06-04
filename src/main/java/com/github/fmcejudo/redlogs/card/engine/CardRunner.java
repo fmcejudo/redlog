@@ -1,9 +1,9 @@
 package com.github.fmcejudo.redlogs.card.engine;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
+import com.github.fmcejudo.redlogs.card.engine.loader.CardLoader;
 import com.github.fmcejudo.redlogs.card.engine.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.card.engine.model.CardQueryResponse;
-import com.github.fmcejudo.redlogs.card.engine.loader.CardLoader;
 import com.github.fmcejudo.redlogs.card.engine.process.CardProcessor;
 import com.github.fmcejudo.redlogs.card.engine.writer.CardResponseWriter;
 import org.slf4j.Logger;
@@ -19,6 +19,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public class CardRunner implements Closeable {
 
@@ -46,18 +47,21 @@ public class CardRunner implements Closeable {
     public void run(final CardContext cardContext) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
+        String uuid = UUID.randomUUID().toString();
         CardQueryExecution.withProvider(() -> cardLoader.load(cardContext))
-                .onCardRequestsReady(uuid -> {
-                    System.out.println("run with execution id " + uuid);
-                    redlogExecutionService.saveExecution(uuid, cardContext);
+                .onCardRequestsReady(() -> {
+                    redlogExecutionService.saveOrReplaceExecution(uuid, cardContext);
+                    return uuid;
                 })
                 .withProcessor(processor, executor)
                 .execute(writer::write,
                         t -> {
+                            redlogExecutionService.updateExecution(uuid, "ERROR");
                             throw new RuntimeException(t);
                         },
                         () -> {
                             stopWatch.stop();
+                            redlogExecutionService.updateExecution(uuid, "SUCCESS");
                             logger.warn("time to execute method: {}", stopWatch.prettyPrint());
                         }
                 );
@@ -76,11 +80,10 @@ interface CardQueryProvider {
 
     List<CardQueryRequest> provide();
 
-    default CardQueryProvider onCardRequestsReady(final Consumer<String> onExecutionStart) {
+    default CardQueryProvider onCardRequestsReady(final ExecutionRegistration executionRegistration) {
         return () -> {
             List<CardQueryRequest> cardQueryRequests = this.provide();
-            String uuid = UUID.randomUUID().toString();
-            onExecutionStart.accept(uuid);
+            String uuid = executionRegistration.run();
             return cardQueryRequests.stream().map(cqr -> cqr.withExecutionId(uuid)).toList();
         };
     }
@@ -120,6 +123,15 @@ interface CardQueryExecution {
     static CardQueryProvider withProvider(CardQueryProvider cardQueryProvider) {
         return cardQueryProvider;
     }
+}
+
+@FunctionalInterface
+interface ExecutionRegistration extends Supplier<String> {
+
+    default String run() {
+        return this.get();
+    }
+
 }
 
 

@@ -16,7 +16,6 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 class CardResponseMongoWriter implements CardResponseWriter {
 
-
     private final MongoTemplate mongoTemplate;
 
     private final RedLogMongoProperties redLogMongoConfigProperties;

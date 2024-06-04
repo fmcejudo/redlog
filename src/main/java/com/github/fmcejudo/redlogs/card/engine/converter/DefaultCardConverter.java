@@ -1,5 +1,8 @@
 package com.github.fmcejudo.redlogs.card.engine.converter;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -34,6 +37,9 @@ final class DefaultCardConverter implements CardConverter {
     }
 
     private void validateParameters(final CardFile cardFile, final Map<String, String> parameters) {
+        if (cardFile.parameters == null || cardFile.parameters.isEmpty()) {
+            return;
+        }
         List<String> unknownParams = cardFile.parameters().stream()
                 .filter(Predicate.not(parameters::containsKey))
                 .toList();
@@ -56,6 +62,8 @@ final class DefaultCardConverter implements CardConverter {
     }
 
     @JsonSerialize
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @JsonInclude(value = JsonInclude.Include.NON_NULL)
     record CardFile(@JsonProperty("common_query") String commonQuery,
                     List<String> parameters,
                     List<CardQuery> queries) {

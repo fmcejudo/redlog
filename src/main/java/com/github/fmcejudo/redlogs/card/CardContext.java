@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.time.format.DateTimeFormatter.*;
+
 public class CardContext {
 
     private final String applicationName;
@@ -22,7 +24,7 @@ public class CardContext {
     }
 
     public static CardContext from(String applicationName, Map<String, String> parameters) {
-        var reportDate = parseToDate(parameters.get(parameters.get("date")));
+        var reportDate = parseToDate(parameters.getOrDefault("date", LocalDate.now().format(ISO_LOCAL_DATE)));
         var usableParameters = prepareParameters(parameters);
         return new CardContext(applicationName, reportDate, usableParameters);
     }
@@ -30,7 +32,7 @@ public class CardContext {
     private static LocalDate parseToDate(String date) {
         LocalDate reportDate = LocalDate.now();
         if (Strings.isNotBlank(date)) {
-            reportDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
+            reportDate = LocalDate.parse(date, ISO_DATE);
         }
         return reportDate;
     }
