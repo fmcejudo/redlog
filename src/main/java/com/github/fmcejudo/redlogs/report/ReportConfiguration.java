@@ -8,7 +8,7 @@ import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
 import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorContent;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorDocumentService;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorFormat;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,12 +22,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class ReportConfiguration {
 
     @Bean
-    ReportRepository reportRepository(final MongoTemplate mongoTemplate,
-                                      final RedLogMongoProperties redLogMongoProperties) {
-        return new ReportRepository();
-    }
-
-    @Bean
     @ConditionalOnMissingBean(AsciiDoctorContent.class)
     AsciiDoctorContent asciiDoctorContent() {
         return reports -> "content";
@@ -35,23 +29,30 @@ public class ReportConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(DocumentFormat.class)
-    AsciiDoctorDocumentService reportService(final AsciiDoctorContent asciiDoctorContent) {
-        return new AsciiDoctorDocumentService(asciiDoctorContent);
+    DocumentFormat documentFormat(final AsciiDoctorContent asciiDoctorContent) {
+        return new AsciiDoctorFormat(asciiDoctorContent);
     }
 
     @Bean
-    ReportServiceProxy reportServiceProxy(final ReportRepository reportRepository, final DocumentFormat reportService) {
-        return new ReportServiceProxy(reportRepository, reportService);
+    @ConditionalOnMissingBean(ReportService.class)
+    ReportService reportService(final MongoTemplate mongoTemplate,
+                                       final RedLogMongoProperties redLogMongoProperties) {
+        return new MongoReportService(mongoTemplate, redLogMongoProperties);
+    }
+
+    @Bean
+    ReportServiceProxy reportServiceProxy(final ReportService reportService, final DocumentFormat documentFormat) {
+        return new ReportServiceProxy(reportService, documentFormat);
     }
 
     @Bean
     @ConditionalOnBean(value = {
             CardLoader.class, CardProcessor.class, CardResponseWriter.class
     })
-    CardRunner cardExecutionService(final CardLoader cardLoader,
-                                    final CardProcessor processor,
-                                    final CardResponseWriter writer,
-                                    final RedlogExecutionService redlogExecutionService) {
+    CardRunner cardRunner(final CardLoader cardLoader,
+                          final CardProcessor processor,
+                          final CardResponseWriter writer,
+                          final RedlogExecutionService redlogExecutionService) {
         return new CardRunner(cardLoader, processor, writer, redlogExecutionService);
     }
 

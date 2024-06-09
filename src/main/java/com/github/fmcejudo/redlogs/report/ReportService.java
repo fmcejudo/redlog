@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-interface ReportService {
+public interface ReportService {
 
     List<Report> findReports(ReportContext reportContext);
 }

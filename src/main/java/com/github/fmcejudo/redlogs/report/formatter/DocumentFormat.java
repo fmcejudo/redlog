@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface DocumentFormat {
 
-    String get(String applicationName, List<Report> reports);
+    String get(List<Report> reports);
 
 }

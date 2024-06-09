@@ -12,16 +12,16 @@ import org.asciidoctor.SafeMode;
 import java.util.List;
 
 
-public class AsciiDoctorDocumentService implements DocumentFormat {
+public class AsciiDoctorFormat implements DocumentFormat {
 
     private final AsciiDoctorContent asciiDoctorContent;
 
-    public AsciiDoctorDocumentService(final AsciiDoctorContent asciiDoctorContent) {
+    public AsciiDoctorFormat(final AsciiDoctorContent asciiDoctorContent) {
         this.asciiDoctorContent = asciiDoctorContent;
     }
 
     @Override
-    public String get(final String applicationName, final List<Report> reports) {
+    public String get(final List<Report> reports) {
         String content = asciiDoctorContent.content(reports);
         try (var asciidoctor = Asciidoctor.Factory.create()) {
 
