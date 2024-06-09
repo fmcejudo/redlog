@@ -84,7 +84,6 @@ class RedlogExecutionServiceTest {
         Assertions.assertThat(executionId).startsWith("test-save").contains(LocalDate.now().format(ISO_LOCAL_DATE));
     }
 
-
     @Test
     void shouldUpdateExecutionStatus() {
 
@@ -102,40 +101,4 @@ class RedlogExecutionServiceTest {
             Assertions.assertThat(e.status()).isEqualTo("SUCCESS");
         });
     }
-
-    @Test
-    void shouldFindExecutionById() {
-
-        //Given
-        CardContext cardContextOne = CardContext.from("TEST-FIND-BY-ID", Map.of("environment", "local", "label", "l1"));
-        CardContext cardContextTwo = CardContext.from("TEST-FIND-BY-ID", Map.of("environment", "pro", "label", "l1"));
-        CardContext cardContextThree = CardContext.from("TEST-FIND-BY-ID", Map.of("environment", "pro"));
-        CardContext cardContextSearch = CardContext.from("TEST-FIND-BY-ID", Map.of("label", "l1"));
-
-        //When
-        redlogExecutionService.saveExecution(cardContextOne);
-        redlogExecutionService.saveExecution(cardContextTwo);
-        redlogExecutionService.saveExecution(cardContextThree);
-        List<String> executionIds = redlogExecutionService.findExecutionIds(cardContextSearch);
-
-        //Then
-        Assertions.assertThat(executionIds).hasSize(2).allSatisfy(s -> {
-            Assertions.assertThat(s).startsWith("test-find-by-id").contains(LocalDate.now().format(ISO_LOCAL_DATE));
-        });
-
-    }
-
-    @Test
-    void shouldReturnEmptyList() {
-
-        //Given
-        CardContext cardContext = CardContext.from("TEST-INVALID", Map.of());
-
-        //When
-        List<String> executionIds = redlogExecutionService.findExecutionIds(cardContext);
-
-        //Then
-        Assertions.assertThat(executionIds).isEmpty();
-    }
-
 }

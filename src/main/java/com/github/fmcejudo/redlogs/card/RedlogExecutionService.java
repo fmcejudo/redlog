@@ -10,9 +10,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
@@ -21,8 +19,6 @@ public interface RedlogExecutionService {
     String saveExecution(CardContext cardContext);
 
     void updateExecution(CardContext cardContext, String status);
-
-    List<String> findExecutionIds(CardContext cardContext);
 }
 
 class DefaultRedlogExecutionService implements RedlogExecutionService {
@@ -78,24 +74,6 @@ class DefaultRedlogExecutionService implements RedlogExecutionService {
                 executionId, execution.applicationName(), execution.parameters(), execution.reportDate(), status
         );
         mongoTemplate.save(toUpdate, executionsCollectionName);
-    }
-
-    @Override
-    public List<String> findExecutionIds(CardContext cardContext) {
-        Query query = createQueryFromCardContext(cardContext);
-        List<RedlogExecution> redlogExecutions =
-                mongoTemplate.find(query, RedlogExecution.class, executionsCollectionName);
-        return redlogExecutions.stream().map(r -> r.executionId).toList();
-    }
-
-    private Query createQueryFromCardContext(final CardContext cardContext) {
-        Criteria criteria = Criteria.where("applicationName").is(cardContext.applicationName())
-                .and("reportDate").is(cardContext.reportDate());
-        Set<Map.Entry<String, String>> entries = cardContext.parameters().entrySet();
-        for (Map.Entry<String, String> entry : entries) {
-            criteria = criteria.and("parameters." + entry.getKey()).is(entry.getValue());
-        }
-        return Query.query(criteria);
     }
 
     record RedlogExecution(@Id String executionId, String applicationName, Map<String, String> parameters,
