@@ -1,6 +1,8 @@
 package com.github.fmcejudo.redlogs.card.report.asciidoctor.builder;
 
 
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.AsciiComponent;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.SectionContainer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +17,7 @@ class SectionContainerTest {
         String document = sectionComponent.content();
 
         //Then
-        Assertions.assertThat(document).isEqualTo("\nthis is my section\n");
+        Assertions.assertThat(document).isEqualTo("this is my section");
     }
 
     @Test
@@ -28,9 +30,7 @@ class SectionContainerTest {
 
         //Then
         Assertions.assertThat(document).isEqualTo("""
-                
                 line 1
-                
                 line 2""");
 
     }

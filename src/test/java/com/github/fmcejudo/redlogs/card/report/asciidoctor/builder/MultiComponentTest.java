@@ -1,5 +1,13 @@
 package com.github.fmcejudo.redlogs.card.report.asciidoctor.builder;
 
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.AsciiComponent;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.ContainerComponent;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.DocumentTitle;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.Item;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.LinkComponent;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.ListItem;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.SectionContainer;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.TextLine;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -12,14 +20,14 @@ public class MultiComponentTest {
     void shouldCreateADocument() {
         //Given
 
-        AsciiComponent sectionOne = SectionContainer.startWithComponent(DocumentTitle.withText("Section one"))
+        AsciiComponent sectionOne = SectionContainer.startWithComponent(DocumentTitle.level(2).withText("Section one"))
                 .add(ListItem.createList(List.of(
                         Item.fromMap(Map.of("name", "value", "description", "content")),
                         new Item("More information to show")
                 )))
                 .add(TextLine.withText("end of section one"));
 
-        AsciiComponent sectionTwo = SectionContainer.startWithComponent(DocumentTitle.withText("Section two"))
+        AsciiComponent sectionTwo = SectionContainer.startWithComponent(DocumentTitle.level(2).withText("Section two"))
                 .add(() -> "**Custom**\n")
                 .add(LinkComponent.link("http://link.io", "link"))
                 .add(TextLine.withText("end of section two"));

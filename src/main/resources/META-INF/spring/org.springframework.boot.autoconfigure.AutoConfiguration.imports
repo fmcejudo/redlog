@@ -1,6 +1,6 @@
-com.github.fmcejudo.redlogs.card.engine.loader.CardConfiguration
-com.github.fmcejudo.redlogs.card.engine.process.CardProcessorConfiguration
-com.github.fmcejudo.redlogs.card.engine.converter.CardConverterConfiguration
-com.github.fmcejudo.redlogs.card.engine.writer.CardResponseWriterConfig
-com.github.fmcejudo.redlogs.card.engine.RedlogExecutionConfiguration
-com.github.fmcejudo.redlogs.card.report.ReportConfiguration
+com.github.fmcejudo.redlogs.card.loader.CardConfiguration
+com.github.fmcejudo.redlogs.card.process.CardProcessorConfiguration
+com.github.fmcejudo.redlogs.card.converter.CardConverterConfiguration
+com.github.fmcejudo.redlogs.card.writer.CardResponseWriterConfig
+com.github.fmcejudo.redlogs.card.RedlogExecutionConfiguration
+com.github.fmcejudo.redlogs.report.ReportConfiguration
