@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.card.report;
+package com.github.fmcejudo.redlogs.report;
 
 import com.github.fmcejudo.redlogs.report.domain.Report;
 import com.github.fmcejudo.redlogs.report.domain.ReportSection;

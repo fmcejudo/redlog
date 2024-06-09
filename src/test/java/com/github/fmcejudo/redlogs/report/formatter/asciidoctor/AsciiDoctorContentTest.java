@@ -1,10 +1,9 @@
-package com.github.fmcejudo.redlogs.card.report.asciidoctor;
+package com.github.fmcejudo.redlogs.report.formatter.asciidoctor;
 
-import com.github.fmcejudo.redlogs.card.report.ReportGenerator;
+import com.github.fmcejudo.redlogs.report.ReportGenerator;
 import com.github.fmcejudo.redlogs.report.domain.Report;
 import com.github.fmcejudo.redlogs.report.domain.ReportItem;
 import com.github.fmcejudo.redlogs.report.domain.ReportSection;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorContent;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.AsciiComponent;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.ContainerComponent;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.DocumentTitle;

@@ -51,11 +51,11 @@ class CardRunnerTest {
             return null;
         }).when(redlogExecutionService).updateExecution(any(CardContext.class), anyString());
 
-        try (CardRunner cardExecutionService = new CardRunner(
+        try (CardRunner cardRunner = new CardRunner(
                 executionLoader, cardProcessor, assertWriter, redlogExecutionService
         )) {
             //When && Then
-            cardExecutionService.run(cardExecutionContext);
+            cardRunner.run(cardExecutionContext);
         }
 
         verify(redlogExecutionService, times(1)).saveExecution(any(CardContext.class));
@@ -83,11 +83,11 @@ class CardRunnerTest {
             return null;
         }).when(redlogExecutionService).updateExecution(any(CardContext.class), anyString());
 
-        try (CardRunner cardExecutionService = new CardRunner(
+        try (CardRunner cardRunner = new CardRunner(
                 executionLoader, cardProcessor, assertWriter, redlogExecutionService
         )){
             //When && Then
-            Assertions.assertThatThrownBy(() -> cardExecutionService.run(cardExecutionContext))
+            Assertions.assertThatThrownBy(() -> cardRunner.run(cardExecutionContext))
                     .isInstanceOf(RuntimeException.class).hasMessageContaining("error");
         }
     }
