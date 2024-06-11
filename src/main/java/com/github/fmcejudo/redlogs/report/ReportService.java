@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDate;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,11 +40,13 @@ class MongoReportService implements ReportService {
     }
 
     private List<ReportExecution> findReportExecutions(ReportContext reportContext) {
-        Query query = Query.query(
-                Criteria.where("applicationName").is(reportContext.applicationName())
-                        .and("reportDate").is(reportContext.reportDate())
-                        .and("parameters").is(reportContext.parameters())
-        );
+        Criteria criteria = Criteria.where("applicationName").is(reportContext.applicationName())
+                .and("reportDate").is(reportContext.reportDate());
+
+        for (Map.Entry<String, String> next : reportContext.parameters().entrySet()) {
+            criteria = criteria.and("parameters." + next.getKey()).is(next.getValue());
+        }
+        Query query = Query.query(criteria);
         return mongoTemplate.find(query, ReportExecution.class, executionsCollectionName);
     }
 

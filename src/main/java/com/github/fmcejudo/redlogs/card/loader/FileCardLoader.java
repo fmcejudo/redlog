@@ -2,6 +2,7 @@ package com.github.fmcejudo.redlogs.card.loader;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.converter.CardConverter;
+import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import org.springframework.core.io.DefaultResourceLoader;
@@ -35,7 +36,7 @@ public class FileCardLoader implements CardLoader {
                     .map(s -> s.withReportDate(reportDate))
                     .toList();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new CardExecutionException(e.getMessage());
         }
     }
 

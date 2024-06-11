@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.github.fmcejudo.redlogs.card.CardContext;
+import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.card.model.CardType;
 import org.apache.commons.text.StringSubstitutor;
@@ -31,7 +32,7 @@ final class DefaultCardConverter implements CardConverter {
             validateParameters(cardFile, cardContext.parameters());
             return cardFile.queries().stream().map(convertToQueryRequest(cardFile, cardContext)).toList();
         } catch (Exception e) {
-            throw new RuntimeException(e.getMessage());
+            throw new CardExecutionException(e.getMessage());
         }
     }
 

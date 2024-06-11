@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.card;
 
+import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,8 +24,12 @@ public class CardController {
     public ResponseEntity<String> triggerReport(@PathVariable String applicationName,
                                                 @RequestParam(required = false) Map<String, String> params) {
 
-        CardContext cardContext = CardContext.from(applicationName,params);
-        cardRunner.run(cardContext);
-        return ResponseEntity.ok("ok");
+        try {
+            CardContext cardContext = CardContext.from(applicationName, params);
+            cardRunner.run(cardContext);
+            return ResponseEntity.ok("ok");
+        } catch (CardExecutionException cardExecutionException) {
+            return ResponseEntity.badRequest().body(cardExecutionException.getMessage());
+        }
     }
 }
