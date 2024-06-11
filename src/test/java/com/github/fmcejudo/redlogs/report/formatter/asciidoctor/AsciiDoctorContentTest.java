@@ -62,7 +62,7 @@ class AsciiDoctorContentTest {
                 === [ label = l1 ]
                                  
                                  
-                ==== Null Pointer Exceptions +
+                ==== Null Pointer Exceptions
                 link:http://grafana.link[grafana link]
                                  
                                  
@@ -75,7 +75,7 @@ class AsciiDoctorContentTest {
                 === [ label = l2 ]
                                  
                                  
-                ==== Null Pointer Exceptions +
+                ==== Null Pointer Exceptions
                 link:http://grafana.link[grafana link]
                                  
                                  
@@ -118,7 +118,7 @@ class AsciiDoctorContentTest {
                 === [ label = l1 ]
                                  
                                  
-                ==== Null Pointer Exceptions +
+                ==== Null Pointer Exceptions
                 link:http://grafana.link[grafana link]
                                  
                                  
@@ -129,7 +129,7 @@ class AsciiDoctorContentTest {
                 === [ label = l2 ]
                                  
                                  
-                ==== Null Pointer Exceptions +
+                ==== Null Pointer Exceptions
                 link:http://grafana.link[grafana link]
                                  
                                  
@@ -138,7 +138,7 @@ class AsciiDoctorContentTest {
                   *count*: 1
                 
                 
-                ==== Other Section +
+                ==== Other Section
                 link:http://link[grafana link]
                                 
                                 
