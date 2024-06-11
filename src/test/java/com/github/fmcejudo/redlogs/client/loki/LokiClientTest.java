@@ -13,7 +13,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
@@ -33,7 +32,6 @@ class LokiClientTest {
     @Autowired
     RedLogLokiConfig lokiConfig;
 
-    @Container
     static GenericContainer<?> lokiContainer = new GenericContainer<>(DockerImageName.parse("grafana/loki:2.9.5"))
             .withExposedPorts(3100);
 

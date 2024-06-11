@@ -1,20 +1,22 @@
 package com.github.fmcejudo.redlogs.report;
 
-import java.time.LocalDate;
+import com.github.fmcejudo.redlogs.report.domain.Report;
+import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
+
 import java.util.List;
 
 class ReportServiceProxy {
 
-    private final ReportRepository reportRepository;
     private final ReportService reportService;
+    private final DocumentFormat documentFormat;
 
-    public ReportServiceProxy(final ReportRepository reportRepository, final ReportService reportService) {
-        this.reportRepository = reportRepository;
+    ReportServiceProxy(final ReportService reportService, final DocumentFormat documentFormat) {
+        this.documentFormat = documentFormat;
         this.reportService = reportService;
     }
 
-    public String content(final String applicationName, final LocalDate reportDate) {
-        List<Report> reports = reportRepository.getReportCompareWithDate(applicationName, reportDate);
-        return reportService.get(applicationName, reports);
+    String content(final ReportContext reportContext) {
+        List<Report> reports = reportService.findReports(reportContext);
+        return documentFormat.get(reports);
     }
 }

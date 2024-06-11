@@ -1,12 +1,15 @@
 package com.github.fmcejudo.redlogs.report;
 
+import com.github.fmcejudo.redlogs.card.CardController;
+import com.github.fmcejudo.redlogs.card.CardRunner;
+import com.github.fmcejudo.redlogs.card.RedlogExecutionService;
+import com.github.fmcejudo.redlogs.card.loader.CardLoader;
+import com.github.fmcejudo.redlogs.card.process.CardProcessor;
+import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
-import com.github.fmcejudo.redlogs.engine.card.CardExecutionService;
-import com.github.fmcejudo.redlogs.engine.card.loader.CardLoader;
-import com.github.fmcejudo.redlogs.engine.card.process.CardProcessor;
-import com.github.fmcejudo.redlogs.engine.card.writer.CardResponseWriter;
-import com.github.fmcejudo.redlogs.report.asciidoctor.AsciiDoctorContent;
-import com.github.fmcejudo.redlogs.report.asciidoctor.AsciiDoctorReportService;
+import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorContent;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorFormat;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -20,41 +23,47 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 public class ReportConfiguration {
 
     @Bean
-    ReportRepository reportRepository(final MongoTemplate mongoTemplate,
-                                      final RedLogMongoProperties redLogMongoProperties) {
-        return new ReportRepository(mongoTemplate, redLogMongoProperties);
-    }
-
-    @Bean
     @ConditionalOnMissingBean(AsciiDoctorContent.class)
     AsciiDoctorContent asciiDoctorContent() {
         return reports -> "content";
     }
 
     @Bean
-    @ConditionalOnMissingBean(ReportService.class)
-    AsciiDoctorReportService reportService(final AsciiDoctorContent asciiDoctorContent) {
-        return new AsciiDoctorReportService(asciiDoctorContent);
+    @ConditionalOnMissingBean(DocumentFormat.class)
+    DocumentFormat documentFormat(final AsciiDoctorContent asciiDoctorContent) {
+        return new AsciiDoctorFormat(asciiDoctorContent);
     }
 
     @Bean
-    ReportServiceProxy reportServiceProxy(final ReportRepository reportRepository, final ReportService reportService) {
-        return new ReportServiceProxy(reportRepository, reportService);
+    @ConditionalOnMissingBean(ReportService.class)
+    ReportService reportService(final MongoTemplate mongoTemplate,
+                                       final RedLogMongoProperties redLogMongoProperties) {
+        return new MongoReportService(mongoTemplate, redLogMongoProperties);
+    }
+
+    @Bean
+    ReportServiceProxy reportServiceProxy(final ReportService reportService, final DocumentFormat documentFormat) {
+        return new ReportServiceProxy(reportService, documentFormat);
     }
 
     @Bean
     @ConditionalOnBean(value = {
             CardLoader.class, CardProcessor.class, CardResponseWriter.class
     })
-    CardExecutionService cardExecutionService(final CardLoader cardLoader,
-                                              final CardProcessor processor,
-                                              final CardResponseWriter writer) {
-        return new CardExecutionService(cardLoader, processor, writer);
+    CardRunner cardRunner(final CardLoader cardLoader,
+                          final CardProcessor processor,
+                          final CardResponseWriter writer,
+                          final RedlogExecutionService redlogExecutionService) {
+        return new CardRunner(cardLoader, processor, writer, redlogExecutionService);
     }
 
     @Bean
-    ReportController reportController(ReportServiceProxy reportServiceProxy,
-                                      CardExecutionService cardExecutionService) {
-        return new ReportController(reportServiceProxy, cardExecutionService);
+    CardController cardController(final CardRunner cardRunner) {
+        return new CardController(cardRunner);
+    }
+
+    @Bean
+    ReportController reportController(ReportServiceProxy reportServiceProxy) {
+        return new ReportController(reportServiceProxy);
     }
 }

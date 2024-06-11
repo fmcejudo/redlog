@@ -1,4 +1,5 @@
-common_query: '{app="redlog-sample"}'
+common_query: '{app="redlog-sample", environment="<environment>", host="<host>"}'
+parameters: ['environment', 'host']
 
 queries:
   - id: coffee
