@@ -19,7 +19,7 @@ public interface DocumentTitle extends AsciiComponent {
     default DocumentTitle setLink(String link, String description) {
         return () -> {
             String title = this.documentTitleContent();
-            return title + " +\nlink:" + link + "[" + description + "]\n";
+            return title + "\nlink:" + link + "[" + description + "]\n";
         };
     }
 

@@ -29,7 +29,7 @@ public final class QueryInstantClient implements LokiClient {
     @Override
     public LokiResponse query(final LokiRequest lokiRequest) {
         long epochMilli =
-                LocalDateTime.of(lokiRequest.reportDate(), LocalTime.of(23, 0, 0)).toInstant(UTC).toEpochMilli();
+                LocalDateTime.of(lokiRequest.reportDate(), LocalTime.of(7, 0, 0)).toInstant(UTC).toEpochMilli();
         long time = TimeUnit.MILLISECONDS.toNanos(epochMilli);
         return queryInstantClient.queryService(lokiRequest.query(), time);
     }

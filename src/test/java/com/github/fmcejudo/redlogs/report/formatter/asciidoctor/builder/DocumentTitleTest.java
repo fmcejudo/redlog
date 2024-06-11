@@ -30,7 +30,7 @@ class DocumentTitleTest {
         //Then
         Assertions.assertThat(content).isEqualTo("""
                 
-                == title +
+                == title
                 link:http://bit.io/link[description]
                 
                 """);
