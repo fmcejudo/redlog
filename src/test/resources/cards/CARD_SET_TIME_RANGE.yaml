@@ -1,0 +1,12 @@
+common_query: '{}'
+parameters: ['range']
+time: '07:00'
+range: <range>
+
+queries:
+- id: something
+  description: description
+  type: COUNT
+  query: |
+    sum by(host)(
+    [_RANGE_])
