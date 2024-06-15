@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -29,7 +28,7 @@ class CardConverterTest {
     }
 
     @Test
-    void shouldParseCardFile() throws IOException {
+    void shouldParseCardFile() {
         //Given
         final String applicationName = "CARD_SET_TIME_RANGE";
         CardContext cardContext = CardContext.from(applicationName, Map.of("range", "24h"));
@@ -51,7 +50,7 @@ class CardConverterTest {
     @FunctionalInterface
     private interface LoadCardContent extends Function<String, String> {
 
-        public static  LoadCardContent createInstance() {
+        public static LoadCardContent createInstance() {
             ClassLoader classLoader = LoadCardContent.class.getClassLoader();
             return applicationName -> {
                 InputStream is = classLoader.getResourceAsStream("cards/" + applicationName + ".yaml");

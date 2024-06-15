@@ -1,5 +1,7 @@
 common_query: '{app="redlog-sample", environment="<environment>", host="<host>"}'
 parameters: ['environment', 'host']
+range: 24h
+time: 07:00
 
 queries:
   - id: coffee
