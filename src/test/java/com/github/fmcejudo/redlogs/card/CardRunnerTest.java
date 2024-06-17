@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -100,8 +101,10 @@ class TestCardLoader implements CardLoader {
     public List<CardQueryRequest> load(final CardContext cardExecutionContext) {
 
         String application = cardExecutionContext.applicationName();
-        var cardQueryRequest = new CardQueryRequest(application, "test", "section test", CardType.SUMMARY, "query")
-                .withExecutionId(UUID.randomUUID().toString());
+        var cardQueryRequest = new CardQueryRequest(
+                application, "test", "section test", CardType.SUMMARY, "query", LocalTime.of(7, 0, 0), "24h"
+        ).withExecutionId(UUID.randomUUID().toString());
+
         return List.of(cardQueryRequest);
     }
 }

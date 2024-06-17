@@ -34,14 +34,14 @@ class LokiCardProcessor implements CardProcessor {
                 LokiLinkBuilder.builder(redLogLokiConfig.getDashboardUrl(), redLogLokiConfig.getDatasourceName());
     }
 
-    public CardQueryResponse process(final CardQueryRequest cardQuery) {
+    public CardQueryResponse process(final CardQueryRequest cardQueryRequest) {
 
-        LokiClient lokiClient = lokiClientFactory.get(cardQuery.cardType());
+        LokiClient lokiClient = lokiClientFactory.get(cardQueryRequest.cardType());
         try {
-            LokiResponse lokiResponse = lokiClient.query(new LokiRequest(cardQuery.query(), cardQuery.reportDate()));
-            return composeResult(cardQuery, lokiResponse);
+            LokiResponse lokiResponse = lokiClient.query(new LokiRequest(cardQueryRequest));
+            return composeResult(cardQueryRequest, lokiResponse);
         } catch (Exception e) {
-            throw new RuntimeException("Error querying to loki: " + cardQuery.id(), e);
+            throw new RuntimeException("Error querying to loki: " + cardQueryRequest.id(), e);
         }
     }
 

@@ -9,10 +9,9 @@ import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
 import org.apache.commons.text.StringSubstitutor;
 
+import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 
 final class DefaultCardConverter implements CardConverter {
@@ -50,9 +49,13 @@ final class DefaultCardConverter implements CardConverter {
             final CardFile cardFile, final CardContext cardContext) {
 
         UnaryOperator<String> queryReplaceFn = buildResolvedQuery(cardFile, cardContext);
+        LocalTime time = cardFile.time();
+        String range = findRange(cardFile.range(), cardContext);
 
         return q -> new CardQueryRequest(
-                cardContext.applicationName(), q.id(), q.description(), q.type(), queryReplaceFn.apply(q.query()));
+                cardContext.applicationName(), q.id(), q.description(), q.type(),
+                queryReplaceFn.apply(q.query()), time, range
+        );
     }
 
     private UnaryOperator<String> buildResolvedQuery(final CardFile cardFile, final CardContext cardContext) {
@@ -64,6 +67,13 @@ final class DefaultCardConverter implements CardConverter {
             StringSubstitutor substitutor = new StringSubstitutor(cardContext.parameters(), "<", ">");
             return substitutor.replace(query.replace("<common_query>", cardFile.commonQuery()));
         };
+    }
+
+    private String findRange(final String range, final CardContext cardContext) {
+        if (range.startsWith("<") && range.endsWith(">")) {
+            return cardContext.parameters().get(range.substring(1, range.length() - 1));
+        }
+        return range;
     }
 
 }
