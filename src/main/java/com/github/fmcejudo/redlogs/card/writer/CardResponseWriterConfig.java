@@ -13,6 +13,6 @@ class CardResponseWriterConfig {
     @ConditionalOnMissingBean({CardResponseWriter.class})
     CardResponseWriter cardResponseWriter(MongoTemplate mongoTemplate,
                                           RedLogMongoProperties redLogMongoProperties) {
-        return new CardResponseMongoWriter(mongoTemplate, redLogMongoProperties);
+        return new MongoCardResponseWriter(mongoTemplate, redLogMongoProperties);
     }
 }

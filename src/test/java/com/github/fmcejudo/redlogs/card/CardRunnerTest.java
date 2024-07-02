@@ -4,27 +4,21 @@ import com.github.fmcejudo.redlogs.card.loader.CardLoader;
 import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponse;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponseEntry;
+import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import com.github.fmcejudo.redlogs.card.model.CardType;
 import com.github.fmcejudo.redlogs.card.process.CardProcessor;
 import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 class CardRunnerTest {
 
@@ -36,31 +30,21 @@ class CardRunnerTest {
                 CardContext.from(applicationName, Map.of("date", LocalDate.now().format(ISO_LOCAL_DATE)));
 
         CardLoader executionLoader = new TestCardLoader();
-        CardProcessor cardProcessor = new TestCardProcessor(r -> r);
+        CardProcessor cardProcessor = new TestCardProcessor(CardResponseWriter::onNext);
         CardResponseWriter assertWriter = new TestCardWriter(result -> {
             Assertions.assertThat(result).satisfies(r -> {
                 Assertions.assertThat(r.applicationName()).isEqualTo(applicationName);
                 Assertions.assertThat(r.id()).isEqualTo("test");
                 Assertions.assertThat(r.executionId()).isNotNull();
             });
+        }, throwable -> {
+            Assertions.fail("No error was expected on processing card");
         });
-        RedlogExecutionService redlogExecutionService = mock(RedlogExecutionService.class);
-        Mockito.when(redlogExecutionService.saveExecution(any(CardContext.class))).thenReturn("uuid");
-        Mockito.doAnswer(a -> {
-            String status = a.getArgument(1);
-            Assertions.assertThat(status).isEqualTo("SUCCESS");
-            return null;
-        }).when(redlogExecutionService).updateExecution(any(CardContext.class), anyString());
-
-        try (CardRunner cardRunner = new CardRunner(
-                executionLoader, cardProcessor, assertWriter, redlogExecutionService
-        )) {
+        try (CardRunner cardRunner = new CardRunner(executionLoader, cardProcessor, assertWriter)) {
             //When && Then
             cardRunner.run(cardExecutionContext);
         }
 
-        verify(redlogExecutionService, times(1)).saveExecution(any(CardContext.class));
-        verify(redlogExecutionService, times(1)).updateExecution(any(CardContext.class), anyString());
     }
 
     @Test
@@ -71,25 +55,15 @@ class CardRunnerTest {
                 CardContext.from(applicationName, Map.of("date", LocalDate.now().format(ISO_LOCAL_DATE)));
 
         CardLoader executionLoader = new TestCardLoader();
-        CardProcessor cardProcessor = new TestCardProcessor(r -> {
-            throw new RuntimeException("error");
-        });
+        CardProcessor cardProcessor = new TestCardProcessor((w, r) -> w.onError(new RuntimeException("error")));
         CardResponseWriter assertWriter = new TestCardWriter(result -> {
+        }, throwable -> {
+            Assertions.assertThat(throwable).isInstanceOf(RuntimeException.class).hasMessageContaining("error");
         });
-        RedlogExecutionService redlogExecutionService = mock(RedlogExecutionService.class);
-        Mockito.when(redlogExecutionService.saveExecution(any(CardContext.class))).thenReturn("uuid");
-        Mockito.doAnswer(a -> {
-            String status = a.getArgument(1);
-            Assertions.assertThat(status).isEqualTo("ERROR");
-            return null;
-        }).when(redlogExecutionService).updateExecution(any(CardContext.class), anyString());
 
-        try (CardRunner cardRunner = new CardRunner(
-                executionLoader, cardProcessor, assertWriter, redlogExecutionService
-        )){
+        try (CardRunner cardRunner = new CardRunner(executionLoader, cardProcessor, assertWriter)) {
             //When && Then
-            Assertions.assertThatThrownBy(() -> cardRunner.run(cardExecutionContext))
-                    .isInstanceOf(RuntimeException.class).hasMessageContaining("error");
+            cardRunner.run(cardExecutionContext);
         }
     }
 
@@ -98,39 +72,68 @@ class CardRunnerTest {
 class TestCardLoader implements CardLoader {
 
     @Override
-    public List<CardQueryRequest> load(final CardContext cardExecutionContext) {
+    public CardRequest load(final CardContext cardContext) {
 
-        String application = cardExecutionContext.applicationName();
-        var cardQueryRequest = new CardQueryRequest(
-                application, "test", "section test", CardType.SUMMARY, "query", LocalTime.of(7, 0, 0), "24h"
-        ).withExecutionId(UUID.randomUUID().toString());
+        String executionId = UUID.randomUUID().toString();
 
-        return List.of(cardQueryRequest);
+        String application = cardContext.applicationName();
+        var cardQueryRequest = new CardQueryRequest("test", "section test", CardType.SUMMARY, "query")
+                .withExecutionId(executionId);
+        return new CardRequest(
+                application, cardContext.reportDate(), null, null, List.of(cardQueryRequest)
+        ).withExecutionId(executionId);
     }
 }
 
-record TestCardProcessor(Function<CardQueryResponse, CardQueryResponse> transformResponse) implements CardProcessor {
+record TestCardProcessor(BiConsumer<CardResponseWriter, CardQueryResponse> responseConsumer) implements CardProcessor {
 
     @Override
-    public CardQueryResponse process(CardQueryRequest cardQuery) {
-        String appName = cardQuery.applicationName();
-        String id = cardQuery.id();
-        String description = cardQuery.description();
-        String executionId = cardQuery.executionId();
+    public void process(CardRequest cardRequest, CardResponseWriter writer) {
+        String appName = cardRequest.applicationName();
+        String executionId = cardRequest.executionId();
 
-        CardQueryResponseEntry responseEntry = new CardQueryResponseEntry(Map.of("test", "test"), 1L);
-        CardQueryResponse response = new CardQueryResponse(
-                appName, LocalDate.now(), id, executionId, description, List.of(responseEntry), "", null
-        );
-        return transformResponse.apply(response);
+        cardRequest.cardQueryRequests().forEach(cqr -> {
+            String id = cqr.id();
+            String description = cqr.description();
+            CardQueryResponseEntry responseEntry = new CardQueryResponseEntry(Map.of("test", "test"), 1L);
+            CardQueryResponse response = new CardQueryResponse(
+                    appName, LocalDate.now(), id, executionId, description, List.of(responseEntry), "", null
+            );
+            responseConsumer.accept(writer, response);
+        });
+
+        writer.onComplete();
     }
 }
 
-record TestCardWriter(Consumer<CardQueryResponse> assertResponseConsumer) implements CardResponseWriter {
+final class TestCardWriter implements CardResponseWriter {
+
+
+    private final Consumer<CardQueryResponse> assertResponseConsumer;
+    private final Consumer<Throwable> assertThrowableConsume;
+
+    TestCardWriter(Consumer<CardQueryResponse> assertResponseConsumer, Consumer<Throwable> assertThrowableConsume) {
+        this.assertResponseConsumer = assertResponseConsumer;
+        this.assertThrowableConsume = assertThrowableConsume;
+    }
 
     @Override
-    public CardQueryResponse write(CardQueryResponse cardTaskResult) {
+    public void writeExecution(CardRequest cardRequest) {
+
+    }
+
+    @Override
+    public void onNext(CardQueryResponse cardTaskResult) {
         assertResponseConsumer.accept(cardTaskResult);
-        return cardTaskResult;
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+        assertThrowableConsume.accept(throwable);
+    }
+
+    @Override
+    public void onComplete() {
+
     }
 }

@@ -2,6 +2,7 @@ package com.github.fmcejudo.redlogs.card.writer;
 
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponse;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponseEntry;
+import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -23,7 +24,6 @@ class CardResponseMongoWriter implements CardResponseWriter {
         this.reportCollectionName = composeCollectionName(mongoPrefix, "reports");
     }
 
-    @Override
     public CardQueryResponse write(final CardQueryResponse cardQueryResponse) {
         var cardMongoRecord = new CardMongoRecord(
                 cardQueryResponse.id(),
@@ -34,6 +34,26 @@ class CardResponseMongoWriter implements CardResponseWriter {
         );
         mongoTemplate.insert(cardMongoRecord, reportCollectionName);
         return cardQueryResponse;
+    }
+
+    @Override
+    public void writeExecution(CardRequest cardRequest) {
+
+    }
+
+    @Override
+    public void onNext(CardQueryResponse cardTaskResult) {
+
+    }
+
+    @Override
+    public void onError(Throwable throwable) {
+
+    }
+
+    @Override
+    public void onComplete() {
+
     }
 
     static final class CardMongoRecord {

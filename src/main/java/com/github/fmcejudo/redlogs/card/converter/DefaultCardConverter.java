@@ -7,8 +7,11 @@ import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.exception.CardException;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
+import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import org.apache.commons.text.StringSubstitutor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.function.Function;
@@ -27,11 +30,18 @@ final class DefaultCardConverter implements CardConverter {
                 .thenValidate(new TimeValidator());
     }
 
-    public List<CardQueryRequest> convert(final String content, final CardContext cardContext) {
+    public CardRequest convert(final String content, final CardContext cardContext) {
         try {
             CardFile cardFile = mapper.readValue(content, CardFile.class);
             validateCards(cardFile, cardContext);
-            return cardFile.queries().stream().map(convertToQueryRequest(cardFile, cardContext)).toList();
+            List<CardQueryRequest> cardQueryRequests = readQueries(cardContext, cardFile);
+            LocalTime time = cardFile.time();
+            String range = findRange(cardFile.range(), cardContext);
+            TimeBoundaries tb = new TimeBoundaries(cardContext.reportDate(), time, range);
+            return new CardRequest(
+                    cardContext.applicationName(), cardContext.reportDate(),
+                    tb.startTime(), tb.endTime(), cardQueryRequests
+            );
         } catch (Exception e) {
             throw new CardExecutionException(e.getMessage());
         }
@@ -44,18 +54,16 @@ final class DefaultCardConverter implements CardConverter {
         }
     }
 
+    private List<CardQueryRequest> readQueries(final CardContext cardContext, final CardFile cardFile) {
+        return cardFile.queries().stream().map(convertToQueryRequest(cardFile, cardContext)).toList();
+    }
+
 
     private Function<CardQuery, CardQueryRequest> convertToQueryRequest(
             final CardFile cardFile, final CardContext cardContext) {
 
         UnaryOperator<String> queryReplaceFn = buildResolvedQuery(cardFile, cardContext);
-        LocalTime time = cardFile.time();
-        String range = findRange(cardFile.range(), cardContext);
-
-        return q -> new CardQueryRequest(
-                cardContext.applicationName(), q.id(), q.description(), q.type(),
-                queryReplaceFn.apply(q.query()), time, range
-        );
+        return q -> new CardQueryRequest(q.id(), q.description(), q.type(), queryReplaceFn.apply(q.query()));
     }
 
     private UnaryOperator<String> buildResolvedQuery(final CardFile cardFile, final CardContext cardContext) {
@@ -74,6 +82,25 @@ final class DefaultCardConverter implements CardConverter {
             return cardContext.parameters().get(range.substring(1, range.length() - 1));
         }
         return range;
+    }
+
+    private record TimeBoundaries(LocalDate date, LocalTime time, String range) {
+
+
+        LocalDateTime endTime() {
+            return LocalDateTime.of(date, time);
+        }
+
+        LocalDateTime startTime() {
+            String stringAmount = range.substring(0, range.length() - 1);
+            int amount = Integer.parseInt(stringAmount);
+            if (range.endsWith("m")) {
+                return endTime().minusMinutes(amount);
+            } else if (range.endsWith("h")) {
+                return endTime().minusHours(amount);
+            }
+            throw new IllegalStateException("wrong range expression");
+        }
     }
 
 }

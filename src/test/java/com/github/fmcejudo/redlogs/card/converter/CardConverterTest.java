@@ -1,7 +1,7 @@
 package com.github.fmcejudo.redlogs.card.converter;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
-import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
+import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -35,10 +34,10 @@ class CardConverterTest {
         String cardContent = loadCardContent.apply(applicationName);
 
         //When
-        List<CardQueryRequest> cardQueryRequests = cardConverter.convert(cardContent, cardContext);
+        CardRequest cardRequest = cardConverter.convert(cardContent, cardContext);
 
         //Then
-        Assertions.assertThat(cardQueryRequests).hasSize(1).first().satisfies(cardQueryRequest -> {
+        Assertions.assertThat(cardRequest.cardQueryRequests()).hasSize(1).first().satisfies(cardQueryRequest -> {
             Assertions.assertThat(cardQueryRequest.description()).isEqualTo("description");
             Assertions.assertThat(cardQueryRequest.id()).isEqualTo("something");
             Assertions.assertThat(cardQueryRequest.query()).isEqualTo("""

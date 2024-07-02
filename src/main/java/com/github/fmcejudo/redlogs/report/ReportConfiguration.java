@@ -2,7 +2,6 @@ package com.github.fmcejudo.redlogs.report;
 
 import com.github.fmcejudo.redlogs.card.CardController;
 import com.github.fmcejudo.redlogs.card.CardRunner;
-import com.github.fmcejudo.redlogs.card.RedlogExecutionService;
 import com.github.fmcejudo.redlogs.card.loader.CardLoader;
 import com.github.fmcejudo.redlogs.card.process.CardProcessor;
 import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
@@ -37,7 +36,7 @@ public class ReportConfiguration {
     @Bean
     @ConditionalOnMissingBean(ReportService.class)
     ReportService reportService(final MongoTemplate mongoTemplate,
-                                       final RedLogMongoProperties redLogMongoProperties) {
+                                final RedLogMongoProperties redLogMongoProperties) {
         return new MongoReportService(mongoTemplate, redLogMongoProperties);
     }
 
@@ -52,9 +51,8 @@ public class ReportConfiguration {
     })
     CardRunner cardRunner(final CardLoader cardLoader,
                           final CardProcessor processor,
-                          final CardResponseWriter writer,
-                          final RedlogExecutionService redlogExecutionService) {
-        return new CardRunner(cardLoader, processor, writer, redlogExecutionService);
+                          final CardResponseWriter writer) {
+        return new CardRunner(cardLoader, processor, writer);
     }
 
     @Bean

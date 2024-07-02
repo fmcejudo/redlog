@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 import org.springframework.util.LinkedMultiValueMap;
 
 import java.time.LocalDate;
@@ -63,6 +64,19 @@ class ReportControllerTest {
         response.expectStatus().isOk();
 
         Mockito.verify(reportServiceProxy, Mockito.times(1)).content(any(ReportContext.class));
+    }
+
+    @Test
+    void shouldFindAllExecutions() {
+        //Given
+
+        //When
+        ResponseSpec response = webTestClient.get().uri(u -> u.path(CONTROLLER_PATH.concat("/list")).build())
+                .accept(MediaType.APPLICATION_JSON).exchange();
+
+
+        //Then
+        response.expectStatus().isOk().expectBodyList(ReportController.Execution.class);
     }
 
 }
