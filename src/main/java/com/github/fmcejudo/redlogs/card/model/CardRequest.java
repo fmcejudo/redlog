@@ -2,7 +2,9 @@ package com.github.fmcejudo.redlogs.card.model;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class CardRequest {
 
@@ -18,15 +20,18 @@ public class CardRequest {
 
     private final List<CardQueryRequest> cardQueryRequests;
 
-    public CardRequest(final String applicationName, final LocalDate date, final LocalDateTime startTime,
-                       final LocalDateTime endTime, final List<CardQueryRequest> cardQueryRequests) {
+    private final Map<String, String> parameters;
 
-        this(applicationName, date, startTime, endTime, cardQueryRequests, null);
+    public CardRequest(final String applicationName, final LocalDate date, final LocalDateTime startTime,
+                       final LocalDateTime endTime, final List<CardQueryRequest> cardQueryRequests,
+                       final Map<String, String> parameters) {
+
+        this(applicationName, date, startTime, endTime, cardQueryRequests, null, parameters);
     }
 
     private CardRequest(final String applicationName, final LocalDate date, final LocalDateTime startTime,
                         final LocalDateTime endTime, final List<CardQueryRequest> cardQueryRequests,
-                        final String executionId) {
+                        final String executionId, final Map<String, String> parameters) {
 
         this.applicationName = applicationName;
         this.cardQueryRequests = cardQueryRequests;
@@ -34,10 +39,11 @@ public class CardRequest {
         this.startTime = startTime;
         this.endTime = endTime;
         this.executionId = executionId;
+        this.parameters = parameters;
     }
 
     public CardRequest withExecutionId(final String executionId) {
-        return new CardRequest(applicationName, date, startTime, endTime, cardQueryRequests, executionId);
+        return new CardRequest(applicationName, date, startTime, endTime, cardQueryRequests, executionId, parameters);
     }
 
     public String applicationName() {
@@ -62,6 +68,10 @@ public class CardRequest {
 
     public String executionId() {
         return executionId;
+    }
+
+    public Map<String, String> getParameters() {
+        return Collections.unmodifiableMap(parameters);
     }
 
 }

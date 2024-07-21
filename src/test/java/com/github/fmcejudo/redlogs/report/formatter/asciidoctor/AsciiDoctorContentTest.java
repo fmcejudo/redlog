@@ -9,14 +9,14 @@ import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.Containe
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.DocumentTitle;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.Item;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.ListItem;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.SectionContainer;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.TextLine;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.util.Assert;
 
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -32,7 +32,7 @@ class AsciiDoctorContentTest {
     void setUp() {
         reportGenerator = ReportGenerator.fromCurrentDate().addSection(sections -> {
             sections.add(new ReportSection(
-                    "nullPointerException", "Null Pointer Exceptions", "http://grafana.link",
+                    "execution-id", "nullPointerException", "Null Pointer Exceptions", "http://grafana.link",
                     List.of(new ReportItem(Map.of("name", "name", "description", "description"), 1L))
             ));
         });
@@ -41,44 +41,24 @@ class AsciiDoctorContentTest {
     @Test
     void shouldCreateADocumentFromReportList() {
         //Given
-        List<Report> reportList = List.of(
-                reportGenerator.withApplicationName("report-one").withParams(Map.of("label", "l1")).generate(),
-                reportGenerator.withApplicationName("report-two").withParams(Map.of("label", "l2")).generate()
-        );
-
+        Report report = reportGenerator.withApplicationName("report-one").withParams(Map.of("label", "l1")).generate();
         AsciiDoctorContent asciiDoctorContent = new CustomAsciiDoctorContent();
         String date = LocalDate.now().format(ISO_LOCAL_DATE);
 
         //When
-        String content = asciiDoctorContent.content(reportList);
+        String content = asciiDoctorContent.content(report);
 
         //Then
         Assertions.assertThat(content).isEqualTo("""
-                                 
-                = Report Date: %s
-                            
-                == REPORT-ONE
-                                 
-                === [ label = l1 ]
-                                 
-                                 
-                ==== Null Pointer Exceptions
+                                
+                = REPORT-ONE
+                Report Date: %s
+                With Parameters:
+                [ label = l1 ]
+                               
+                == Null Pointer Exceptions
                 link:http://grafana.link[grafana link]
-                                 
-                                 
-                * *description*: description +
-                  *name*: name +
-                  *count*: 1
-                                 
-                == REPORT-TWO
-                                 
-                === [ label = l2 ]
-                                 
-                                 
-                ==== Null Pointer Exceptions
-                link:http://grafana.link[grafana link]
-                                 
-                                 
+                              
                 * *description*: description +
                   *name*: name +
                   *count*: 1
@@ -89,59 +69,40 @@ class AsciiDoctorContentTest {
     @DisplayName("same report with different params should render under the same application name")
     void shouldRenderSameReportWithDifferentParams() {
         //Given
-        List<Report> reportList = List.of(
-                reportGenerator.withApplicationName("report-one").withParams(Map.of("label", "l1")).generate(),
-
-                reportGenerator.withApplicationName("report-one")
-                        .withParams(Map.of("label", "l2"))
-                        .addSection(l ->
-                                l.add(new ReportSection("other-section", "Other Section", "http://link", List.of(
+        Report report = reportGenerator.withApplicationName("report-one")
+                .withParams(Map.of("label", "l2"))
+                .addSection(l ->
+                        l.add(new ReportSection("executionid", "other-section", "Other Section", "http://link",
+                                List.of(
                                         new ReportItem(Map.of("name", "one", "description", "description1"), 1L),
                                         new ReportItem(Map.of("name", "two", "description", "description2"), 1L)
                                 )))
-                        ).generate()
-        );
+                ).generate();
 
         AsciiDoctorContent asciiDoctorContent = new CustomAsciiDoctorContent();
         String date = LocalDate.now().format(ISO_LOCAL_DATE);
 
         //When
-        String content = asciiDoctorContent.content(reportList);
+        String content = asciiDoctorContent.content(report);
 
         //Then
         Assertions.assertThat(content).isEqualTo("""
-                                 
-                = Report Date: %s
-                            
-                == REPORT-ONE
-                                 
-                === [ label = l1 ]
-                                 
-                                 
-                ==== Null Pointer Exceptions
+                                  
+                = REPORT-ONE
+                Report Date: %s
+                With Parameters:
+                [ label = l2 ]
+                                
+                == Null Pointer Exceptions
                 link:http://grafana.link[grafana link]
-                                 
                                  
                 * *description*: description +
                   *name*: name +
                   *count*: 1
                                  
-                === [ label = l2 ]
-                                 
-                                 
-                ==== Null Pointer Exceptions
-                link:http://grafana.link[grafana link]
-                                 
-                                 
-                * *description*: description +
-                  *name*: name +
-                  *count*: 1
-                
-                
-                ==== Other Section
+                == Other Section
                 link:http://link[grafana link]
-                                
-                                
+                                 
                 * *description*: description1 +
                   *name*: one +
                   *count*: 1
@@ -156,42 +117,27 @@ class AsciiDoctorContentTest {
 class CustomAsciiDoctorContent implements AsciiDoctorContent {
 
     @Override
-    public String content(final List<Report> reports) {
-        ContainerComponent containerComponent = ContainerComponent.create().addComponent(reportDateComponent(reports));
-
-        List<Report> sortedReports = reports.stream().sorted(Comparator.comparing(Report::applicationName)).toList();
-
-        String lastName = null;
-        for (Report report : sortedReports) {
-            if (!report.applicationName().equals(lastName)) {
-                lastName = report.applicationName();
-                containerComponent = containerComponent
-                        .addComponent(DocumentTitle.level(2).withText(report.applicationName().toUpperCase()));
-            }
-            containerComponent = containerComponent.addComponent(generateSection(report));
-        }
-        return containerComponent.content();
+    public String content(final Report report) {
+        Assert.notNull(report, "report can not be null");
+        return ContainerComponent.create()
+                .addComponent(DocumentTitle.level(1).withText(report.applicationName().toUpperCase()))
+                .addComponent(TextLine.withText("Report Date: %s".formatted(report.reportDate())))
+                .addComponent(TextLine.withText("With Parameters:"))
+                .addComponent(TextLine.withText(formatParams(report)))
+                .addComponent(generateSection(report))
+                .content();
     }
 
-    private AsciiComponent reportDateComponent(List<Report> reports) {
-        if (reports.isEmpty()) {
-            return () -> "There is no reports to show";
-        }
-        String date = reports.getFirst().reportDate().format(ISO_LOCAL_DATE);
-        return DocumentTitle.level(1).withText("Report Date: %s".formatted(date));
-    }
 
     private AsciiComponent generateSection(final Report report) {
 
-        var sectionContainer = SectionContainer.startWithComponent(
-                DocumentTitle.level(3).withText(formatParams(report))
-        );
+        var sectionContainer = ContainerComponent.create();
 
         for (ReportSection reportSection : report.sections()) {
-            sectionContainer = sectionContainer.add(DocumentTitle.level(4)
+            sectionContainer = sectionContainer.addComponent(DocumentTitle.level(2)
                     .withText(reportSection.description())
                     .setLink(reportSection.link(), "grafana link")
-            ).add(generateItems(reportSection.items()));
+            ).addComponent(generateItems(reportSection.items()));
         }
         return sectionContainer;
     }

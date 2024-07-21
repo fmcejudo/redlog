@@ -11,9 +11,7 @@ interface DataGenerator {
     public abstract Data generate();
 
     public static DataGenerator resultType(DataType dataType) {
-        return () -> {
-            return new Data(dataType.getType(), List.of());
-        };
+        return () -> new Data(dataType.getType(), List.of());
     }
 
     public default DataGenerator addMatrixResult(final Map<String, String> label, final List<MatrixValue> values) {

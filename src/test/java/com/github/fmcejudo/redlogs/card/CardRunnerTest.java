@@ -80,7 +80,7 @@ class TestCardLoader implements CardLoader {
         var cardQueryRequest = new CardQueryRequest("test", "section test", CardType.SUMMARY, "query")
                 .withExecutionId(executionId);
         return new CardRequest(
-                application, cardContext.reportDate(), null, null, List.of(cardQueryRequest)
+                application, cardContext.reportDate(), null, null, List.of(cardQueryRequest), Map.of()
         ).withExecutionId(executionId);
     }
 }

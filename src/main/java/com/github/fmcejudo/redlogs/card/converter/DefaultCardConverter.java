@@ -40,7 +40,7 @@ final class DefaultCardConverter implements CardConverter {
             TimeBoundaries tb = new TimeBoundaries(cardContext.reportDate(), time, range);
             return new CardRequest(
                     cardContext.applicationName(), cardContext.reportDate(),
-                    tb.startTime(), tb.endTime(), cardQueryRequests
+                    tb.startTime(), tb.endTime(), cardQueryRequests, cardContext.parameters()
             );
         } catch (Exception e) {
             throw new CardExecutionException(e.getMessage());

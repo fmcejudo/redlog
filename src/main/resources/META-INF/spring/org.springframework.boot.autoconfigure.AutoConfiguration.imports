@@ -3,3 +3,4 @@ com.github.fmcejudo.redlogs.card.process.CardProcessorConfiguration
 com.github.fmcejudo.redlogs.card.converter.CardConverterConfiguration
 com.github.fmcejudo.redlogs.card.writer.CardResponseWriterConfig
 com.github.fmcejudo.redlogs.report.ReportConfiguration
+com.github.fmcejudo.redlogs.execution.ExecutionConfiguration

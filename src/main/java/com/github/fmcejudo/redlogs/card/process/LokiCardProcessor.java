@@ -11,6 +11,8 @@ import com.github.fmcejudo.redlogs.client.loki.LokiResponse;
 import com.github.fmcejudo.redlogs.client.loki.instant.QueryInstantClient;
 import com.github.fmcejudo.redlogs.client.loki.range.QueryRangeClient;
 import com.github.fmcejudo.redlogs.config.RedLogLokiConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.web.reactive.function.client.ExchangeStrategies;
@@ -26,6 +28,8 @@ import java.util.function.Consumer;
 import static org.apache.logging.log4j.util.Base64Util.encode;
 
 class LokiCardProcessor implements CardProcessor {
+
+    private static final Logger log = LoggerFactory.getLogger(LokiCardProcessor.class);
 
     private final LokiClientFactory lokiClientFactory;
 
@@ -63,6 +67,7 @@ class LokiCardProcessor implements CardProcessor {
             CardQueryResponse cardQueryResponse = composeResult(processorContext, lokiResponse);
             onNext.accept(cardQueryResponse);
         } catch (Exception e) {
+            log.error("Error querying loki {}", e.getMessage());
             onError.accept(new RuntimeException("Error querying to loki: " + processorContext.id(), e));
         }
     }
@@ -76,7 +81,7 @@ class LokiCardProcessor implements CardProcessor {
         String executionId = processorContext.executionId();
 
         if (lokiResponse == null) {
-            System.err.println("loki response is null");
+           log.error("loki response is null");
             return CardQueryResponse.failure(
                     applicationName, reportDate, id, executionId, description, "No report response found"
             );
@@ -85,7 +90,7 @@ class LokiCardProcessor implements CardProcessor {
         if (lokiResponse.isSuccess()) {
             return buildCardReportEntries(processorContext, lokiResponse, reportDate);
         }
-        System.err.println("loki response has failed");
+        log.error("loki response has failed");
         return CardQueryResponse.failure(
                 applicationName, reportDate, id, executionId, description, "query ended up being failed"
         );

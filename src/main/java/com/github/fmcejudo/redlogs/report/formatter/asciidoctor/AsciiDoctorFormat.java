@@ -9,8 +9,6 @@ import org.asciidoctor.Options;
 import org.asciidoctor.Placement;
 import org.asciidoctor.SafeMode;
 
-import java.util.List;
-
 
 public class AsciiDoctorFormat implements DocumentFormat {
 
@@ -21,8 +19,8 @@ public class AsciiDoctorFormat implements DocumentFormat {
     }
 
     @Override
-    public String get(final List<Report> reports) {
-        String content = asciiDoctorContent.content(reports);
+    public String get(final Report report) {
+        String content = asciiDoctorContent.content(report);
         try (var asciidoctor = Asciidoctor.Factory.create()) {
 
             AttributesBuilder attributesBuilder = Attributes.builder()
