@@ -33,6 +33,39 @@ NOTE: The above example is a simple way to indicate the application is generatin
 
 Reports can be triggered for the current date or another date for which logs are available. The execution populates a MongoDB collection with extracted items. Users can then request reports to see how their application behaved based on team observations, without needing to gather individual queries.
 
+These templates can be parameterized to be reused based for same application name with multiple use cases, in example for
+the environment or host where the this application to be observed.
+
+[source,yaml]
+----
+common_query: '{app="my-app", host="<host>"}'
+parameters: ['host']
+range: 24h
+
+queries:
+- id: my-report-id
+  description: My Report Id
+  type: SUMMARY
+  query: |
+    sum by (host) ( count_over_time(
+       <common_query>
+       | json | line_format '{{.message}}' [<range>]
+    ))
+
+----
+
+So, in the previous template, request to generate reports requires `host` param to be replaced in `<host>`, and a default configured `range` has been declared to be used in our query. This leads us to execute our template to observe particular hosts.
+
+As an example, if `host` takes value `localhost`, the executed query in runtime will be like:
+
+[source,text]
+----
+sum by (host) ( count_over_time(
+       {app="my-app", host="localhost"}
+       | json | line_format '{{.message}}' [24h]
+))
+----
+
 == Configuration
 
 === Dependency
@@ -66,7 +99,9 @@ RedLog offers several properties for customization:
 | `redlog.loki.dashboard-url` | URL to a `Grafana` dashboard showing the executed query. | `http://localhost:3000`
 | `redlog.loki.datasource-name` | Datasource name configured in Grafana. | `default`
 | `redlog.mongo.collection-name-prefix` | Prefix for MongoDB collection names. | Empty prefix
+| `redlog.card.controller-path` | Context path for the `Card` controller. | `card-runner` (resulting in `/card-runner/**` endpoints)
 | `redlog.report.controller-path` | Context path for the `Report` controller. | `report` (resulting in `/report/**` endpoints)
+| `redlog.execution.controller-path` | Context path for the `Execution` controller. | `report` (resulting in `/execution/**` endpoints)
 |===
 
 === Configuration Examples
@@ -98,14 +133,93 @@ redlog.loki.datasourceName=default
 
 == Generating Report Document
 
-The starter provides endpoints to execute cards and generate `AsciiDoctor` documents from gathered information. The default path for these endpoints is `/report`.
+The starter provides an endpoint to trigger templates based on an application name, this is the `card` controller, and it
+receives as parameters those used in our defined template
 
-* `/report/trigger/<CARD_ID>`: Executes the card and populates the database.
-* `/report/<CARD_ID>`: Reads from the database and generates the document.
+[source,shell]
+----
+http :8080/card-runner/<file_name> host=localhost
+----
 
-Both endpoints accept a `date` query parameter to specify the date for which the report should be generated.
+As a result of the task executed in our plugin, it will populate two collections in the previously configured mongo
+database: `Executions` and `Reports`
+
+- In `Executions` data defines the application name, parameters and date for which the reports are executed. With a `execution-id` which is pointing to in the `Reports` collection.
+
+- In `Report` collection we can find estate of our execution for each defined entry in our template, with the reference
+to `execution-id` to track what information was used to get this information.
+
+== Execution Information
+
+Another controller provided is `execution` in which we can find the list of executions by application name. To list the
+execution we generated for the application we can use:
+
+[source,text]
+----
+http :8080/execution/list/<file>
+----
+
+This will resolve the stored executions of our application, showing the parameters and date for which that occurred, and
+also a couple of links which will point to the report entries details of such execution.
+
+[source,json]
+----
+[
+  {
+    "application": "<FILE>",
+    "executionId": "d6dcccf8-e551-4561-bf64-afd8c9c83589",
+    "parameters": {},
+    "reportDate": "date",
+    "links": [
+        {
+        "rel": "json",
+        "href": "http://localhost:8080/report/execution/d6dcccf8-e551-4561-bf64-afd8c9c83589/json"
+        },
+        {
+        "rel": "doc",
+        "href": "http://localhost:8080/report/execution/d6dcccf8-e551-4561-bf64-afd8c9c83589/doc"
+        }
+    ]
+  }
+]
+----
+
+== Report Controller
+
+Finally `report` controller is used to obtain the details of the execution, listing the report entries information gather
+in the identified execution.
+
+Thanks to `hateoas` we provide the links to these endpoints built from the execution, what make it easy to navigate to
+without composing yourself.
+
+[source,json]
+----
+{
+    "applicationName": "<FILE>",
+    "reportDate": "date",
+    "params": {
+       "host" : "localhost"
+    },
+    "sections": [
+      {
+        "executionId": "d6dcccf8-e551-4561-bf64-afd8c9c83589",
+        "reportId": "report-id",
+        "description": "Report Id",
+        "link": "http://link.to.loki",
+        "items": [
+            ...
+        ]
+      }
+    ]
+}
+----
 
 == Document Structure
+
+To pretty print information to be readable for users, we implemented a way to generate an `AsciiDoctor` document from
+the report items.
+
+The link to read such document is the `rel = doc` in the list of links shown in `execution`.
 
 The generated document is a custom document implemented by the team using the `AsciiDoctorContent` interface.
 
@@ -115,7 +229,7 @@ The generated document is a custom document implemented by the team using the `A
 ----
 @FunctionalInterface
 public interface AsciiDoctorContent {
-    String content(final List<Report> reports);
+    String content(final Report report);
 }
 ----
 
@@ -123,20 +237,17 @@ public interface AsciiDoctorContent {
 
 [source,java]
 ----
-public record Report(String reportId,
-                     @Field("date") LocalDate lastUpdated,
-                     String link,
-                     String description,
-                     @Field("items") List<ReportItem> items,
-                     @Field("previousItem") List<ReportItem> previousItems) {
+public record Report(String applicationName, LocalDate reportDate,
+                     Map<String,String> params, List<ReportSection> sections) {
 }
 ----
 
-=== ReportItem Model
+=== ReportSection Model
 
 [source,java]
 ----
-public record ReportItem(Map<String, String> labels, long count) {
+public record ReportSection(String id, String executionId, String reportId, String description, String link,
+                            List<ReportItem> items) {
 }
 ----
 
@@ -145,13 +256,19 @@ public record ReportItem(Map<String, String> labels, long count) {
 [source,java]
 ----
 class CustomAsciiDoctorContent implements AsciiDoctorContent {
+
     @Override
-    public String content(final List<Report> reports) {
-        return reports.stream().map(this::contentSingleReport).collect(Collectors.joining("\n\n"));
+    public String content(final Report report) {
+        return ContainerComponent.create()
+                .addComponent(DocumentTitle.level(2).withText(report.applicationName().toUpperCase()))
+                .addComponent(generateSection(report))
+                .content();
     }
 
-    private String contentSingleReport(final Report report) {
-        return "== " + report.description() + "\n" + report.items().size() + " elements";
+    private AsciiComponent generateSection(final Report report) {
+
+        // your section implementation
+        return sectionContainer;
     }
 }
 ----

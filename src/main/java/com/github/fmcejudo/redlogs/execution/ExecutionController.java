@@ -18,7 +18,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/execution")
+@RequestMapping("/${redlog.execution.controller-path:execution}")
 class ExecutionController {
 
     private final ExecutionService executionService;
