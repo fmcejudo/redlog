@@ -2,15 +2,13 @@ package com.github.fmcejudo.redlogs.card.loader;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.converter.CardConverter;
-import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
+import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.LocalDate;
-import java.util.List;
 import java.util.Map;
 
 class GithubCardLoader implements CardLoader {
@@ -28,15 +26,12 @@ class GithubCardLoader implements CardLoader {
     }
 
     @Override
-    public List<CardQueryRequest> load(final CardContext cardContext) {
+    public CardRequest load(final CardContext cardContext) {
 
         String application = cardContext.applicationName();
-        LocalDate reportDate = cardContext.reportDate();
         try {
             String content = githubClient.download(repoUrl(application) + application + ".yaml");
-            return cardConverter.convert(content, cardContext).stream()
-                    .map(cq -> cq.withReportDate(reportDate))
-                    .toList();
+            return cardConverter.convert(content, cardContext);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

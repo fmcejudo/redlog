@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.report;
 
+import com.github.fmcejudo.redlogs.report.domain.Report;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -9,15 +10,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
-import org.springframework.util.LinkedMultiValueMap;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import static java.time.LocalDate.now;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @WebFluxTest(controllers = ReportController.class)
 @ContextConfiguration(classes = {
@@ -25,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 })
 class ReportControllerTest {
 
-    private static final String CONTROLLER_PATH = "/report/";
+    private static final String CONTROLLER_PATH = "/report/execution/";
 
     @MockBean
     ReportServiceProxy reportServiceProxy;
@@ -37,32 +35,46 @@ class ReportControllerTest {
     @Test
     void shouldCallReport() {
         //Given
+        final String executionId = "id";
+
         Mockito.doAnswer(a -> {
-
-            ReportContext reportContext = a.getArgument(0);
-            String applicationName = reportContext.applicationName();
-            LocalDate reportDate = reportContext.reportDate();
-
-            Assertions.assertThat(applicationName).isEqualTo("TEST");
-            Assertions.assertThat(reportDate).isEqualTo(now().format(ISO_LOCAL_DATE));
-
+            String id = a.getArgument(0);
+            Assertions.assertThat(id).isEqualTo(executionId);
             return null;
-        }).when(reportServiceProxy).content(any(ReportContext.class));
+        }).when(reportServiceProxy).content(anyString());
 
         //When
         var response = webTestClient.get()
-                .uri(uri -> uri.path(CONTROLLER_PATH.concat("{applicationName}"))
-                        .queryParams(new LinkedMultiValueMap<>(Map.of(
-                                "date", List.of(now().format(ISO_LOCAL_DATE)),
-                                "environment", List.of("des")
-                        )))
-                        .build("TEST"))
+                .uri(uri -> uri.path(CONTROLLER_PATH.concat("{id}/doc")).build(executionId))
                 .accept(MediaType.APPLICATION_JSON).exchange();
 
         //Then
         response.expectStatus().isOk();
 
-        Mockito.verify(reportServiceProxy, Mockito.times(1)).content(any(ReportContext.class));
+        Mockito.verify(reportServiceProxy, Mockito.times(1)).content(anyString());
+    }
+
+    @Test
+    void shouldCallReportAsJson() {
+        //Given
+        final String executionId = "id";
+
+        Mockito.doAnswer(a -> {
+            String id = a.getArgument(0);
+            Assertions.assertThat(id).isEqualTo(executionId);
+            return new Report("app", LocalDate.now(), Map.of(), List.of());
+        }).when(reportServiceProxy).getJson(anyString());
+
+
+        //When
+        var response = webTestClient.get()
+                .uri(uri -> uri.path(CONTROLLER_PATH.concat("{id}/json")).build(executionId))
+                .accept(MediaType.APPLICATION_JSON).exchange();
+
+        //Then
+        response.expectStatus().isOk();
+
+        Mockito.verify(reportServiceProxy, Mockito.times(1)).getJson(anyString());
     }
 
 }

@@ -61,10 +61,22 @@
       "defaultValue": ""
     },
     {
+      "name": "redlog.card.controller-path",
+      "type": "string",
+      "description": "define the path for card runner endpoints",
+      "defaultValue": "card-runner"
+    },
+    {
       "name": "redlog.report.controller-path",
       "type": "string",
-      "description": "define the prefix for collection used by red-log",
-      "defaultValue": "/report"
+      "description": "define the path for report endpoints",
+      "defaultValue": "report"
+    },
+    {
+      "name": "redlog.execution.controller-path",
+      "type": "string",
+      "description": "define the path for execution endpoints",
+      "defaultValue": "execution"
     }
   ]
 }

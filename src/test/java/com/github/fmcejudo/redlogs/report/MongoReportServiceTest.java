@@ -1,7 +1,10 @@
 package com.github.fmcejudo.redlogs.report;
 
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
+import com.github.fmcejudo.redlogs.execution.domain.Execution;
 import com.github.fmcejudo.redlogs.report.domain.Report;
+import com.github.fmcejudo.redlogs.report.domain.ReportItem;
+import com.github.fmcejudo.redlogs.report.domain.ReportSection;
 import com.github.fmcejudo.redlogs.util.MongoNamingUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -53,42 +56,37 @@ class MongoReportServiceTest {
     @Test
     void shouldComposeAReport() {
         //Given
+        final String executionId = "id";
         String executionsCollectionName = MongoNamingUtils.composeCollectionName("test", "executions");
-        Map<String, Object> execution = new HashMap<>(Map.of(
-                "_id", "executionId",
-                "applicationName", "app",
-                "parameters", new HashMap<>(),
-                "reportDate", LocalDate.now()
-        ));
+        Execution execution = new Execution(executionId, "app", Map.of(), LocalDate.now());
         mongoTemplate.save(execution, executionsCollectionName);
 
         String reportsCollectionName = MongoNamingUtils.composeCollectionName("test", "reports");
 
-        Map<String, Object> reportObject = new HashMap<>(Map.of(
-                "_id", "section-id",
-                "reportId", "section-id",
-                "executionId", "executionId",
-                "description", "sectionId",
-                "link", "http://grafana.link",
-                "items", List.of(Map.of("labels", Map.of("environment", "pre"), "count", 10))
-        ));
-        mongoTemplate.save(reportObject, reportsCollectionName);
+        ReportSection reportSection = new ReportSection(
+                executionId,
+                "section-id",
+                "sectionId",
+                "http://grafana.link",
+                List.of(new ReportItem(Map.of("environment", "pre"), 10))
+        );
+        mongoTemplate.save(reportSection, reportsCollectionName);
 
         //When
-        List<Report> report = reportService.findReports(new ReportContext("app", Map.of()));
+        Report report = reportService.findReport(executionId);
 
         //Then
-        Assertions.assertThat(report).isNotEmpty().first().satisfies(r  -> {
-            Assertions.assertThat(r.applicationName()).isEqualTo("app");
-            Assertions.assertThat(r.reportDate()).isEqualTo(LocalDate.now());
-            Assertions.assertThat(r.sections()).hasSize(1).first().satisfies(rs -> {
-                Assertions.assertThat(rs.reportId()).isEqualTo("section-id");
-                Assertions.assertThat(rs.description()).isEqualTo("sectionId");
-                Assertions.assertThat(rs.items()).hasSize(1).first().satisfies(ri -> {
-                    Assertions.assertThat(ri.labels()).containsEntry("environment", "pre");
-                    Assertions.assertThat(ri.count()).isEqualTo(10L);
-                });
+
+        Assertions.assertThat(report.applicationName()).isEqualTo("app");
+        Assertions.assertThat(report.reportDate()).isEqualTo(LocalDate.now());
+        Assertions.assertThat(report.sections()).hasSize(1).first().satisfies(rs -> {
+            Assertions.assertThat(rs.reportId()).isEqualTo("section-id");
+            Assertions.assertThat(rs.description()).isEqualTo("sectionId");
+            Assertions.assertThat(rs.items()).hasSize(1).first().satisfies(ri -> {
+                Assertions.assertThat(ri.labels()).containsEntry("environment", "pre");
+                Assertions.assertThat(ri.count()).isEqualTo(10L);
             });
         });
+
     }
 }

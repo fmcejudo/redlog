@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/${redlog.report.controller-path:card-runner}")
+@RequestMapping("/${redlog.card.controller-path:card-runner}")
 public class CardController {
 
     private final CardRunner cardRunner;

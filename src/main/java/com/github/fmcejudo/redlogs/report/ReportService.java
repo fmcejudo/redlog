@@ -1,6 +1,8 @@
 package com.github.fmcejudo.redlogs.report;
 
+import com.github.fmcejudo.redlogs.card.writer.CardReportAppender;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
+import com.github.fmcejudo.redlogs.execution.domain.Execution;
 import com.github.fmcejudo.redlogs.report.domain.Report;
 import com.github.fmcejudo.redlogs.report.domain.ReportSection;
 import com.github.fmcejudo.redlogs.util.MongoNamingUtils;
@@ -9,16 +11,15 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.time.LocalDate;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 public interface ReportService {
 
-    List<Report> findReports(ReportContext reportContext);
+    Report findReport(String executionId);
 }
 
-class MongoReportService implements ReportService {
+class MongoReportService implements ReportService, CardReportAppender {
 
     private final MongoTemplate mongoTemplate;
 
@@ -34,27 +35,20 @@ class MongoReportService implements ReportService {
     }
 
     @Override
-    public List<Report> findReports(ReportContext reportContext) {
-        List<ReportExecution> reportExecutions = findReportExecutions(reportContext);
-        return reportExecutions.stream().map(this::findReportFromExecution).toList();
+    public Report findReport(String executionId) {
+        Execution reportExecution = findExecution(executionId);
+        return findReport(reportExecution);
     }
 
-    private List<ReportExecution> findReportExecutions(ReportContext reportContext) {
-        Criteria criteria = Criteria.where("applicationName").is(reportContext.applicationName())
-                .and("reportDate").is(reportContext.reportDate());
-
-        for (Map.Entry<String, String> next : reportContext.parameters().entrySet()) {
-            criteria = criteria.and("parameters." + next.getKey()).is(next.getValue());
-        }
-        Query query = Query.query(criteria);
-        return mongoTemplate.find(query, ReportExecution.class, executionsCollectionName);
+    private Execution findExecution(String executionId) {
+        return mongoTemplate.findById(executionId, Execution.class, executionsCollectionName);
     }
-
-    private Report findReportFromExecution(final ReportExecution reportExecution) {
+    
+    private Report findReport(final Execution reportExecution) {
         String executionId = reportExecution.id();
         LocalDate reportDate = reportExecution.reportDate();
         Map<String, String> parameters = reportExecution.parameters();
-        String applicationName = reportExecution.applicationName();
+        String applicationName = reportExecution.application();
         List<ReportSection> reportSection = findReportSection(executionId);
         return new Report(applicationName, reportDate, parameters, reportSection);
     }
@@ -64,9 +58,9 @@ class MongoReportService implements ReportService {
         return mongoTemplate.find(query, ReportSection.class, reportsCollectionName);
     }
 
-    record ReportExecution(String id, String applicationName, Map<String, String> parameters, LocalDate reportDate) {
-
+    @Override
+    public void add(ReportSection reportSection) {
+        mongoTemplate.save(reportSection, reportsCollectionName);
     }
-
 
 }

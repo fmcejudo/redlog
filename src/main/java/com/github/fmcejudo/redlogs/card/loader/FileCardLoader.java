@@ -3,15 +3,13 @@ package com.github.fmcejudo.redlogs.card.loader;
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
-import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
+import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.time.LocalDate;
-import java.util.List;
 
 public class FileCardLoader implements CardLoader {
 
@@ -25,16 +23,13 @@ public class FileCardLoader implements CardLoader {
     }
 
     @Override
-    public List<CardQueryRequest> load(final CardContext cardContext) {
+    public CardRequest load(final CardContext cardContext) {
 
         String application = cardContext.applicationName();
-        LocalDate reportDate = cardContext.reportDate();
         try {
             File file = resource.createRelative(application.toUpperCase() + ".yaml").getFile();
             String content = new String(Files.readAllBytes(file.toPath()));
-            return cardConverter.convert(content, cardContext).stream()
-                    .map(s -> s.withReportDate(reportDate))
-                    .toList();
+            return cardConverter.convert(content, cardContext);
         } catch (Exception e) {
             throw new CardExecutionException(e.getMessage());
         }

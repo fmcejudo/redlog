@@ -9,8 +9,6 @@ import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.concurrent.TimeUnit;
 
 import static java.time.ZoneOffset.UTC;
@@ -23,13 +21,13 @@ public final class QueryInstantClient implements LokiClient {
     public QueryInstantClient(final WebClient.Builder webClientBuilder) {
         WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
         HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+
         this.queryInstantClient = factory.createClient(HttpQueryInstantClient.class);
     }
 
     @Override
     public LokiResponse query(final LokiRequest lokiRequest) {
-        long epochMilli =
-                LocalDateTime.of(lokiRequest.reportDate(), LocalTime.of(7, 0, 0)).toInstant(UTC).toEpochMilli();
+        long epochMilli = lokiRequest.endTime().toInstant(UTC).toEpochMilli();
         long time = TimeUnit.MILLISECONDS.toNanos(epochMilli);
         return queryInstantClient.queryService(lokiRequest.query(), time);
     }
