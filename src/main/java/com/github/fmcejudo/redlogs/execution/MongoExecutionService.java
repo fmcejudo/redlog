@@ -39,6 +39,6 @@ final class MongoExecutionService implements ExecutionService, CardExecutionAppe
 
     @Override
     public void add(Execution execution) {
-        mongoTemplate.save(execution);
+        mongoTemplate.save(execution, collectionName);
     }
 }
