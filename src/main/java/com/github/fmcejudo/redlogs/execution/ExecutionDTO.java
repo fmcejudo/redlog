@@ -16,20 +16,21 @@ class ExecutionDTO  {
     private final List<Link> links;
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public ExecutionDTO(String application, String executionId, Map<String, String> parameters, LocalDate reportDate) {
+    public ExecutionDTO(String application, String executionId, Map<String, String> parameters,
+                        LocalDate reportDate, String urlBase) {
         this.application = application;
         this.executionId = executionId;
         this.parameters = parameters;
         this.reportDate = reportDate;
         this.links = List.of(
-            new Link("json", "http://localhost:8080/report/execution/"+executionId+"/json"),
-            new Link("doc", "http://localhost:8080/report/execution/"+executionId+"/doc")
+            new Link("json", urlBase + "/report/execution/"+executionId+"/json"),
+            new Link("doc", urlBase + "/report/execution/"+executionId+"/doc")
         );
     }
 
-    public static ExecutionDTO from(final Execution execution) {
+    public static ExecutionDTO from(final Execution execution, String urlBase) {
         return new ExecutionDTO(
-                execution.application(), execution.id(), execution.parameters(), execution.reportDate()
+                execution.application(), execution.id(), execution.parameters(), execution.reportDate(), urlBase
         );
     }
 
@@ -49,8 +50,10 @@ class ExecutionDTO  {
         return reportDate;
     }
 
+    public List<Link> getLinks() {
+        return links;
+    }
+
     public record Link(String rel, String href) {
-
-
     }
 }
