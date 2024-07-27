@@ -40,13 +40,23 @@ class ExecutionController {
     }
 
     private String getUrlToLink(ServerHttpRequest request) {
-        String contextPath = request.getPath().contextPath().value();
+
         URI uri = request.getURI();
         String urlBase = "%s://%s:%d".formatted(uri.getScheme(), uri.getHost(), uri.getPort());
+        String contextPath = extractContextPath(request);
         if (StringUtils.isNotBlank(contextPath)) {
             return String.join("/", urlBase, contextPath);
         }
         return urlBase;
+    }
+
+    private String extractContextPath(final ServerHttpRequest request) {
+        
+        String contextPath = request.getPath().contextPath().value();
+        if (contextPath.startsWith("/")) {
+            return contextPath.substring(1);
+        }
+        return contextPath;
     }
 
 }
