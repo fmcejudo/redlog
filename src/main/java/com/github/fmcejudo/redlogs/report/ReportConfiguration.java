@@ -49,9 +49,9 @@ public class ReportConfiguration {
     }
 
     @Bean
-    ReportServiceProxy reportServiceProxy(final ReportService reportService,
-                                          final DocumentFormat documentFormat) {
-        return new ReportServiceProxy(reportService, documentFormat);
+    ReportReaderService reportServiceProxy(final ReportService reportService,
+                                           final DocumentFormat documentFormat) {
+        return new ReportReaderService(reportService, documentFormat);
     }
 
     @Bean
@@ -70,7 +70,7 @@ public class ReportConfiguration {
     }
 
     @Bean
-    ReportController reportController(ReportServiceProxy reportServiceProxy) {
+    ReportController reportController(ReportReaderService reportServiceProxy) {
         return new ReportController(reportServiceProxy);
     }
 

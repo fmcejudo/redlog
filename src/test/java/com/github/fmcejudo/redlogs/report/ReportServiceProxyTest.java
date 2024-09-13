@@ -25,7 +25,7 @@ import org.testcontainers.utility.DockerImageName;
 @EnableConfigurationProperties(value = RedLogMongoProperties.class)
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-        ReportServiceProxy.class,
+        ReportReaderService.class,
         MongoReportService.class
 })
 @Testcontainers(disabledWithoutDocker = true)
@@ -37,7 +37,7 @@ class ReportServiceProxyTest {
     private static final String COLLECTION_NAME = "testExecutions";
 
     @Autowired
-    ReportServiceProxy reportServiceProxy;
+    ReportReaderService reportServiceProxy;
 
     @Autowired
     MongoTemplate mongoTemplate;

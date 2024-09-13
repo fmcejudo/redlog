@@ -26,7 +26,7 @@ class ReportControllerTest {
     private static final String CONTROLLER_PATH = "/report/execution/";
 
     @MockBean
-    ReportServiceProxy reportServiceProxy;
+    ReportReaderService reportServiceProxy;
 
     @Autowired
     WebTestClient webTestClient;
@@ -41,7 +41,7 @@ class ReportControllerTest {
             String id = a.getArgument(0);
             Assertions.assertThat(id).isEqualTo(executionId);
             return null;
-        }).when(reportServiceProxy).content(anyString());
+        }).when(reportServiceProxy).asBinaryPDF(anyString());
 
         //When
         var response = webTestClient.get()
@@ -51,7 +51,7 @@ class ReportControllerTest {
         //Then
         response.expectStatus().isOk();
 
-        Mockito.verify(reportServiceProxy, Mockito.times(1)).content(anyString());
+        Mockito.verify(reportServiceProxy, Mockito.times(1)).asBinaryPDF(anyString());
     }
 
     @Test
@@ -63,7 +63,7 @@ class ReportControllerTest {
             String id = a.getArgument(0);
             Assertions.assertThat(id).isEqualTo(executionId);
             return new Report("app", LocalDate.now(), Map.of(), List.of());
-        }).when(reportServiceProxy).getJson(anyString());
+        }).when(reportServiceProxy).asReport(anyString());
 
 
         //When
@@ -74,7 +74,7 @@ class ReportControllerTest {
         //Then
         response.expectStatus().isOk();
 
-        Mockito.verify(reportServiceProxy, Mockito.times(1)).getJson(anyString());
+        Mockito.verify(reportServiceProxy, Mockito.times(1)).asReport(anyString());
     }
 
 }

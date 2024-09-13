@@ -11,20 +11,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/${redlog.report.controller-path:report}")
 public class ReportController {
 
-    private final ReportServiceProxy reportServiceProxy;
+    private final ReportReaderService reportReaderService;
 
-    ReportController(final ReportServiceProxy reportServiceProxy) {
-        this.reportServiceProxy = reportServiceProxy;
+    ReportController(final ReportReaderService reportReaderService) {
+        this.reportReaderService = reportReaderService;
     }
 
     @GetMapping(value = "/execution/{executionId}/doc")
     public ResponseEntity<String> getAdocReport(@PathVariable String executionId) {
-        return ResponseEntity.ok(reportServiceProxy.content(executionId));
+        return ResponseEntity.ok(reportReaderService.asBinaryPDF(executionId));
     }
 
     @GetMapping("/execution/{executionId}/json")
     public ResponseEntity<Report> getJsonReport(@PathVariable String executionId) {
-        return ResponseEntity.ok(reportServiceProxy.getJson(executionId));
+        return ResponseEntity.ok(reportReaderService.asReport(executionId));
     }
 
 }
