@@ -41,9 +41,9 @@ class RangeValidator implements CardValidator {
 
     private CardValidation validateTimeRange(final String range) {
         if (range.endsWith("m")) {
-            return validateAmountOfTime(range, t -> t > 0 && t < 60 * THREE_DAYS);
+            return validateAmountOfTime(range, t -> t > 0 && t <= 60 * THREE_DAYS);
         } else if (range.endsWith("h")) {
-            return validateAmountOfTime(range, t -> t > 0 && t < THREE_DAYS);
+            return validateAmountOfTime(range, t -> t > 0 && t <= THREE_DAYS);
         }
         return CardValidation.invalid("valid units for range are 'm' (minutes) or 'h' (hours)");
     }
