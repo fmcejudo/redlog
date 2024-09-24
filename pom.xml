@@ -8,7 +8,7 @@
         <version>3.3.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.github.fmcejudo</groupId>
+    <groupId>io.github.fmcejudo.redlogs</groupId>
     <artifactId>red-log</artifactId>
     <version>0.0.4-SNAPSHOT</version>
     <name>red-logs</name>
