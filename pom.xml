@@ -9,7 +9,7 @@
     </parent>
     <groupId>io.github.fmcejudo.redlogs</groupId>
     <artifactId>red-log</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
     <name>red-logs</name>
     <description>Demo project for Spring Boot</description>
 
@@ -18,7 +18,7 @@
         <connection>scm:git@github.com:fmcejudo/redlog.git</connection>
         <developerConnection>scm:git:git@github.com:fmcejudo/redlog.git</developerConnection>
         <url>https://github.com/fmcejudo/redlog</url>
-        <tag>red-log-0.0.4</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <properties>
