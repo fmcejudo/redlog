@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import static java.time.LocalDateTime.now;
+
 public interface CardResponseWriter {
 
     void writeExecution(CardRequest cardRequest);
@@ -105,20 +107,20 @@ interface ReportSectionBuilder {
 
     static ReportSectionBuilder fromExecutionIdAndReportId(final String executionId, final String reportId) {
         String id = String.join(".", reportId, executionId);
-        return () -> new ReportSection(id, executionId, reportId, null, null, List.of());
+        return () -> new ReportSection(id, executionId, reportId, null, null, List.of(), now());
     }
 
     default ReportSectionBuilder withDescription(final String description) {
         return () -> {
             ReportSection r = this.build();
-            return new ReportSection(r.id(), r.executionId(), r.reportId(), description, r.link(), r.items());
+            return new ReportSection(r.id(), r.executionId(), r.reportId(), description, r.link(), r.items(), now());
         };
     }
 
     default ReportSectionBuilder withLink(final String link) {
         return () -> {
             ReportSection r = this.build();
-            return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), link, r.items());
+            return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), link, r.items(), now());
         };
     }
 
@@ -126,7 +128,7 @@ interface ReportSectionBuilder {
         return () -> {
             ReportSection r = this.build();
             var reportItems = items.stream().map(cqr -> new ReportItem(cqr.labels(), cqr.count())).toList();
-            return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), r.link(), reportItems);
+            return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), r.link(), reportItems, now());
         };
     }
 }

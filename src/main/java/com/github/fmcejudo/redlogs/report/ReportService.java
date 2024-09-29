@@ -45,6 +45,9 @@ class MongoReportService implements ReportService, CardReportAppender {
     }
     
     private Report findReport(final Execution reportExecution) {
+        if (reportExecution == null) {
+            return null;
+        }
         String executionId = reportExecution.id();
         LocalDate reportDate = reportExecution.reportDate();
         Map<String, String> parameters = reportExecution.parameters();
