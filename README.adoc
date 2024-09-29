@@ -77,9 +77,10 @@ To include this starter in a Spring application, add the following dependency to
 <dependency>
     <groupId>com.github.fmcejudo.redlogs</groupId>
     <artifactId>red-log</artifactId>
-    <version>0.0.4-SNAPSHOT</version>
+    <version>0.0.4</version>
 </dependency>
 ----
+
 
 === Properties
 
