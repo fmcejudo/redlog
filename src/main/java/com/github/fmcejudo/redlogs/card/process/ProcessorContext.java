@@ -17,10 +17,6 @@ record ProcessorContext(CardRequest cardRequest, CardQueryRequest cardQueryReque
         return cardRequest.executionId();
     }
 
-    CardType type() {
-        return cardQueryRequest.cardType();
-    }
-
     String id() {
         return cardQueryRequest.id();
     }

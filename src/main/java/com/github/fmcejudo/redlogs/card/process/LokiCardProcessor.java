@@ -1,9 +1,11 @@
 package com.github.fmcejudo.redlogs.card.process;
 
+import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponse;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponseEntry;
 import com.github.fmcejudo.redlogs.card.model.CardRequest;
-import com.github.fmcejudo.redlogs.card.model.CardType;
+import com.github.fmcejudo.redlogs.card.model.CounterCardQueryRequest;
+import com.github.fmcejudo.redlogs.card.model.SummaryCardQueryRequest;
 import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import com.github.fmcejudo.redlogs.client.loki.LokiClient;
 import com.github.fmcejudo.redlogs.client.loki.LokiRequest;
@@ -59,7 +61,7 @@ class LokiCardProcessor implements CardProcessor {
     private void processCardQueryRequest(ProcessorContext processorContext,
                                          Consumer<CardQueryResponse> onNext,
                                          Consumer<Throwable> onError) {
-        LokiClient lokiClient = lokiClientFactory.get(processorContext.type());
+        LokiClient lokiClient = lokiClientFactory.get(processorContext.cardQueryRequest());
         try {
             LokiRequest lokiRequest =
                     new LokiRequest(processorContext.query(), processorContext.start(), processorContext.end());
@@ -120,13 +122,18 @@ class LokiCardProcessor implements CardProcessor {
 @FunctionalInterface
 interface LokiClientFactory {
 
-    public abstract LokiClient get(final CardType cardType);
+    public abstract LokiClient get(final CardQueryRequest cardQueryRequest);
 
     static LokiClientFactory createInstance(final RedLogLokiConfig redLogLokiConfig) {
         WebClient.Builder webClientBuilder = createWebClient(redLogLokiConfig);
-        return (cardType) -> switch (cardType) {
-            case SUMMARY -> new QueryRangeClient(webClientBuilder);
-            case COUNT -> new QueryInstantClient(webClientBuilder);
+
+        return (cardQueryRequest) -> {
+            if (cardQueryRequest instanceof CounterCardQueryRequest) {
+                return new QueryInstantClient(webClientBuilder);
+            } else if (cardQueryRequest instanceof SummaryCardQueryRequest) {
+                return new QueryRangeClient(webClientBuilder);
+            }
+            throw new RuntimeException("Unknown card query request");
         };
     }
 

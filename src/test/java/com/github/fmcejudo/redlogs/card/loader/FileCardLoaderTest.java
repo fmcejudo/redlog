@@ -3,7 +3,8 @@ package com.github.fmcejudo.redlogs.card.loader;
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.converter.CardConverterConfiguration;
 import com.github.fmcejudo.redlogs.card.model.CardRequest;
-import com.github.fmcejudo.redlogs.card.model.CardType;
+import com.github.fmcejudo.redlogs.card.model.CounterCardQueryRequest;
+import com.github.fmcejudo.redlogs.card.model.SummaryCardQueryRequest;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -36,7 +37,6 @@ class FileCardLoaderTest {
     @Autowired
     CardLoader cardLoader;
 
-
     @Test
     void shouldLoadAValidCard() {
         //Given
@@ -55,7 +55,7 @@ class FileCardLoaderTest {
         Assertions.assertThat(cardRequest.cardQueryRequests()).hasSize(2);
         Assertions.assertThat(cardRequest.cardQueryRequests()).filteredOn(cq -> cq.id().equals("coffee")).first()
                 .satisfies(cqr -> {
-                    Assertions.assertThat(cqr.cardType()).isEqualTo(CardType.COUNT);
+                    Assertions.assertThat(cqr).isInstanceOf(CounterCardQueryRequest.class);
                     Assertions.assertThat(cqr.executionId()).isNull();
                     Assertions.assertThat(cqr.query())
                             .contains("{app=\"redlog-sample\", environment=\"local\", host=\"localhost\"}")
@@ -64,7 +64,7 @@ class FileCardLoaderTest {
 
         Assertions.assertThat(cardRequest.cardQueryRequests()).filteredOn(cq -> cq.id().equals("chocolate")).first()
                 .satisfies(cqr -> {
-                    Assertions.assertThat(cqr.cardType()).isEqualTo(CardType.SUMMARY);
+                    Assertions.assertThat(cqr).isInstanceOf(SummaryCardQueryRequest.class);
                     Assertions.assertThat(cqr.query())
                             .contains("{app=\"redlog-sample\", environment=\"local\", host=\"localhost\"}")
                             .contains("|~ `likes chocolate`");

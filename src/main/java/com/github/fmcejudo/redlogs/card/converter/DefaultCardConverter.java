@@ -63,7 +63,12 @@ final class DefaultCardConverter implements CardConverter {
             final CardFile cardFile, final CardContext cardContext) {
 
         UnaryOperator<String> queryReplaceFn = buildResolvedQuery(cardFile, cardContext);
-        return q -> new CardQueryRequest(q.id(), q.description(), q.type(), queryReplaceFn.apply(q.query()));
+
+        return q -> {
+            CardQueryRequest.CardQueryContext context =
+                    new CardQueryRequest.CardQueryContext(q.id(), q.description(), queryReplaceFn.apply(q.query()));
+            return CardQueryRequest.getInstance(q.type(), context);
+        };
     }
 
     private UnaryOperator<String> buildResolvedQuery(final CardFile cardFile, final CardContext cardContext) {
