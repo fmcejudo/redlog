@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.card.converter;
+package com.github.fmcejudo.redlogs.card.loader;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;

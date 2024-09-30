@@ -24,9 +24,10 @@ public class QueryRangeClient implements LokiClient {
 
     @Override
     public LokiResponse query(LokiRequest lokiRequest) {
+        String query = lokiRequest.getQuery();
         long start = TimeUnit.MILLISECONDS.toNanos(lokiRequest.startTime().toInstant(ZoneOffset.UTC).toEpochMilli());
         long end = TimeUnit.MILLISECONDS.toNanos(lokiRequest.endTime().toInstant(ZoneOffset.UTC).toEpochMilli());
-        return queryRangeClient.queryService(lokiRequest.query(), 1000, start, end, "1m");
+        return queryRangeClient.queryService(query, 1000, start, end, "1m");
     }
 
     public interface HttpQueryRangeClient {

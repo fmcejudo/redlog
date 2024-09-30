@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.card.converter;
+package com.github.fmcejudo.redlogs.card.loader;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -7,6 +7,7 @@ import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.exception.CardException;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
+import com.github.fmcejudo.redlogs.card.model.CardQueryRequest.CardQueryContext;
 import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import org.apache.commons.text.StringSubstitutor;
 
@@ -16,6 +17,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
+
+import static java.util.Optional.ofNullable;
 
 final class DefaultCardConverter implements CardConverter {
 
@@ -65,8 +68,9 @@ final class DefaultCardConverter implements CardConverter {
         UnaryOperator<String> queryReplaceFn = buildResolvedQuery(cardFile, cardContext);
 
         return q -> {
-            CardQueryRequest.CardQueryContext context =
-                    new CardQueryRequest.CardQueryContext(q.id(), q.description(), queryReplaceFn.apply(q.query()));
+            CardQueryContext context = new CardQueryContext(
+                    q.id(), q.description(), queryReplaceFn.apply(q.query()), ofNullable(q.expectedAtLeast()).orElse(1)
+            );
             return CardQueryRequest.getInstance(q.type(), context);
         };
     }

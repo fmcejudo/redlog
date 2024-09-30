@@ -6,7 +6,6 @@ import com.github.fmcejudo.redlogs.card.model.CardQueryRequest.CardQueryContext;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponse;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponseEntry;
 import com.github.fmcejudo.redlogs.card.model.CardRequest;
-import com.github.fmcejudo.redlogs.card.model.CardType;
 import com.github.fmcejudo.redlogs.card.process.CardProcessor;
 import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import org.assertj.core.api.Assertions;

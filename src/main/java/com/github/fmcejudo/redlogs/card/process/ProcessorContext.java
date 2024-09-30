@@ -2,7 +2,6 @@ package com.github.fmcejudo.redlogs.card.process;
 
 import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.card.model.CardRequest;
-import com.github.fmcejudo.redlogs.card.model.CardType;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

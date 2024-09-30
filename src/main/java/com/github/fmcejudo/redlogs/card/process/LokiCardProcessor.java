@@ -6,6 +6,7 @@ import com.github.fmcejudo.redlogs.card.model.CardQueryResponseEntry;
 import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import com.github.fmcejudo.redlogs.card.model.CounterCardQueryRequest;
 import com.github.fmcejudo.redlogs.card.model.SummaryCardQueryRequest;
+import com.github.fmcejudo.redlogs.card.process.filter.ResponseEntryFilter;
 import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import com.github.fmcejudo.redlogs.client.loki.LokiClient;
 import com.github.fmcejudo.redlogs.client.loki.LokiRequest;
@@ -53,20 +54,24 @@ class LokiCardProcessor implements CardProcessor {
         //For each query request, process it
         cardRequest.cardQueryRequests().forEach(cqr -> {
             ProcessorContext processorContext = new ProcessorContext(cr, cqr);
-            processCardQueryRequest(processorContext, writer::onNext, writer::onError);
+            ResponseEntryFilter responseEntryFilter = ResponseEntryFilter.getInstance(cqr);
+            processCardQueryRequest(processorContext, responseEntryFilter, writer::onNext, writer::onError);
         });
         writer.onComplete();
     }
 
     private void processCardQueryRequest(ProcessorContext processorContext,
+                                         ResponseEntryFilter responseEntryFilter,
                                          Consumer<CardQueryResponse> onNext,
                                          Consumer<Throwable> onError) {
         LokiClient lokiClient = lokiClientFactory.get(processorContext.cardQueryRequest());
         try {
-            LokiRequest lokiRequest =
-                    new LokiRequest(processorContext.query(), processorContext.start(), processorContext.end());
+            LokiRequest lokiRequest = new LokiRequest(
+                    processorContext.cardQueryRequest(), processorContext.start(), processorContext.end()
+            );
+
             LokiResponse lokiResponse = lokiClient.query(lokiRequest);
-            CardQueryResponse cardQueryResponse = composeResult(processorContext, lokiResponse);
+            CardQueryResponse cardQueryResponse = composeResult(processorContext, responseEntryFilter, lokiResponse);
             onNext.accept(cardQueryResponse);
         } catch (Exception e) {
             log.error("Error querying loki {}", e.getMessage());
@@ -74,7 +79,9 @@ class LokiCardProcessor implements CardProcessor {
         }
     }
 
-    private CardQueryResponse composeResult(final ProcessorContext processorContext, final LokiResponse lokiResponse) {
+    private CardQueryResponse composeResult(final ProcessorContext processorContext,
+                                            final ResponseEntryFilter responseEntryFilter,
+                                            final LokiResponse lokiResponse) {
 
         String id = processorContext.id();
         String description = processorContext.description();
@@ -83,14 +90,14 @@ class LokiCardProcessor implements CardProcessor {
         String executionId = processorContext.executionId();
 
         if (lokiResponse == null) {
-           log.error("loki response is null");
+            log.error("loki response is null");
             return CardQueryResponse.failure(
                     applicationName, reportDate, id, executionId, description, "No report response found"
             );
         }
 
         if (lokiResponse.isSuccess()) {
-            return buildCardReportEntries(processorContext, lokiResponse, reportDate);
+            return buildCardReportEntries(processorContext, responseEntryFilter, lokiResponse, reportDate);
         }
         log.error("loki response has failed");
         return CardQueryResponse.failure(
@@ -99,6 +106,7 @@ class LokiCardProcessor implements CardProcessor {
     }
 
     private CardQueryResponse buildCardReportEntries(final ProcessorContext processorContext,
+                                                     final ResponseEntryFilter responseEntryFilter,
                                                      final LokiResponse lokiResponse,
                                                      final LocalDate reportDate) {
         String id = processorContext.id();
@@ -112,6 +120,7 @@ class LokiCardProcessor implements CardProcessor {
 
         List<CardQueryResponseEntry> entries = lokiResponse.result().stream()
                 .map(result -> new CardQueryResponseEntry(result.labels(), result.count()))
+                .filter(responseEntryFilter::filter)
                 .toList();
 
         return CardQueryResponse.success(applicationName, reportDate, id, executionId, description, link, entries);
@@ -126,7 +135,6 @@ interface LokiClientFactory {
 
     static LokiClientFactory createInstance(final RedLogLokiConfig redLogLokiConfig) {
         WebClient.Builder webClientBuilder = createWebClient(redLogLokiConfig);
-
         return (cardQueryRequest) -> {
             if (cardQueryRequest instanceof CounterCardQueryRequest) {
                 return new QueryInstantClient(webClientBuilder);

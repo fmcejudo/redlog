@@ -22,7 +22,9 @@ public sealed interface CardQueryRequest permits CounterCardQueryRequest, Summar
     default CardQueryRequest withExecutionId(final String executionId) {
 
         if (this instanceof CounterCardQueryRequest cqr) {
-            return new CounterCardQueryRequest(cqr.id(), cqr.description(), cqr.query(), executionId);
+            return new CounterCardQueryRequest(
+                    cqr.id(), cqr.description(), cqr.query(), cqr.expectAtLeast(), executionId
+            );
         }
         if (this instanceof SummaryCardQueryRequest sqr) {
             return new SummaryCardQueryRequest(sqr.id(), sqr.description(), sqr.query(), executionId);
@@ -30,8 +32,11 @@ public sealed interface CardQueryRequest permits CounterCardQueryRequest, Summar
         throw new RuntimeException("type not recognised");
     }
 
-    public record CardQueryContext(String id, String description, String query) {
+    public record CardQueryContext(String id, String description, String query, Integer expectAtLeast) {
 
+        public CardQueryContext(String id, String description, String query) {
+            this(id, description, query, 1);
+        }
     }
 }
 
