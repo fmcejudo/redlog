@@ -2,10 +2,10 @@ package com.github.fmcejudo.redlogs.card;
 
 import com.github.fmcejudo.redlogs.card.loader.CardLoader;
 import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
+import com.github.fmcejudo.redlogs.card.model.CardQueryRequest.CardQueryContext;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponse;
 import com.github.fmcejudo.redlogs.card.model.CardQueryResponseEntry;
 import com.github.fmcejudo.redlogs.card.model.CardRequest;
-import com.github.fmcejudo.redlogs.card.model.CardType;
 import com.github.fmcejudo.redlogs.card.process.CardProcessor;
 import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import org.assertj.core.api.Assertions;
@@ -18,6 +18,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import static com.github.fmcejudo.redlogs.card.model.CardType.SUMMARY;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 class CardRunnerTest {
@@ -77,8 +78,10 @@ class TestCardLoader implements CardLoader {
         String executionId = UUID.randomUUID().toString();
 
         String application = cardContext.applicationName();
-        var cardQueryRequest = new CardQueryRequest("test", "section test", CardType.SUMMARY, "query")
+        CardQueryRequest cardQueryRequest = CardQueryRequest
+                .getInstance(SUMMARY, new CardQueryContext("test", "section test", "query"))
                 .withExecutionId(executionId);
+
         return new CardRequest(
                 application, cardContext.reportDate(), null, null, List.of(cardQueryRequest), Map.of()
         ).withExecutionId(executionId);

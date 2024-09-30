@@ -1,7 +1,6 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
-import com.github.fmcejudo.redlogs.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.model.CardRequest;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;

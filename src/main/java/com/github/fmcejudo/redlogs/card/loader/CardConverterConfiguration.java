@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.card.converter;
+package com.github.fmcejudo.redlogs.card.loader;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

@@ -1,20 +1,43 @@
 package com.github.fmcejudo.redlogs.card.model;
 
 
-public record CardQueryRequest(String id,
-                               String description,
-                               CardType cardType,
-                               String query,
-                               String executionId) {
+public sealed interface CardQueryRequest permits CounterCardQueryRequest, SummaryCardQueryRequest {
 
-    public CardQueryRequest(String id,
-                            String description,
-                            CardType cardType,
-                            String query) {
-        this(id, description, cardType, query, null);
+    String id();
+
+    String description();
+
+    String query();
+
+    String executionId();
+
+    public static <T extends CardQueryRequest> CardQueryRequest getInstance(CardType type,
+                                                                            CardQueryContext cardQueryContext) {
+        return switch (type) {
+            case COUNT -> new CounterCardQueryRequest(cardQueryContext);
+            case SUMMARY -> new SummaryCardQueryRequest(cardQueryContext);
+        };
     }
 
-    public CardQueryRequest withExecutionId(final String executionId) {
-        return new CardQueryRequest(id, description, cardType, query, executionId);
+    default CardQueryRequest withExecutionId(final String executionId) {
+
+        if (this instanceof CounterCardQueryRequest cqr) {
+            return new CounterCardQueryRequest(
+                    cqr.id(), cqr.description(), cqr.query(), cqr.expectAtLeast(), executionId
+            );
+        }
+        if (this instanceof SummaryCardQueryRequest sqr) {
+            return new SummaryCardQueryRequest(sqr.id(), sqr.description(), sqr.query(), executionId);
+        }
+        throw new RuntimeException("type not recognised");
+    }
+
+    public record CardQueryContext(String id, String description, String query, Integer expectAtLeast) {
+
+        public CardQueryContext(String id, String description, String query) {
+            this(id, description, query, 1);
+        }
     }
 }
+
+

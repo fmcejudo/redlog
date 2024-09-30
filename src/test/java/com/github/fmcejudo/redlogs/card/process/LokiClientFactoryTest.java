@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.card.process;
 
+import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
 import com.github.fmcejudo.redlogs.card.model.CardType;
 import com.github.fmcejudo.redlogs.client.loki.LokiClient;
 import com.github.fmcejudo.redlogs.client.loki.instant.QueryInstantClient;
@@ -29,6 +30,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @ConfigurationPropertiesScan(basePackageClasses = {RedLogLokiConfig.class})
 class LokiClientFactoryTest {
 
+    private final CardQueryRequest.CardQueryContext EMPTY_QUERY_CONTEXT =
+            new CardQueryRequest.CardQueryContext(null, null, null);
+
     @Autowired
     private RedLogLokiConfig redLogLokiConfig;
 
@@ -45,7 +49,7 @@ class LokiClientFactoryTest {
         final CardType cardType = CardType.SUMMARY;
 
         //When
-        LokiClient lokiClient = lokiClientFactory.get(cardType);
+        LokiClient lokiClient = lokiClientFactory.get(CardQueryRequest.getInstance(cardType, EMPTY_QUERY_CONTEXT));
 
         //Then
         Assertions.assertThat(lokiClient).isInstanceOf(QueryRangeClient.class);
@@ -57,11 +61,10 @@ class LokiClientFactoryTest {
         final CardType cardType = CardType.COUNT;
 
         //When
-        LokiClient lokiClient = lokiClientFactory.get(cardType);
+        LokiClient lokiClient = lokiClientFactory.get(CardQueryRequest.getInstance(cardType, EMPTY_QUERY_CONTEXT));
 
         //Then
         Assertions.assertThat(lokiClient).isInstanceOf(QueryInstantClient.class);
     }
-
 
 }

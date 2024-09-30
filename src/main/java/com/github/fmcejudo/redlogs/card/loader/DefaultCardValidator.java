@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.card.converter;
+package com.github.fmcejudo.redlogs.card.loader;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import org.springframework.util.NumberUtils;

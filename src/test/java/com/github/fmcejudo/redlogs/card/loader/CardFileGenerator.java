@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.card.converter;
+package com.github.fmcejudo.redlogs.card.loader;
 
 import java.time.LocalTime;
 import java.util.ArrayList;

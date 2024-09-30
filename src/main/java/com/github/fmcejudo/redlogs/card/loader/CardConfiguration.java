@@ -1,6 +1,5 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
-import com.github.fmcejudo.redlogs.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
