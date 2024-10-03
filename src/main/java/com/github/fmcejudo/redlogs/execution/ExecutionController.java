@@ -33,31 +33,11 @@ class ExecutionController {
     public ResponseEntity<List<ExecutionDTO>> getExecutionList(@PathVariable final String applicationName,
                                                                @RequestParam final Map<String, String> params,
                                                                final ServerWebExchange exchange) {
-        String urlBase = getUrlToLink(exchange.getRequest());
+
+        String urlBase = UrlLinkBuilder.from(exchange.getRequest()).build();
         List<ExecutionDTO> executions = executionService.findExecutionWithParameters(applicationName, params)
                 .stream().map(execution -> ExecutionDTO.from(execution, urlBase)).toList();
         return ResponseEntity.ok(executions);
     }
-
-    private String getUrlToLink(ServerHttpRequest request) {
-
-        URI uri = request.getURI();
-        String urlBase = "%s://%s:%d".formatted(uri.getScheme(), uri.getHost(), uri.getPort());
-        String contextPath = extractContextPath(request);
-        if (StringUtils.isNotBlank(contextPath)) {
-            return String.join("/", urlBase, contextPath);
-        }
-        return urlBase;
-    }
-
-    private String extractContextPath(final ServerHttpRequest request) {
-        
-        String contextPath = request.getPath().contextPath().value();
-        if (contextPath.startsWith("/")) {
-            return contextPath.substring(1);
-        }
-        return contextPath;
-    }
-
 }
 

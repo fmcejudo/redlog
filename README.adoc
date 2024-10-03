@@ -18,6 +18,19 @@ Developers or team members query the logs on a dashboard to extract information 
 
 === Card Template Example
 
+Card Templates allow users to interact with the generated report by organizing the sections that highlight the issues which we want to see in our document.
+
+These sections, by and large, are made of type, id, description and query, and they might have other custom properties based in the type.
+
+Each template is composed of various sections, each of a specific type. And currently, there are two section types available: COUNT and SUMMARY.
+
+==== Card Type COUNT
+
+The COUNT section type is used to track the frequency of specific events over time, based on query parameters.
+
+As an example:
+
+Count section
 [source,yaml]
 ----
 queries:
@@ -29,12 +42,56 @@ queries:
         |~ `java.lang.NullPointerException`
 ----
 
+
 NOTE: The above example is a simple way to indicate the application is generating `NullPointerException` errors.
+
+As customized field for this type, we have the field:
+
+`expectedAtLeast` : This is a filter to collect just those items whose `count` value is greater than or equal to the provided value.
+
+So we can extend the previous example as:
+
+[source,yaml]
+----
+queries:
+  - id: db_connection_problems
+    description: DB Connection Issues
+    type: COUNT
+    expectedAtLeast: 3
+    query: |
+        {app="my-app", service="my-service", level="ERROR"}
+        |~ `Timeout Exception`
+----
+
+NOTE: only shows the item if the number the connection issues is 3 or more times.
+
+==== Card Type SUMMARY
+
+The SUMMARY section type provides a snapshot of the service's state over a specific time period.
+
+[source,yaml]
+----
+queries:
+- id: my-report-id
+  description: My Report Id
+  type: SUMMARY
+  query: |
+    sum by (host) ( count_over_time(
+       {app="my-app", service="my-service", level="ERROR"}
+       | json | line_format '{{.message}}' [5m]
+    ))
+----
+
+In this example we are querying in a range of time, having slots of 5 minutes, and we are counting issues by host as they go.
+
+
+=== CARD Template Parameterized
 
 Reports can be triggered for the current date or another date for which logs are available. The execution populates a MongoDB collection with extracted items. Users can then request reports to see how their application behaved based on team observations, without needing to gather individual queries.
 
-These templates can be parameterized to be reused based for same application name with multiple use cases, in example for
-the environment or host where the this application to be observed.
+These templates can be parameterized to be reused for the same application name with different variables applicable to labels, time range or any other.
+
+As an example:
 
 [source,yaml]
 ----
@@ -77,7 +134,7 @@ To include this starter in a Spring application, add the following dependency to
 <dependency>
     <groupId>com.github.fmcejudo.redlogs</groupId>
     <artifactId>red-log</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.6</version>
 </dependency>
 ----
 
@@ -277,3 +334,18 @@ class CustomAsciiDoctorContent implements AsciiDoctorContent {
 And document with it looks like:
 
 image:images/document.png[generated document]
+
+== Storing Reports in MongoDB
+
+Currently, the only storage option for gathering report items is MongoDB, which uses two collections:
+1. *executions* – stores information about report executions.
+2. *reports* – linked to the corresponding executions.
+
+To manage the size of these collections and avoid keeping unnecessary reports, each document includes a `createdAt` field. This field is used to automatically expire and remove old reports after a set period of time.
+
+=== Applying TTL Index for Expiration
+
+If you want to enable automatic expiration of old records, you can use the provided MongoDB script to apply a TTL (Time to Live) index on the `createdAt` field.
+
+The script is located in the repository at:
+link:https://github.com/fmcejudo/redlog/blob/main/db/mongo/redlog-mongo.js[db/mongo/redlog-mongo.js]
