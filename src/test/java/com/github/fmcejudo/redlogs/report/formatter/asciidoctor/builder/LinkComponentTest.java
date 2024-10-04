@@ -14,7 +14,7 @@ class LinkComponentTest {
         String content = link.content();
 
         //Then
-        Assertions.assertThat(content).isEqualTo("link:http://something.io[description]\n");
+        Assertions.assertThat(content).isEqualTo("link:++http://something.io++[description]\n");
     }
 
 }

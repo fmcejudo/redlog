@@ -47,7 +47,7 @@ public class MultiComponentTest {
                
                   **Custom**
                
-                  link:http://link.io[link]
+                  link:++http://link.io++[link]
                
                   end of section two
                   """);
