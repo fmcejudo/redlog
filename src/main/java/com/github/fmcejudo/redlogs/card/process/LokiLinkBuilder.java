@@ -2,6 +2,8 @@ package com.github.fmcejudo.redlogs.card.process;
 
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.ToLongFunction;
@@ -15,7 +17,7 @@ final class LokiLinkBuilder {
     private String query;
     private LocalDateTime from;
     private LocalDateTime to;
-    private String dataSource;
+    private final String dataSource;
 
     private LokiLinkBuilder(final String lokiUrl, final String dataSource) {
         this.lokiExploreUrl = String.join("/", lokiUrl, "explore");
@@ -63,8 +65,7 @@ final class LokiLinkBuilder {
         @Override
         public String toString() {
 
-            String formattedQuery = expr.replace("\n", " ").trim().replaceAll(" +", " ").replace("\"", "\\\"");
-
+            String formattedQuery = expr.replace("\n", " ").trim().replaceAll(" +", " ");
             return """
                     {"refId":"%s","expr":"%s"}""".formatted(refId, formattedQuery);
         }
@@ -75,8 +76,12 @@ final class LokiLinkBuilder {
         @Override
         public String toString() {
 
-            ToLongFunction<LocalDateTime> dateTimeConverter =
-                    dateTime -> dateTime.toInstant(UTC).toEpochMilli();
+            ToLongFunction<LocalDateTime> dateTimeConverter = dateTime -> {
+                if (dateTime == null) {
+                    return -1L;
+                }
+                return dateTime.toInstant(UTC).toEpochMilli();
+            };
 
             return """
                     {"from":"%s", "to":"%s"}"""
