@@ -1,11 +1,13 @@
 package com.github.fmcejudo.redlogs.card.process;
 
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.util.UriUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.function.ToLongFunction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -45,11 +47,16 @@ final class LokiLinkBuilder {
 
     public String build() {
 
-        String left = new LeftPart(dataSource, List.of(new QueryPart("A", query)), new RangePart(from, to)).toString();
-        return UriComponentsBuilder.fromHttpUrl(lokiExploreUrl)
+        String left = new LeftPart(dataSource, List.of(new QueryPart("A", query, dataSource)), new RangePart(from, to)).toString();
+        String path = UriComponentsBuilder.fromPath(null).queryParam("schemaVersion", 1)
+                .queryParam("panes", "{\"tm7\":" + left + "}")
                 .queryParam("orgId", 1)
-                .queryParam("left", left)
-                .build().encode(UTF_8).toUriString();
+                .build().encode().toUriString()
+                .substring(1)
+                .replace("(", "%28").replace(")", "%29").replace("?", "%3F").replace("*", "%2A");
+        return lokiExploreUrl+"?"+path;
+
+
     }
 
 
@@ -61,13 +68,16 @@ final class LokiLinkBuilder {
         }
     }
 
-    record QueryPart(String refId, String expr) {
+    record QueryPart(String refId, String expr, String datasource) {
         @Override
         public String toString() {
 
-            String formattedQuery = expr.replace("\n", " ").trim().replaceAll(" +", " ");
+            String formattedExpression = expr.replace("\\", "\\\\")
+                    .replace("\"", "\\\"");
             return """
-                    {"refId":"%s","expr":"%s"}""".formatted(refId, formattedQuery);
+                    {"refId":"%s","expr":"%s","queryType":"range",\
+                    "datasource":{"type":"loki","uid":"%s"},"editorMode":"code"}"""
+                    .formatted(refId, formattedExpression, datasource);
         }
     }
 
@@ -76,12 +86,7 @@ final class LokiLinkBuilder {
         @Override
         public String toString() {
 
-            ToLongFunction<LocalDateTime> dateTimeConverter = dateTime -> {
-                if (dateTime == null) {
-                    return -1L;
-                }
-                return dateTime.toInstant(UTC).toEpochMilli();
-            };
+            ToLongFunction<LocalDateTime> dateTimeConverter = dateTime -> dateTime.toInstant(UTC).toEpochMilli();
 
             return """
                     {"from":"%s", "to":"%s"}"""
