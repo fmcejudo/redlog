@@ -1,16 +1,11 @@
 package com.github.fmcejudo.redlogs.card.process;
 
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.web.util.UriUtils;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.function.ToLongFunction;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.ZoneOffset.UTC;
 
 final class LokiLinkBuilder {
@@ -53,7 +48,7 @@ final class LokiLinkBuilder {
                 .queryParam("orgId", 1)
                 .build().encode().toUriString()
                 .substring(1)
-                .replace("(", "%28").replace(")", "%29").replace("?", "%3F").replace("*", "%2A");
+                .replace("(", "%28").replace(")", "%29").replace("?", "%3F").replace("*", "%2A").replace("%0A","%5Cn");
         return lokiExploreUrl+"?"+path;
 
 
