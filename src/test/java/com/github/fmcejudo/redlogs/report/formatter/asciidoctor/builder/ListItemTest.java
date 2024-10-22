@@ -133,10 +133,10 @@ class ListItemTest {
         //Then
         Assertions.assertThat(content).isEqualTo("""
           * *group*: Rebel Alliance +
-            *name*: link:http://star.wars/anakin[Anakin Skywalker]
+            *name*: link:++http://star.wars/anakin++[Anakin Skywalker]
          
           * *group*: Galactic Empire +
-            *name*: link:http://star.wars/lordSidious[Lord Sidious]
+            *name*: link:++http://star.wars/lordSidious++[Lord Sidious]
           """);
     }
 }
