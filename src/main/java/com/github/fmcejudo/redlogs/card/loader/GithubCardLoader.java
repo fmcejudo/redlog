@@ -29,7 +29,7 @@ class GithubCardLoader implements CardLoader {
 
         String application = cardContext.applicationName();
         try {
-            String filePath = repoUrl(application) + application + ".yaml";
+            String filePath = repoUrl(application);
             String content = githubClient.download(filePath);
             return cardConverter.convert(content, cardContext);
         } catch (Exception e) {
