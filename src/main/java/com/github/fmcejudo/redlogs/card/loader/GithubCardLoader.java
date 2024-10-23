@@ -29,7 +29,8 @@ class GithubCardLoader implements CardLoader {
 
         String application = cardContext.applicationName();
         try {
-            String content = githubClient.download(repoUrl(application) + application + ".yaml");
+            String filePath = repoUrl(application) + application + ".yaml";
+            String content = githubClient.download(filePath);
             return cardConverter.convert(content, cardContext);
         } catch (Exception e) {
             throw new RuntimeException(e);
