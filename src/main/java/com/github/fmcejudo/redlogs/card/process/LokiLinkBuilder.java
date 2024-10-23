@@ -50,8 +50,6 @@ final class LokiLinkBuilder {
                 .substring(1)
                 .replace("(", "%28").replace(")", "%29").replace("?", "%3F").replace("*", "%2A").replace("%0A","%5Cn");
         return lokiExploreUrl+"?"+path;
-
-
     }
 
 
