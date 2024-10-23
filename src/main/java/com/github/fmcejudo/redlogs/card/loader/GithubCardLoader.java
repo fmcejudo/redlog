@@ -59,6 +59,8 @@ class GithubCardLoader implements CardLoader {
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
                         .header("Authorization", "Bearer " + token)
+                        .header("Accept", "application/vnd.github.raw+json")
+                        .header("X-GitHub-Api-Version", "2022-11-28")
                         .build();
 
                 // Send the request and get the response
