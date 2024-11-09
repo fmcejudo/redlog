@@ -6,9 +6,9 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.exception.CardException;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
-import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
-import com.github.fmcejudo.redlogs.card.model.CardQueryRequest.CardQueryContext;
-import com.github.fmcejudo.redlogs.card.model.CardRequest;
+import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest;
+import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest.CardQueryContext;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import org.apache.commons.text.StringSubstitutor;
 
 import java.time.LocalDate;

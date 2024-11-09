@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.card.writer;
 
+import io.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.AutoConfigurations;

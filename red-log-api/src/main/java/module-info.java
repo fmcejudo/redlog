@@ -1,0 +1,6 @@
+module red.log.api {
+  exports io.github.fmcejudo.redlogs.card.domain;
+  exports io.github.fmcejudo.redlogs.card.processor;
+  exports io.github.fmcejudo.redlogs.card.processor.filter;
+  exports io.github.fmcejudo.redlogs.card.writer;
+}

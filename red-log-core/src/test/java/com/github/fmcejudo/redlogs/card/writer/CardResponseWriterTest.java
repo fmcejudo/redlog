@@ -1,10 +1,11 @@
 package com.github.fmcejudo.redlogs.card.writer;
 
-import com.github.fmcejudo.redlogs.card.model.CardQueryResponse;
-import com.github.fmcejudo.redlogs.card.model.CardQueryResponseEntry;
-import com.github.fmcejudo.redlogs.card.model.CardRequest;
+import io.github.fmcejudo.redlogs.card.domain.CardQueryResponse;
+import io.github.fmcejudo.redlogs.card.domain.CardQueryResponseEntry;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import com.github.fmcejudo.redlogs.execution.domain.Execution;
 import com.github.fmcejudo.redlogs.report.domain.ReportSection;
+import io.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

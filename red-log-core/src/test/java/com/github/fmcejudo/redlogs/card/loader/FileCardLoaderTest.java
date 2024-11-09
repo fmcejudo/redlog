@@ -1,9 +1,9 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
-import com.github.fmcejudo.redlogs.card.model.CardRequest;
-import com.github.fmcejudo.redlogs.card.model.CounterCardQueryRequest;
-import com.github.fmcejudo.redlogs.card.model.SummaryCardQueryRequest;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
+import io.github.fmcejudo.redlogs.card.domain.CounterCardQueryRequest;
+import io.github.fmcejudo.redlogs.card.domain.SummaryCardQueryRequest;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

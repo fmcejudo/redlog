@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.card.writer;
 
+import io.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

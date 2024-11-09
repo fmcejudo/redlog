@@ -1,7 +1,7 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
-import com.github.fmcejudo.redlogs.card.model.CardRequest;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 
 @FunctionalInterface
 public interface CardLoader {

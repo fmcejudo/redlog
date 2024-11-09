@@ -1,7 +1,7 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
-import com.github.fmcejudo.redlogs.card.model.CardType;
+import io.github.fmcejudo.redlogs.card.domain.CardType;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

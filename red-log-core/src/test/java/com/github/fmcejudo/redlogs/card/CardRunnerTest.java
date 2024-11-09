@@ -1,13 +1,13 @@
 package com.github.fmcejudo.redlogs.card;
 
 import com.github.fmcejudo.redlogs.card.loader.CardLoader;
-import com.github.fmcejudo.redlogs.card.model.CardQueryRequest;
-import com.github.fmcejudo.redlogs.card.model.CardQueryRequest.CardQueryContext;
-import com.github.fmcejudo.redlogs.card.model.CardQueryResponse;
-import com.github.fmcejudo.redlogs.card.model.CardQueryResponseEntry;
-import com.github.fmcejudo.redlogs.card.model.CardRequest;
-import com.github.fmcejudo.redlogs.card.process.CardProcessor;
-import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
+import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest;
+import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest.CardQueryContext;
+import io.github.fmcejudo.redlogs.card.domain.CardQueryResponse;
+import io.github.fmcejudo.redlogs.card.domain.CardQueryResponseEntry;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
+import io.github.fmcejudo.redlogs.card.processor.CardProcessor;
+import io.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import static com.github.fmcejudo.redlogs.card.model.CardType.SUMMARY;
+import static io.github.fmcejudo.redlogs.card.domain.CardType.SUMMARY;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 class CardRunnerTest {

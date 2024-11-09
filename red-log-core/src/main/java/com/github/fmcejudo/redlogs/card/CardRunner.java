@@ -1,9 +1,9 @@
 package com.github.fmcejudo.redlogs.card;
 
 import com.github.fmcejudo.redlogs.card.loader.CardLoader;
-import com.github.fmcejudo.redlogs.card.model.CardRequest;
-import com.github.fmcejudo.redlogs.card.process.CardProcessor;
-import com.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
+import io.github.fmcejudo.redlogs.card.processor.CardProcessor;
+import io.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;

@@ -2,7 +2,7 @@ package com.github.fmcejudo.redlogs.card.loader;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
-import com.github.fmcejudo.redlogs.card.model.CardRequest;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
