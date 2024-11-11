@@ -1,7 +1,7 @@
 package com.github.fmcejudo.redlogs.report;
 
-import com.github.fmcejudo.redlogs.report.domain.Report;
-import com.github.fmcejudo.redlogs.report.domain.ReportSection;
+import io.github.fmcejudo.redlogs.report.domain.Report;
+import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

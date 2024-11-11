@@ -1,6 +1,6 @@
 package com.github.fmcejudo.redlogs.report.formatter.asciidoctor;
 
-import com.github.fmcejudo.redlogs.report.domain.Report;
+import io.github.fmcejudo.redlogs.report.domain.Report;
 import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
 import org.asciidoctor.Asciidoctor;
 import org.asciidoctor.Attributes;

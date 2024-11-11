@@ -1,6 +1,6 @@
 package com.github.fmcejudo.redlogs.report;
 
-import com.github.fmcejudo.redlogs.report.domain.Report;
+import io.github.fmcejudo.redlogs.report.domain.Report;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

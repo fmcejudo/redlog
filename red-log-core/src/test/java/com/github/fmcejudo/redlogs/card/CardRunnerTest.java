@@ -7,7 +7,8 @@ import io.github.fmcejudo.redlogs.card.domain.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.domain.CardQueryResponseEntry;
 import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import io.github.fmcejudo.redlogs.card.processor.CardProcessor;
-import io.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
+import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
+import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -31,8 +32,9 @@ class CardRunnerTest {
                 CardContext.from(applicationName, Map.of("date", LocalDate.now().format(ISO_LOCAL_DATE)));
 
         CardLoader executionLoader = new TestCardLoader();
-        CardProcessor cardProcessor = new TestCardProcessor(CardResponseWriter::onNext);
-        CardResponseWriter assertWriter = new TestCardWriter(result -> {
+        CardProcessor cardProcessor = new TestCardProcessor(CardReportWriter::onNext);
+        CardExecutionWriter assertExecutionWriter = new TestExecutionWriter();
+        CardReportWriter assertReportWriter = new TestCardWriter(result -> {
             Assertions.assertThat(result).satisfies(r -> {
                 Assertions.assertThat(r.applicationName()).isEqualTo(applicationName);
                 Assertions.assertThat(r.id()).isEqualTo("test");
@@ -41,7 +43,7 @@ class CardRunnerTest {
         }, throwable -> {
             Assertions.fail("No error was expected on processing card");
         });
-        try (CardRunner cardRunner = new CardRunner(executionLoader, cardProcessor, assertWriter)) {
+        try (CardRunner cardRunner = new CardRunner(executionLoader, cardProcessor, assertExecutionWriter, assertReportWriter)) {
             //When && Then
             cardRunner.run(cardExecutionContext);
         }
@@ -57,12 +59,13 @@ class CardRunnerTest {
 
         CardLoader executionLoader = new TestCardLoader();
         CardProcessor cardProcessor = new TestCardProcessor((w, r) -> w.onError(new RuntimeException("error")));
-        CardResponseWriter assertWriter = new TestCardWriter(result -> {
+        CardExecutionWriter assertExecutionWriter = new TestExecutionWriter();
+        CardReportWriter assertReportWriter = new TestCardWriter(result -> {
         }, throwable -> {
             Assertions.assertThat(throwable).isInstanceOf(RuntimeException.class).hasMessageContaining("error");
         });
 
-        try (CardRunner cardRunner = new CardRunner(executionLoader, cardProcessor, assertWriter)) {
+        try (CardRunner cardRunner = new CardRunner(executionLoader, cardProcessor,assertExecutionWriter, assertReportWriter)) {
             //When && Then
             cardRunner.run(cardExecutionContext);
         }
@@ -88,10 +91,10 @@ class TestCardLoader implements CardLoader {
     }
 }
 
-record TestCardProcessor(BiConsumer<CardResponseWriter, CardQueryResponse> responseConsumer) implements CardProcessor {
+record TestCardProcessor(BiConsumer<CardReportWriter, CardQueryResponse> responseConsumer) implements CardProcessor {
 
     @Override
-    public void process(CardRequest cardRequest, CardResponseWriter writer) {
+    public void process(CardRequest cardRequest, CardExecutionWriter executionWriter, CardReportWriter writer) {
         String appName = cardRequest.applicationName();
         String executionId = cardRequest.executionId();
 
@@ -109,8 +112,7 @@ record TestCardProcessor(BiConsumer<CardResponseWriter, CardQueryResponse> respo
     }
 }
 
-final class TestCardWriter implements CardResponseWriter {
-
+final class TestCardWriter implements CardReportWriter {
 
     private final Consumer<CardQueryResponse> assertResponseConsumer;
     private final Consumer<Throwable> assertThrowableConsume;
@@ -118,11 +120,6 @@ final class TestCardWriter implements CardResponseWriter {
     TestCardWriter(Consumer<CardQueryResponse> assertResponseConsumer, Consumer<Throwable> assertThrowableConsume) {
         this.assertResponseConsumer = assertResponseConsumer;
         this.assertThrowableConsume = assertThrowableConsume;
-    }
-
-    @Override
-    public void writeExecution(CardRequest cardRequest) {
-
     }
 
     @Override
@@ -138,5 +135,13 @@ final class TestCardWriter implements CardResponseWriter {
     @Override
     public void onComplete() {
 
+    }
+}
+
+final class TestExecutionWriter implements CardExecutionWriter {
+
+    @Override
+    public String writeCardExecution(CardRequest cardRequest) {
+        return UUID.randomUUID().toString();
     }
 }

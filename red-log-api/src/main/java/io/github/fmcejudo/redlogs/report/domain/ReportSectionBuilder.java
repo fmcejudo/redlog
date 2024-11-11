@@ -1,15 +1,13 @@
-package com.github.fmcejudo.redlogs.card.writer;
+package io.github.fmcejudo.redlogs.report.domain;
 
 import static java.time.LocalDateTime.now;
 
 import java.util.List;
 
-import com.github.fmcejudo.redlogs.report.domain.ReportItem;
-import com.github.fmcejudo.redlogs.report.domain.ReportSection;
 import io.github.fmcejudo.redlogs.card.domain.CardQueryResponseEntry;
 
 @FunctionalInterface
-interface ReportSectionBuilder {
+public interface ReportSectionBuilder {
 
   public ReportSection build();
 

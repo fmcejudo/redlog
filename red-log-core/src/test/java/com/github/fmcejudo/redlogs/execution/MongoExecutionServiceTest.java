@@ -1,7 +1,7 @@
 package com.github.fmcejudo.redlogs.execution;
 
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
-import com.github.fmcejudo.redlogs.execution.domain.Execution;
+import io.github.fmcejudo.redlogs.report.domain.Execution;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

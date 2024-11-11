@@ -17,7 +17,8 @@ import io.github.fmcejudo.redlogs.card.domain.CounterCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.domain.SummaryCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.processor.CardProcessor;
 import io.github.fmcejudo.redlogs.card.processor.filter.ResponseEntryFilter;
-import io.github.fmcejudo.redlogs.card.writer.CardResponseWriter;
+import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
+import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.processor.loki.instant.QueryInstantClient;
 import io.github.fmcejudo.redlogs.processor.loki.range.QueryRangeClient;
 import org.apache.logging.log4j.util.Strings;
@@ -45,16 +46,14 @@ class LokiCardProcessor implements CardProcessor {
         LokiLinkBuilder.builder(connectionDetails.dashboardUrl(), connectionDetails.datasource());
   }
 
-  public void process(final CardRequest cardRequest, final CardResponseWriter writer) {
+  public void process(final CardRequest cardRequest, final CardExecutionWriter executionWriter, final CardReportWriter writer) {
 
-    //Write first to execution collection
-    String executionId = UUID.randomUUID().toString();
-    CardRequest cr = cardRequest.withExecutionId(executionId);
-    writer.writeExecution(cr);
+    String executionId = executionWriter.writeCardExecution(cardRequest);
+    CardRequest cardRequestWithExecutionId = cardRequest.withExecutionId(executionId);
 
     //For each query request, process it
     cardRequest.cardQueryRequests().forEach(cqr -> {
-      ProcessorContext processorContext = new ProcessorContext(cr, cqr);
+      ProcessorContext processorContext = new ProcessorContext(cardRequestWithExecutionId, cqr);
       ResponseEntryFilter responseEntryFilter = ResponseEntryFilter.getInstance(cqr);
       processCardQueryRequest(processorContext, responseEntryFilter, writer::onNext, writer::onError);
     });

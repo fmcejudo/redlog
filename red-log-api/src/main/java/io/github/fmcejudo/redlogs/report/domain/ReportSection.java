@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.report.domain;
+package io.github.fmcejudo.redlogs.report.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;

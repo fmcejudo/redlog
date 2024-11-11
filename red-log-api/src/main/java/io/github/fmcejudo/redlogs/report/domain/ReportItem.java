@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.report.domain;
+package io.github.fmcejudo.redlogs.report.domain;
 
 import java.util.Map;
 import java.util.Objects;

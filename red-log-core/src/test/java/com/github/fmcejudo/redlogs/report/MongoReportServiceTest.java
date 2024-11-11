@@ -1,10 +1,10 @@
 package com.github.fmcejudo.redlogs.report;
 
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
-import com.github.fmcejudo.redlogs.execution.domain.Execution;
-import com.github.fmcejudo.redlogs.report.domain.Report;
-import com.github.fmcejudo.redlogs.report.domain.ReportItem;
-import com.github.fmcejudo.redlogs.report.domain.ReportSection;
+import io.github.fmcejudo.redlogs.report.domain.Execution;
+import io.github.fmcejudo.redlogs.report.domain.Report;
+import io.github.fmcejudo.redlogs.report.domain.ReportItem;
+import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import com.github.fmcejudo.redlogs.util.MongoNamingUtils;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;

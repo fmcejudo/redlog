@@ -1,12 +1,10 @@
-package com.github.fmcejudo.redlogs.card.writer;
+package io.github.fmcejudo.redlogs.report.domain;
 
 import java.time.LocalDate;
 import java.util.Map;
 
-import com.github.fmcejudo.redlogs.execution.domain.Execution;
-
 @FunctionalInterface
-interface ExecutionBuilder {
+public interface ExecutionBuilder {
 
   public Execution build();
 

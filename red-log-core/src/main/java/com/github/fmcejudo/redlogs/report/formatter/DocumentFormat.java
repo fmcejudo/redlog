@@ -1,6 +1,6 @@
 package com.github.fmcejudo.redlogs.report.formatter;
 
-import com.github.fmcejudo.redlogs.report.domain.Report;
+import io.github.fmcejudo.redlogs.report.domain.Report;
 
 public interface DocumentFormat {
 

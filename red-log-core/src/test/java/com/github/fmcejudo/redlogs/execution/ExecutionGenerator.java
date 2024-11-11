@@ -1,6 +1,6 @@
 package com.github.fmcejudo.redlogs.execution;
 
-import com.github.fmcejudo.redlogs.execution.domain.Execution;
+import io.github.fmcejudo.redlogs.report.domain.Execution;
 
 import java.time.LocalDate;
 import java.util.Map;
