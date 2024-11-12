@@ -6,4 +6,6 @@ public interface CardProcessorProvider {
 
   CardProcessor createProcessor(Map<String, String> connectionDetails);
 
+  String type();
+
 }

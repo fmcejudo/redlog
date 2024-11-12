@@ -69,7 +69,7 @@ final class DefaultCardConverter implements CardConverter {
 
         return q -> {
             CardQueryContext context = new CardQueryContext(
-                    q.id(), q.description(), queryReplaceFn.apply(q.query()), ofNullable(q.expectedAtLeast()).orElse(1)
+                    q.id(), q.source(), q.description(), queryReplaceFn.apply(q.query()), ofNullable(q.expectedAtLeast()).orElse(1)
             );
             return CardQueryRequest.getInstance(q.type(), context);
         };

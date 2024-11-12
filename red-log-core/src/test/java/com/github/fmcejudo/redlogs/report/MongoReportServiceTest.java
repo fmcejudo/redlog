@@ -8,6 +8,7 @@ import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import com.github.fmcejudo.redlogs.util.MongoNamingUtils;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,7 +58,14 @@ class MongoReportServiceTest {
     @DynamicPropertySource
     static void updateProperties(DynamicPropertyRegistry registry) {
         Startables.deepStart(mongoDBContainer).join();
+        mongoDBContainer.start();
         mongoDBContainer.updateConfig(registry);
+    }
+
+    @AfterAll
+    static void onFinish() {
+        mongoDBContainer.stop();
+        mongoDBContainer.close();
     }
 
     @Test

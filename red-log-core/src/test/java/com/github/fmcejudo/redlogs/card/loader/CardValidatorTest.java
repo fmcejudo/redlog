@@ -32,7 +32,7 @@ class CardValidatorTest {
                         {"app"="<applicationName>", "name"="<name>"}
                         """)
                 .withParameters(List.of("applicationName", "name"))
-                .addQuery(new CardQuery("npe","Null Pointer Exception", CardType.SUMMARY,"{}"));
+                .addQuery(new CardQuery("npe","LOKI", "Null Pointer Exception", CardType.SUMMARY,"{}"));
     }
 
     @Test

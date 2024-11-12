@@ -74,7 +74,7 @@ class CardReportMongoWriterTest {
   void shouldWriteAReportInDB() {
     //Given
     CardQueryResponse cardQueryResponse =
-        CardQueryResponse.success("appTest", LocalDate.now(), "id", "executionId", "description", "http://link", List.of());
+        CardQueryResponse.success(LocalDate.now(), "id", "executionId", "description", "http://link", List.of());
 
     //When && Then
     List<ReportSection> reportSections =

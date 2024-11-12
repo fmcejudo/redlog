@@ -5,12 +5,10 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import io.github.fmcejudo.redlogs.card.domain.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
-import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;

@@ -6,18 +6,16 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.domain.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.domain.CardQueryResponseEntry;
-import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import io.github.fmcejudo.redlogs.card.domain.CounterCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.domain.SummaryCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.processor.CardProcessor;
+import io.github.fmcejudo.redlogs.card.processor.ProcessorContext;
 import io.github.fmcejudo.redlogs.card.processor.filter.ResponseEntryFilter;
-import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.processor.loki.instant.QueryInstantClient;
 import io.github.fmcejudo.redlogs.processor.loki.range.QueryRangeClient;
@@ -46,18 +44,8 @@ class LokiCardProcessor implements CardProcessor {
         LokiLinkBuilder.builder(connectionDetails.dashboardUrl(), connectionDetails.datasource());
   }
 
-  public void process(final CardRequest cardRequest, final CardExecutionWriter executionWriter, final CardReportWriter writer) {
-
-    String executionId = executionWriter.writeCardExecution(cardRequest);
-    CardRequest cardRequestWithExecutionId = cardRequest.withExecutionId(executionId);
-
-    //For each query request, process it
-    cardRequest.cardQueryRequests().forEach(cqr -> {
-      ProcessorContext processorContext = new ProcessorContext(cardRequestWithExecutionId, cqr);
-      ResponseEntryFilter responseEntryFilter = ResponseEntryFilter.getInstance(cqr);
-      processCardQueryRequest(processorContext, responseEntryFilter, writer::onNext, writer::onError);
-    });
-    writer.onComplete();
+  public void process(final ProcessorContext processorContext, ResponseEntryFilter filters, final CardReportWriter writer) {
+      processCardQueryRequest(processorContext, filters, writer::onNext, writer::onError);
   }
 
   private void processCardQueryRequest(ProcessorContext processorContext,
@@ -85,24 +73,19 @@ class LokiCardProcessor implements CardProcessor {
 
     String id = processorContext.id();
     String description = processorContext.description();
-    String applicationName = processorContext.applicationName();
     LocalDate reportDate = processorContext.reportDate();
     String executionId = processorContext.executionId();
 
     if (lokiResponse == null) {
       log.error("loki response is null");
-      return CardQueryResponse.failure(
-          applicationName, reportDate, id, executionId, description, "No report response found"
-      );
+      return CardQueryResponse.failure(reportDate, id, executionId, description, "No report response found");
     }
 
     if (lokiResponse.isSuccess()) {
       return buildCardReportEntries(processorContext, responseEntryFilter, lokiResponse, reportDate);
     }
     log.error("loki response has failed");
-    return CardQueryResponse.failure(
-        applicationName, reportDate, id, executionId, description, "query ended up being failed"
-    );
+    return CardQueryResponse.failure(reportDate, id, executionId, description, "query ended up being failed");
   }
 
   private CardQueryResponse buildCardReportEntries(final ProcessorContext processorContext,
@@ -111,7 +94,6 @@ class LokiCardProcessor implements CardProcessor {
       final LocalDate reportDate) {
     String id = processorContext.id();
     String description = processorContext.description();
-    String applicationName = processorContext.applicationName();
     String executionId = processorContext.executionId();
     String link = lokiLinkBuilder.query(processorContext.query())
         .from(processorContext.start())
@@ -123,7 +105,7 @@ class LokiCardProcessor implements CardProcessor {
         .filter(responseEntryFilter::filter)
         .toList();
 
-    return CardQueryResponse.success(applicationName, reportDate, id, executionId, description, link, entries);
+    return CardQueryResponse.success(reportDate, id, executionId, description, link, entries);
   }
 
 }

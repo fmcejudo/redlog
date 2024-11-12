@@ -22,7 +22,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class LokiClientFactoryTest {
 
   private final CardQueryRequest.CardQueryContext EMPTY_QUERY_CONTEXT =
-      new CardQueryRequest.CardQueryContext(null, null, null);
+      new CardQueryRequest.CardQueryContext(null, null, null, null);
 
   private LokiClientFactory lokiClientFactory;
 

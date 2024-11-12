@@ -3,6 +3,7 @@ package com.github.fmcejudo.redlogs.report;
 import com.github.fmcejudo.redlogs.card.CardController;
 import com.github.fmcejudo.redlogs.card.CardRunner;
 import com.github.fmcejudo.redlogs.card.loader.CardLoader;
+import com.github.fmcejudo.redlogs.card.process.CardProcessorFactory;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
 import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorContent;
@@ -51,10 +52,10 @@ public class ReportConfiguration {
       CardLoader.class, CardProcessor.class, CardReportWriter.class
   })
   CardRunner cardRunner(final CardLoader cardLoader,
-      final CardProcessor processor,
+      final CardProcessorFactory processorFactory,
       final CardExecutionWriter cardExecutionWriter,
       final CardReportWriter cardReportWriter) {
-    return new CardRunner(cardLoader, processor, cardExecutionWriter, cardReportWriter);
+    return new CardRunner(cardLoader, processorFactory, cardExecutionWriter, cardReportWriter);
   }
 
   @Bean

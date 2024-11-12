@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record CardQueryResponse(
-        String applicationName,
         LocalDate date,
         String id,
         String executionId,
@@ -15,7 +14,6 @@ public record CardQueryResponse(
 
 
     public static CardQueryResponse success(
-            String applicationName,
             LocalDate date,
             String id,
             String executionId,
@@ -24,7 +22,6 @@ public record CardQueryResponse(
             List<CardQueryResponseEntry> entries) {
 
         return new CardQueryResponse(
-                applicationName,
                 date,
                 id,
                 executionId,
@@ -36,7 +33,6 @@ public record CardQueryResponse(
     }
 
     public static CardQueryResponse failure(
-            String applicationName,
             LocalDate date,
             String id,
             String executionId,
@@ -44,7 +40,6 @@ public record CardQueryResponse(
             String error) {
 
         return new CardQueryResponse(
-                applicationName,
                 date,
                 id,
                 executionId,

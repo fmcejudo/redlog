@@ -10,4 +10,9 @@ public class LokiCardProcessorProvider implements CardProcessorProvider  {
   public CardProcessor createProcessor(Map<String,String> details) {
     return new LokiCardProcessor(details);
   }
+
+  @Override
+  public String type() {
+    return "LOKI";
+  }
 }

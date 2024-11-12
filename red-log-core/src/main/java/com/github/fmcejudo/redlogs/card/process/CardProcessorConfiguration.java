@@ -1,5 +1,7 @@
 package com.github.fmcejudo.redlogs.card.process;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
@@ -15,12 +17,17 @@ import org.springframework.context.annotation.Bean;
 class CardProcessorConfiguration {
 
   @Bean
-  CardProcessor cardProcessor(final RedLogLokiConfig redLogLokiConfig) {
+  CardProcessorFactory cardProcessorFactory(final RedLogLokiConfig redLogLokiConfig) {
     var loader = ServiceLoader.load(CardProcessorProvider.class);
     var loaderIterator = loader.iterator();
-    if (loaderIterator.hasNext()) {
-      return loaderIterator.next().createProcessor(Map.of());
+    if (!loaderIterator.hasNext()) {
+      throw new RuntimeException("There is no plugin to process cards");
     }
-    throw new RuntimeException("There is no plugin to process cards");
+    Map<String, CardProcessor> cardProcessorMap = new HashMap<>();
+    loaderIterator.forEachRemaining(cpp -> {
+      cardProcessorMap.put(cpp.type(), cpp.createProcessor(Map.of()));
+    });
+    return new CardProcessorFactory(Collections.unmodifiableMap(cardProcessorMap));
   }
+
 }
