@@ -1,11 +1,11 @@
 package com.github.fmcejudo.redlogs.execution;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import io.github.fmcejudo.redlogs.report.domain.Execution;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.github.fmcejudo.redlogs.report.domain.Execution;
 
 class ExecutionDTO  {
 

@@ -1,7 +1,10 @@
 package io.github.fmcejudo.redlogs.processor.loki.range;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.github.fmcejudo.redlogs.processor.loki.LokiResponse;
+import static java.time.ZoneOffset.ofHours;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
+import static java.util.concurrent.TimeUnit.MINUTES;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -15,11 +18,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.time.ZoneOffset.ofHours;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
-import static java.util.concurrent.TimeUnit.MINUTES;
-import static java.util.concurrent.TimeUnit.NANOSECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.github.fmcejudo.redlogs.processor.loki.LokiResponse;
 
 @JsonSerialize
 public record QueryRangeResponse(String status, Data data) implements LokiResponse {

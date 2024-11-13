@@ -1,18 +1,18 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
-import com.github.fmcejudo.redlogs.card.CardContext;
-import io.github.fmcejudo.redlogs.card.domain.CardRequest;
-import org.apache.commons.io.IOUtils;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 import java.util.function.Function;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
+import com.github.fmcejudo.redlogs.card.CardContext;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
+import org.apache.commons.io.IOUtils;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 class CardConverterTest {
 

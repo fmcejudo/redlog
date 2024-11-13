@@ -1,63 +1,63 @@
 {
   "properties": [
     {
-      "name": "redlog.loki.url",
+      "name": "redlog.processor.loki.url",
       "type": "String",
       "description": "loki url to query",
       "defaultValue" : "http://localhost:3100"
     },
     {
-      "name": "redlog.loki.username",
+      "name": "redlog.processor.loki.username",
       "type": "String",
       "description": "loki username",
       "defaultValue" : ""
     },
     {
-      "name": "redlog.loki.password",
+      "name": "redlog.processor.loki.password",
       "type": "String",
       "description": "loki password",
       "defaultValue" : ""
     },
     {
-      "name": "redlog.loki.dashboard-url",
+      "name": "redlog.processor.loki.dashboard-url",
       "type": "String",
       "description": "grafana loki explorer",
       "defaultValue" : "http://localhost:9090"
     },
     {
-      "name": "redlog.loki.datasource-name",
+      "name": "redlog.processor.loki.datasource-name",
       "type": "String",
       "description": "grafana datasource identifier",
       "defaultValue" : "default"
     },
     {
-      "name": "redlog.source-type",
+      "name": "redlog.source.type",
       "type": "com.github.fmcejudo.redlogs.config.SourceType",
       "description": "Where the card are taken from.",
       "defaultValue": "file"
     },
     {
-      "name": "redlog.file.files-path",
+      "name": "redlog.source.file.files-path",
       "type": "java.lang.String",
       "description": "path to files",
       "defaultValue": "classpath:."
     },
     {
-      "name": "redlog.github.github-token",
+      "name": "redlog.source.github.github-token",
       "type": "java.lang.String",
       "description": "Token to connect to github where the cards are",
       "defaultValue": "any"
     },
     {
-      "name": "redlog.github.url-mapper",
+      "name": "redlog.source.github.url-mapper",
       "type": "java.util.Map",
       "description": "define for each application, where is the path in github",
       "defaultValue": "any"
     },
     {
-      "name": "redlog.mongo.collection-name-prefix",
+      "name": "redlog.writer.type",
       "type": "string",
-      "description": "define the prefix for collection used by red-log",
+      "description": "define where the report information is stored and read from",
       "defaultValue": ""
     },
     {

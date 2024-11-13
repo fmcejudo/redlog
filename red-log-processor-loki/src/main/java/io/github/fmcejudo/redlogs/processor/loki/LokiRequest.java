@@ -1,9 +1,9 @@
 package io.github.fmcejudo.redlogs.processor.loki;
 
-import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
+
+import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest;
 
 public record LokiRequest(CardQueryRequest cardQueryRequest, LocalDateTime startTime, LocalDateTime endTime) {
 

@@ -1,2 +1,5 @@
 io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties
+io.github.fmcejudo.redlogs.mongo.RedLogMongoConfiguration
 io.github.fmcejudo.redlogs.mongo.writer.CardMongoWriterConfiguration
+io.github.fmcejudo.redlogs.mongo.report.RedLogMongoReportConfiguration
+

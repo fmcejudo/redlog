@@ -1,13 +1,13 @@
 package com.github.fmcejudo.redlogs.report;
 
-import io.github.fmcejudo.redlogs.report.domain.Report;
-import io.github.fmcejudo.redlogs.report.domain.ReportSection;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import io.github.fmcejudo.redlogs.report.domain.Report;
+import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 
 @FunctionalInterface
 public interface ReportGenerator {

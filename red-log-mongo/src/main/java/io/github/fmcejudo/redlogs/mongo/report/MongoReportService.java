@@ -1,22 +1,18 @@
-package com.github.fmcejudo.redlogs.report;
+package io.github.fmcejudo.redlogs.mongo.report;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
-import com.github.fmcejudo.redlogs.util.MongoNamingUtils;
+import io.github.fmcejudo.redlogs.mongo.MongoNamingUtils;
+import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
+import io.github.fmcejudo.redlogs.report.ReportService;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
 import io.github.fmcejudo.redlogs.report.domain.Report;
 import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
-public interface ReportService {
-
-  Report findReport(String executionId);
-}
 
 class MongoReportService implements ReportService {
 
@@ -26,9 +22,9 @@ class MongoReportService implements ReportService {
 
   private final String reportsCollectionName;
 
-  public MongoReportService(final MongoTemplate mongoTemplate, final RedLogMongoProperties redLogMongoProperties) {
+  public MongoReportService(final MongoTemplate mongoTemplate, final RedlogMongoProperties redLogMongoProperties) {
     this.mongoTemplate = mongoTemplate;
-    String collectionNamePrefix = redLogMongoProperties.getCollectionNamePrefix();
+    String collectionNamePrefix = "test";
     this.reportsCollectionName = MongoNamingUtils.composeCollectionName(collectionNamePrefix, "reports");
     this.executionsCollectionName = MongoNamingUtils.composeCollectionName(collectionNamePrefix, "executions");
   }

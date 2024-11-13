@@ -1,11 +1,18 @@
-package com.github.fmcejudo.redlogs.report;
+package io.github.fmcejudo.redlogs.mongo.report;
 
-import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+import io.github.fmcejudo.redlogs.mongo.MongoNamingUtils;
+import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
+import io.github.fmcejudo.redlogs.report.ReportService;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
 import io.github.fmcejudo.redlogs.report.domain.Report;
 import io.github.fmcejudo.redlogs.report.domain.ReportItem;
 import io.github.fmcejudo.redlogs.report.domain.ReportSection;
-import com.github.fmcejudo.redlogs.util.MongoNamingUtils;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
@@ -28,21 +35,16 @@ import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
 import org.testcontainers.utility.MountableFile;
 
-import java.time.Duration;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Map;
-
 @DataMongoTest
 @Testcontainers(disabledWithoutDocker = true)
-@EnableConfigurationProperties(value = RedLogMongoProperties.class)
+@EnableConfigurationProperties(value = RedlogMongoProperties.class)
 @EnableMongoRepositories
 @ContextConfiguration(classes = {
-        MongoReportService.class
+        MongoReportService.class,
+        RedLogMongoReportConfiguration.class
 })
 @TestPropertySource(properties = {
-        "redlog.mongo.collection-name-prefix=test"
+        "redlog.writer.mongo.collection-name-prefix=test"
 })
 class MongoReportServiceTest {
 
@@ -110,6 +112,7 @@ class MongoReportServiceTest {
     }
 }
 
+
 class CustomMongoDBContainer extends GenericContainer<CustomMongoDBContainer> {
 
     private static final String DATABASE_NAME = "redlog";
@@ -117,15 +120,15 @@ class CustomMongoDBContainer extends GenericContainer<CustomMongoDBContainer> {
     public CustomMongoDBContainer(DockerImageName dockerImageName) {
         super(dockerImageName);
         this.withExposedPorts(27017)
-                .withCopyToContainer(
-                        MountableFile.forClasspathResource("db/mongo/redlog-mongo.js"),
-                        "/docker-entrypoint-initdb.d/redlog-mongo.js"
-                )
-                .withEnv("MONGO_INITDB_DATABASE", "admin")
-                .withEnv("MONGO_INITDB_ROOT_USERNAME", "root")
-                .withEnv("MONGO_INITDB_ROOT_PASSWORD", "pass")
-                .waitingFor(Wait.forLogMessage("(?i).*waiting for connections.*", 2))
-                .withStartupTimeout(Duration.ofSeconds(10));
+            .withCopyToContainer(
+                MountableFile.forClasspathResource("db/mongo/redlog-mongo.js"),
+                "/docker-entrypoint-initdb.d/redlog-mongo.js"
+            )
+            .withEnv("MONGO_INITDB_DATABASE", "admin")
+            .withEnv("MONGO_INITDB_ROOT_USERNAME", "root")
+            .withEnv("MONGO_INITDB_ROOT_PASSWORD", "pass")
+            .waitingFor(Wait.forLogMessage("(?i).*waiting for connections.*", 2))
+            .withStartupTimeout(Duration.ofSeconds(10));
     }
 
     public static CustomMongoDBContainer fromMongoVersion(final String version) {

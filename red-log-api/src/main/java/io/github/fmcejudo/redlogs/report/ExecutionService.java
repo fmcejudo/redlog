@@ -1,9 +1,9 @@
-package com.github.fmcejudo.redlogs.execution;
-
-import io.github.fmcejudo.redlogs.report.domain.Execution;
+package io.github.fmcejudo.redlogs.report;
 
 import java.util.List;
 import java.util.Map;
+
+import io.github.fmcejudo.redlogs.report.domain.Execution;
 
 public interface ExecutionService {
 

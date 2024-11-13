@@ -1,10 +1,15 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+
+import java.time.LocalDate;
+import java.util.Map;
+
 import com.github.fmcejudo.redlogs.card.CardContext;
+import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import io.github.fmcejudo.redlogs.card.domain.CounterCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.domain.SummaryCardQueryRequest;
-import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,11 +19,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-
-import java.time.LocalDate;
-import java.util.Map;
-
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {

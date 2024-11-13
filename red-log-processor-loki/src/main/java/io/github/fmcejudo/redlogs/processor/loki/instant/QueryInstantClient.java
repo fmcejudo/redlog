@@ -1,5 +1,9 @@
 package io.github.fmcejudo.redlogs.processor.loki.instant;
 
+import static java.time.ZoneOffset.UTC;
+
+import java.util.concurrent.TimeUnit;
+
 import io.github.fmcejudo.redlogs.processor.loki.LokiClient;
 import io.github.fmcejudo.redlogs.processor.loki.LokiRequest;
 import io.github.fmcejudo.redlogs.processor.loki.LokiResponse;
@@ -8,10 +12,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.annotation.GetExchange;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
-
-import java.util.concurrent.TimeUnit;
-
-import static java.time.ZoneOffset.UTC;
 
 public final class QueryInstantClient implements LokiClient {
 

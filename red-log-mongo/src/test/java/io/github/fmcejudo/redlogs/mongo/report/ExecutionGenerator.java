@@ -1,10 +1,10 @@
-package com.github.fmcejudo.redlogs.execution;
-
-import io.github.fmcejudo.redlogs.report.domain.Execution;
+package io.github.fmcejudo.redlogs.mongo.report;
 
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
+
+import io.github.fmcejudo.redlogs.report.domain.Execution;
 
 @FunctionalInterface
 interface ExecutionGenerator {

@@ -1,10 +1,10 @@
 package io.github.fmcejudo.redlogs.processor.loki.instant;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import io.github.fmcejudo.redlogs.processor.loki.LokiResponse;
-
 import java.util.List;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import io.github.fmcejudo.redlogs.processor.loki.LokiResponse;
 
 @JsonSerialize
 public record QueryInstantResponse(String status, Data data) implements LokiResponse {

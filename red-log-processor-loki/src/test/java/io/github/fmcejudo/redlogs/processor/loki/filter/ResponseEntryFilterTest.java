@@ -1,14 +1,14 @@
 package io.github.fmcejudo.redlogs.processor.loki.filter;
 
+import java.util.List;
+import java.util.Map;
+
 import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.domain.CardQueryResponseEntry;
 import io.github.fmcejudo.redlogs.card.domain.CardType;
 import io.github.fmcejudo.redlogs.card.processor.filter.ResponseEntryFilter;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
 
 class ResponseEntryFilterTest {
 

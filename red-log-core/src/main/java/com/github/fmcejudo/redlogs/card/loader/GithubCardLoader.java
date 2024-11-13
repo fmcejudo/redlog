@@ -1,14 +1,14 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
-import com.github.fmcejudo.redlogs.card.CardContext;
-import io.github.fmcejudo.redlogs.card.domain.CardRequest;
-import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
-
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
+
+import com.github.fmcejudo.redlogs.card.CardContext;
+import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 
 class GithubCardLoader implements CardLoader {
 

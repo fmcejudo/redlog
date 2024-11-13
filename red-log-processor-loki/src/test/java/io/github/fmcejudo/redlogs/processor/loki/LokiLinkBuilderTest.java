@@ -1,9 +1,9 @@
 package io.github.fmcejudo.redlogs.processor.loki;
 
+import java.time.LocalDateTime;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
 
 class LokiLinkBuilderTest {
 

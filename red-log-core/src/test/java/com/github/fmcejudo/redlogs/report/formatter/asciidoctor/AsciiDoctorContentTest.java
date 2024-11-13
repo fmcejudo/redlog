@@ -1,20 +1,6 @@
 package com.github.fmcejudo.redlogs.report.formatter.asciidoctor;
 
-import com.github.fmcejudo.redlogs.report.ReportGenerator;
-import io.github.fmcejudo.redlogs.report.domain.Report;
-import io.github.fmcejudo.redlogs.report.domain.ReportItem;
-import io.github.fmcejudo.redlogs.report.domain.ReportSection;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.AsciiComponent;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.ContainerComponent;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.DocumentTitle;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.Item;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.ListItem;
-import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.TextLine;
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -22,7 +8,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+import com.github.fmcejudo.redlogs.report.ReportGenerator;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.AsciiComponent;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.ContainerComponent;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.DocumentTitle;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.Item;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.ListItem;
+import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.builder.TextLine;
+import io.github.fmcejudo.redlogs.report.domain.Report;
+import io.github.fmcejudo.redlogs.report.domain.ReportItem;
+import io.github.fmcejudo.redlogs.report.domain.ReportSection;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.util.Assert;
 
 class AsciiDoctorContentTest {
 

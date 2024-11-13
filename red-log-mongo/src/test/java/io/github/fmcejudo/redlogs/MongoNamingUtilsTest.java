@@ -1,5 +1,6 @@
-package com.github.fmcejudo.redlogs.util;
+package io.github.fmcejudo.redlogs;
 
+import io.github.fmcejudo.redlogs.mongo.MongoNamingUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;

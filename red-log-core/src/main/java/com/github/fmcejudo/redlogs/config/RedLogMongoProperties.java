@@ -2,7 +2,7 @@ package com.github.fmcejudo.redlogs.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = "redlog.mongo")
+@ConfigurationProperties(prefix = "redlog.writer")
 public class RedLogMongoProperties {
 
     private String collectionNamePrefix;

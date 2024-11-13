@@ -1,12 +1,12 @@
 package io.github.fmcejudo.redlogs.processor.loki;
 
-import org.springframework.web.util.UriComponentsBuilder;
+import static java.time.ZoneOffset.UTC;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.ToLongFunction;
 
-import static java.time.ZoneOffset.UTC;
+import org.springframework.web.util.UriComponentsBuilder;
 
 final class LokiLinkBuilder {
 

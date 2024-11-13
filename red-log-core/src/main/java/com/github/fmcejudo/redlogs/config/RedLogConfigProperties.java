@@ -1,5 +1,7 @@
 package com.github.fmcejudo.redlogs.config;
 
+import java.util.Map;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
@@ -9,18 +11,11 @@ public class RedLogConfigProperties {
 
     private SourceType sourceType;
 
-    private RedLogGithubProperties github;
+    private RedLogSource source;
 
     private RedLogMongoProperties mongo;
 
-
-    public RedLogGithubProperties getGithub() {
-        return github;
-    }
-
-    public void setGithub(RedLogGithubProperties github) {
-        this.github = github;
-    }
+    private Map<String, String> processor;
 
     public SourceType getSourceType() {
         return sourceType;
@@ -36,5 +31,21 @@ public class RedLogConfigProperties {
 
     public void setMongo(RedLogMongoProperties mongo) {
         this.mongo = mongo;
+    }
+
+    public RedLogSource getSource() {
+        return source;
+    }
+
+    public void setSource(RedLogSource source) {
+        this.source = source;
+    }
+
+    public Map<String, String> getProcessor() {
+        return processor;
+    }
+
+    public void setProcessor(Map<String, String> processor) {
+        this.processor = processor;
     }
 }

@@ -1,14 +1,14 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
-import com.github.fmcejudo.redlogs.card.CardContext;
-import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
-import io.github.fmcejudo.redlogs.card.domain.CardRequest;
-import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.io.Resource;
-
 import java.io.File;
 import java.nio.file.Files;
+
+import com.github.fmcejudo.redlogs.card.CardContext;
+import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
+import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
+import io.github.fmcejudo.redlogs.card.domain.CardRequest;
+import org.springframework.core.io.DefaultResourceLoader;
+import org.springframework.core.io.Resource;
 
 public class FileCardLoader implements CardLoader {
 

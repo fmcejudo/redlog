@@ -1,5 +1,11 @@
 package com.github.fmcejudo.redlogs.report;
 
+import static org.mockito.ArgumentMatchers.anyString;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
 import io.github.fmcejudo.redlogs.report.domain.Report;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -10,12 +16,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
-import static org.mockito.ArgumentMatchers.anyString;
 
 @WebFluxTest(controllers = ReportController.class)
 @ContextConfiguration(classes = {

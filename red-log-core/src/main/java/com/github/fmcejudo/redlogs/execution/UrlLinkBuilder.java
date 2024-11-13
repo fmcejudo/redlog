@@ -1,9 +1,9 @@
 package com.github.fmcejudo.redlogs.execution;
 
+import java.net.URI;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-
-import java.net.URI;
 
 final class UrlLinkBuilder {
 

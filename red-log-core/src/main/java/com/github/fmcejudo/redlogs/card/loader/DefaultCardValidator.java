@@ -1,13 +1,13 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
-import com.github.fmcejudo.redlogs.card.CardContext;
-import org.springframework.util.NumberUtils;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
+
+import com.github.fmcejudo.redlogs.card.CardContext;
+import org.springframework.util.NumberUtils;
 
 class RangeValidator implements CardValidator {
 

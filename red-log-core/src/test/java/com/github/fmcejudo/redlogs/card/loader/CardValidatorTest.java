@@ -1,5 +1,9 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Map;
+
 import com.github.fmcejudo.redlogs.card.CardContext;
 import io.github.fmcejudo.redlogs.card.domain.CardType;
 import org.assertj.core.api.Assertions;
@@ -8,10 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Map;
 
 class CardValidatorTest {
 

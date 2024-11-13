@@ -1,5 +1,10 @@
 package com.github.fmcejudo.redlogs.execution;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+import io.github.fmcejudo.redlogs.report.ExecutionService;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,10 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {

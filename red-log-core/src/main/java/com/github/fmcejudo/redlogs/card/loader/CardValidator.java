@@ -1,10 +1,10 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
-import com.github.fmcejudo.redlogs.card.CardContext;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import com.github.fmcejudo.redlogs.card.CardContext;
 
 @FunctionalInterface
 interface CardValidator {

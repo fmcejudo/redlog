@@ -1,10 +1,10 @@
 package io.github.fmcejudo.redlogs.processor.loki.instant;
 
-import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Test;
-
 import java.util.List;
 import java.util.Map;
+
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 class QueryInstantResponseTest {
 

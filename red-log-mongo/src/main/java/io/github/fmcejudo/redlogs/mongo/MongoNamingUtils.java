@@ -1,4 +1,4 @@
-package com.github.fmcejudo.redlogs.util;
+package io.github.fmcejudo.redlogs.mongo;
 
 public final class MongoNamingUtils {
 

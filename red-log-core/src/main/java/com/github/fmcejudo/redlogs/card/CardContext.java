@@ -1,13 +1,13 @@
 package com.github.fmcejudo.redlogs.card;
 
-import org.apache.logging.log4j.util.Strings;
+import static java.time.format.DateTimeFormatter.ISO_DATE;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static java.time.format.DateTimeFormatter.ISO_DATE;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+import org.apache.logging.log4j.util.Strings;
 
 public class CardContext {
 

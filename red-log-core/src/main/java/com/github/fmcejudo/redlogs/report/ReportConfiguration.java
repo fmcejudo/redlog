@@ -4,13 +4,13 @@ import com.github.fmcejudo.redlogs.card.CardController;
 import com.github.fmcejudo.redlogs.card.CardRunner;
 import com.github.fmcejudo.redlogs.card.loader.CardLoader;
 import com.github.fmcejudo.redlogs.card.process.CardProcessorFactory;
-import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
 import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorContent;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorFormat;
 import io.github.fmcejudo.redlogs.card.processor.CardProcessor;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
+import io.github.fmcejudo.redlogs.report.ReportService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,15 +35,7 @@ public class ReportConfiguration {
   }
 
   @Bean
-  @ConditionalOnMissingBean(ReportService.class)
-  ReportService reportService(final MongoTemplate mongoTemplate,
-      final RedLogMongoProperties redLogMongoProperties) {
-    return new MongoReportService(mongoTemplate, redLogMongoProperties);
-  }
-
-  @Bean
-  ReportReaderService reportServiceProxy(final ReportService reportService,
-      final DocumentFormat documentFormat) {
+  ReportReaderService reportServiceProxy(final ReportService reportService, final DocumentFormat documentFormat) {
     return new ReportReaderService(reportService, documentFormat);
   }
 

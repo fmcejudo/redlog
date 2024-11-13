@@ -1,6 +1,11 @@
-package com.github.fmcejudo.redlogs.execution;
+package io.github.fmcejudo.redlogs.mongo.report;
 
-import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
+import io.github.fmcejudo.redlogs.report.ExecutionService;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,20 +28,16 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.lifecycle.Startables;
 import org.testcontainers.utility.DockerImageName;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
-@EnableConfigurationProperties(value = RedLogMongoProperties.class)
+@EnableConfigurationProperties(value = RedlogMongoProperties.class)
 @EnableMongoRepositories
 @ContextConfiguration(classes = {
         MongoExecutionService.class
 })
 @Testcontainers(disabledWithoutDocker = true)
 @TestPropertySource(properties = {
-        "redlog.mongo.collection-name-prefix=test"
+        "redlog.writer.mongo.collection-name-prefix=test"
 })
 class MongoExecutionServiceTest {
 

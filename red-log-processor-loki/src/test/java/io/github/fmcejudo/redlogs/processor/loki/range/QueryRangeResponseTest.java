@@ -1,11 +1,11 @@
 package io.github.fmcejudo.redlogs.processor.loki.range;
 
+import java.util.List;
+import java.util.Map;
+
 import io.github.fmcejudo.redlogs.processor.loki.LokiResponse;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.Map;
 
 class QueryRangeResponseTest {
 

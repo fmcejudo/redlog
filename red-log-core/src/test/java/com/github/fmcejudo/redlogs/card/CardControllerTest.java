@@ -1,5 +1,13 @@
 package com.github.fmcejudo.redlogs.card;
 
+import static java.time.LocalDate.now;
+import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
+
+import static org.mockito.ArgumentMatchers.any;
+
+import java.util.List;
+import java.util.Map;
+
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -10,13 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.LinkedMultiValueMap;
-
-import java.util.List;
-import java.util.Map;
-
-import static java.time.LocalDate.now;
-import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
-import static org.mockito.ArgumentMatchers.any;
 
 @WebFluxTest(controllers = CardController.class)
 @ContextConfiguration(classes = {

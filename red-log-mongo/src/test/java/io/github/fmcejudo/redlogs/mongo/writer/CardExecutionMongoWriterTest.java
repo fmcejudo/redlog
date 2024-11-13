@@ -7,6 +7,7 @@ import java.util.Map;
 
 import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
+import io.github.fmcejudo.redlogs.mongo.RedLogMongoConfiguration;
 import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
 import org.assertj.core.api.Assertions;
@@ -33,14 +34,15 @@ import org.testcontainers.utility.DockerImageName;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {
-    CardMongoWriterConfiguration.class,
-    RedlogMongoProperties.class
+    RedlogMongoProperties.class,
+    RedLogMongoConfiguration.class,
+    CardMongoWriterConfiguration.class
 })
 @ConfigurationPropertiesScan(basePackageClasses = RedlogMongoProperties.class)
 @Testcontainers(disabledWithoutDocker = true)
 @EnableAutoConfiguration
 @TestPropertySource(properties = {
-    "redlog.writer=mongo"
+    "redlog.writer.type=mongo"
 })
 class CardExecutionMongoWriterTest {
 

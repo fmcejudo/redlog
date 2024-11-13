@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import io.github.fmcejudo.redlogs.card.domain.CardQueryRequest;
-import io.github.fmcejudo.redlogs.card.processor.filter.ResponseEntryFilter;
 
 public record ProcessorContext(String executionId, CardQueryRequest cardQueryRequest, LocalDateTime startTime, LocalDateTime endTime) {
 
