@@ -41,7 +41,7 @@ public class ReportConfiguration {
 
   @Bean
   @ConditionalOnBean(value = {
-      CardLoader.class, CardProcessor.class, CardReportWriter.class
+      CardLoader.class, CardProcessorFactory.class, CardExecutionWriter.class, CardReportWriter.class
   })
   CardRunner cardRunner(final CardLoader cardLoader,
       final CardProcessorFactory processorFactory,
