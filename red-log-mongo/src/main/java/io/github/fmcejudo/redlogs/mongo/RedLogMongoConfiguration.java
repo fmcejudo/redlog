@@ -10,13 +10,13 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 
-@Configuration
+@AutoConfiguration
 public class RedLogMongoConfiguration {
 
   @Bean(destroyMethod = "close")

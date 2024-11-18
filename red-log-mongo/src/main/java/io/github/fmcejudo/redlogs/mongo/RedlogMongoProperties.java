@@ -1,9 +1,9 @@
 package io.github.fmcejudo.redlogs.mongo;
 
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@AutoConfiguration
 @ConfigurationProperties(prefix = "redlog.writer.mongo")
 public class RedlogMongoProperties {
 

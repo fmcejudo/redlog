@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.mongo.MongoNamingUtils;
-import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
 import io.github.fmcejudo.redlogs.report.ReportService;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
 import io.github.fmcejudo.redlogs.report.domain.Report;
@@ -22,7 +21,7 @@ class MongoReportService implements ReportService {
 
   private final String reportsCollectionName;
 
-  public MongoReportService(final MongoTemplate mongoTemplate, final RedlogMongoProperties redLogMongoProperties) {
+  public MongoReportService(final MongoTemplate mongoTemplate) {
     this.mongoTemplate = mongoTemplate;
     String collectionNamePrefix = "test";
     this.reportsCollectionName = MongoNamingUtils.composeCollectionName(collectionNamePrefix, "reports");

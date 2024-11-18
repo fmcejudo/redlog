@@ -7,19 +7,15 @@ import com.github.fmcejudo.redlogs.card.process.CardProcessorFactory;
 import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorContent;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorFormat;
-import io.github.fmcejudo.redlogs.card.processor.CardProcessor;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.report.ReportService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.mongodb.core.MongoTemplate;
 
-@ConfigurationPropertiesScan
-@AutoConfiguration(after = MongoTemplate.class)
+@AutoConfiguration
 public class ReportConfiguration {
 
   @Bean
@@ -39,10 +35,7 @@ public class ReportConfiguration {
     return new ReportReaderService(reportService, documentFormat);
   }
 
-  @Bean
-  @ConditionalOnBean(value = {
-      CardLoader.class, CardProcessorFactory.class, CardExecutionWriter.class, CardReportWriter.class
-  })
+  @Bean(destroyMethod = "close")
   CardRunner cardRunner(final CardLoader cardLoader,
       final CardProcessorFactory processorFactory,
       final CardExecutionWriter cardExecutionWriter,
@@ -51,11 +44,13 @@ public class ReportConfiguration {
   }
 
   @Bean
+  @ConditionalOnBean(CardRunner.class)
   CardController cardController(final CardRunner cardRunner) {
     return new CardController(cardRunner);
   }
 
   @Bean
+  @ConditionalOnBean(ReportReaderService.class)
   ReportController reportController(final ReportReaderService reportServiceProxy) {
     return new ReportController(reportServiceProxy);
   }

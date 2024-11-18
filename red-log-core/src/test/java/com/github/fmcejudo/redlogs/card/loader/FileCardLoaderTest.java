@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.util.Map;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
-import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
+import com.github.fmcejudo.redlogs.config.RedLogConfigProperties;
 import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 import io.github.fmcejudo.redlogs.card.domain.CounterCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.domain.SummaryCardQueryRequest;
@@ -26,10 +26,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
         CardConfiguration.class
 })
 @EnableConfigurationProperties
-@ConfigurationPropertiesScan(basePackageClasses = {RedLogFileProperties.class})
+@ConfigurationPropertiesScan(basePackageClasses = {RedLogConfigProperties.class})
 @TestPropertySource(properties = {
-        "redlog.file.files-path=classpath:cards/",
-        "redlog.source-type=FILE"
+        "redlog.source.file.files-path=classpath:cards/",
+        "redlog.source.type=FILE"
 })
 class FileCardLoaderTest {
 

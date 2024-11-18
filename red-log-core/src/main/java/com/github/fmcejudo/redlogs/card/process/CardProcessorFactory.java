@@ -14,9 +14,10 @@ public final class CardProcessorFactory implements Closeable {
     this.cardProcessorMap = cardProcessorMap;
   }
 
-  public final CardProcessor ofType(final String type) {
-    return Optional.ofNullable(cardProcessorMap.get(type))
-        .orElseThrow(() -> new IllegalStateException("type %s is not registered"));
+  public CardProcessor ofType(final String type) {
+
+    return Optional.ofNullable(cardProcessorMap.get("LOKI"))
+        .orElseThrow(() -> new IllegalStateException("type %s is not registered".formatted(type)));
   }
 
   public void close() {
