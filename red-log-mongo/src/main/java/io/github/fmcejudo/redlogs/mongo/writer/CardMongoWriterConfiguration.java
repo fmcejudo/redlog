@@ -6,21 +6,19 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
-@DependsOn(value = { "redlogMongoTemplate"})
 class CardMongoWriterConfiguration {
 
   @Bean
-  @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
+  @ConditionalOnBean(value = MongoTemplate.class)
   CardExecutionWriter cardExecutionWriter(@Qualifier("redlogMongoTemplate") final MongoTemplate redlogMongoTemplate) {
     return new CardExecutionMongoWriter(redlogMongoTemplate);
   }
 
   @Bean
-  @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
+  @ConditionalOnBean(value = MongoTemplate.class)
   CardReportWriter cardReportWriter(@Qualifier("redlogMongoTemplate") final MongoTemplate redlogMongoTemplate) {
     return new CardReportMongoWriter(redlogMongoTemplate);
   }
