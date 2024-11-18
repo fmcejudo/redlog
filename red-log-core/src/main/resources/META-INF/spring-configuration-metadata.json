@@ -34,7 +34,7 @@
       "name": "redlog.source.type",
       "type": "com.github.fmcejudo.redlogs.config.SourceType",
       "description": "Where the card are taken from.",
-      "defaultValue": "file"
+      "defaultValue": "FILE"
     },
     {
       "name": "redlog.source.file.files-path",

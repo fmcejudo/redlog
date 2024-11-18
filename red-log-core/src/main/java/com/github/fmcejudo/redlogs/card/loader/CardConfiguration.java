@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
+import com.github.fmcejudo.redlogs.config.RedLogConfigProperties;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
 import com.github.fmcejudo.redlogs.config.RedLogMongoProperties;
@@ -15,17 +16,17 @@ class CardConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(CardLoader.class)
-    @ConditionalOnProperty(name = "redlog.source-type", havingValue = "GITHUB")
-    public CardLoader githubCardLoader(final RedLogGithubProperties redLogGithubProperties,
+    @ConditionalOnProperty(name = "redlog.source.type", havingValue = "GITHUB")
+    public CardLoader githubCardLoader(final RedLogConfigProperties redLogConfigProperties,
                                        final CardConverter cardConverter) {
-        return new GithubCardLoader(redLogGithubProperties, cardConverter);
+        return new GithubCardLoader(redLogConfigProperties.getSource().getGithub(), cardConverter);
     }
 
     @Bean
     @ConditionalOnMissingBean(CardLoader.class)
-    @ConditionalOnProperty(name = "redlog.source-type", havingValue = "FILE")
-    public CardLoader fileCardLoader(final RedLogFileProperties redLogFileProperties,
+    @ConditionalOnProperty(name = "redlog.source.type", havingValue = "FILE")
+    public CardLoader fileCardLoader(final RedLogConfigProperties redLogConfigProperties,
                                      final CardConverter cardConverter) {
-        return new FileCardLoader(redLogFileProperties, cardConverter);
+        return new FileCardLoader(redLogConfigProperties.getSource().getFile(), cardConverter);
     }
 }

@@ -13,8 +13,6 @@ public class RedLogConfigProperties {
 
     private RedLogSource source;
 
-    private RedLogMongoProperties mongo;
-
     private Map<String, String> processor;
 
     public SourceType getSourceType() {
@@ -23,14 +21,6 @@ public class RedLogConfigProperties {
 
     public void setSourceType(SourceType sourceType) {
         this.sourceType = sourceType;
-    }
-
-    public RedLogMongoProperties getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(RedLogMongoProperties mongo) {
-        this.mongo = mongo;
     }
 
     public RedLogSource getSource() {
