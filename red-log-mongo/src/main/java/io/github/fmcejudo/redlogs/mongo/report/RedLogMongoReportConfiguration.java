@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
-class RedLogMongoReportConfiguration {
+public class RedLogMongoReportConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(ReportService.class)

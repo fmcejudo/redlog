@@ -9,16 +9,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
-class CardMongoWriterConfiguration {
+public class CardMongoWriterConfiguration {
 
   @Bean
-  @ConditionalOnBean(value = MongoTemplate.class)
+  @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
   CardExecutionWriter cardExecutionWriter(@Qualifier("redlogMongoTemplate") final MongoTemplate redlogMongoTemplate) {
     return new CardExecutionMongoWriter(redlogMongoTemplate);
   }
 
   @Bean
-  @ConditionalOnBean(value = MongoTemplate.class)
+  @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
   CardReportWriter cardReportWriter(@Qualifier("redlogMongoTemplate") final MongoTemplate redlogMongoTemplate) {
     return new CardReportMongoWriter(redlogMongoTemplate);
   }
