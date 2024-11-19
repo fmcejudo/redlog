@@ -20,7 +20,7 @@ public class RedLogMongoReportConfiguration {
   }
 
   @Bean
-  @ConditionalOnMissingBean(ReportService.class)
+  @ConditionalOnMissingBean(ExecutionService.class)
   @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
   ExecutionService executionService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate) {
     return new MongoExecutionService(mongoTemplate);
