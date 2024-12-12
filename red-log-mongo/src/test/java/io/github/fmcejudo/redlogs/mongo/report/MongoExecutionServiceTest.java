@@ -49,6 +49,9 @@ class MongoExecutionServiceTest {
     @Autowired
     MongoTemplate mongoTemplate;
 
+    @Autowired
+    RedlogMongoProperties redlogMongoProperties;
+
     @Container
     static MongoDBContainer mongoDBContainer = new MongoDBContainer(DockerImageName.parse("mongo:5"));
 

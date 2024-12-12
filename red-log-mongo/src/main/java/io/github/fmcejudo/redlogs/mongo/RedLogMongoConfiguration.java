@@ -8,6 +8,7 @@ import com.mongodb.MongoClientSettings.Builder;
 import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
+import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -17,6 +18,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 
 @AutoConfiguration
+@ConditionalOnRedlogEnabled
 public class RedLogMongoConfiguration {
 
   @Bean(destroyMethod = "close")

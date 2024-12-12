@@ -1,19 +1,25 @@
 {
   "properties": [
     {
+      "name": "redlog.enabled",
+      "type": "boolean",
+      "description": "enable redlog",
+      "defaultValue" : true
+    },
+    {
       "name": "redlog.processor.loki.url",
       "type": "String",
       "description": "loki url to query",
       "defaultValue" : "http://localhost:3100"
     },
     {
-      "name": "redlog.processor.loki.username",
+      "name": "redlog.processor.loki.user",
       "type": "String",
       "description": "loki username",
       "defaultValue" : ""
     },
     {
-      "name": "redlog.processor.loki.password",
+      "name": "redlog.processor.loki.pass",
       "type": "String",
       "description": "loki password",
       "defaultValue" : ""
@@ -25,7 +31,7 @@
       "defaultValue" : "http://localhost:9090"
     },
     {
-      "name": "redlog.processor.loki.datasource-name",
+      "name": "redlog.processor.loki.datasource",
       "type": "String",
       "description": "grafana datasource identifier",
       "defaultValue" : "default"
@@ -57,7 +63,7 @@
     {
       "name": "redlog.writer.type",
       "type": "string",
-      "description": "define where the report information is stored and read from",
+      "description": "define where the report information is stored and read from. It depends on the imported dependencies",
       "defaultValue": ""
     },
     {

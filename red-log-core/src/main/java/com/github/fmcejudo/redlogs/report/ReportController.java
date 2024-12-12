@@ -1,6 +1,7 @@
 package com.github.fmcejudo.redlogs.report;
 
 import io.github.fmcejudo.redlogs.report.domain.Report;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

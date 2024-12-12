@@ -7,18 +7,21 @@ import io.github.fmcejudo.redlogs.processor.loki.LokiClient;
 import io.github.fmcejudo.redlogs.processor.loki.LokiRequest;
 import io.github.fmcejudo.redlogs.processor.loki.LokiResponse;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.invoker.HttpExchangeAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 public class QueryRangeClient implements LokiClient {
 
     private final HttpQueryRangeClient queryRangeClient;
 
-    public QueryRangeClient(final WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
-        this.queryRangeClient = HttpServiceProxyFactory.builderFor(webClientAdapter).build()
+    public QueryRangeClient(final RestClient restClient) {
+        HttpExchangeAdapter adapter = RestClientAdapter.create(restClient);
+        this.queryRangeClient = HttpServiceProxyFactory.builderFor(adapter).build()
                 .createClient(HttpQueryRangeClient.class);
     }
 

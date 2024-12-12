@@ -2,6 +2,7 @@ package com.github.fmcejudo.redlogs.report;
 
 import com.github.fmcejudo.redlogs.card.CardController;
 import com.github.fmcejudo.redlogs.card.CardRunner;
+import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
 import com.github.fmcejudo.redlogs.card.loader.CardLoader;
 import com.github.fmcejudo.redlogs.card.process.CardProcessorFactory;
 import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
@@ -16,6 +17,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
+@ConditionalOnRedlogEnabled
 public class ReportConfiguration {
 
   @Bean

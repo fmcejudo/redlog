@@ -9,8 +9,8 @@ record LokiConnectionDetails(String url, String user, String password, String da
       throw new RuntimeException("There is no enough details to connect to loki");
     }
     String url = details.get("url");
-    String user = details.get("user");
-    String pass = details.get("pass");
+    String user = details.getOrDefault("user","");
+    String pass = details.getOrDefault("pass","");
     String datasource = details.get("datasource");
     String dashboardUrl = details.getOrDefault("dashboardUrl", "");
     return new LokiConnectionDetails(url, user, pass, datasource, dashboardUrl);

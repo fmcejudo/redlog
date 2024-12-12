@@ -8,9 +8,14 @@ import io.github.fmcejudo.redlogs.processor.loki.LokiClient;
 import io.github.fmcejudo.redlogs.processor.loki.LokiRequest;
 import io.github.fmcejudo.redlogs.processor.loki.LokiResponse;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.support.RestClientAdapter;
+import org.springframework.web.client.support.RestTemplateAdapter;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.support.WebClientAdapter;
 import org.springframework.web.service.annotation.GetExchange;
+import org.springframework.web.service.invoker.HttpExchangeAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 public final class QueryInstantClient implements LokiClient {
@@ -18,9 +23,9 @@ public final class QueryInstantClient implements LokiClient {
 
     private final HttpQueryInstantClient queryInstantClient;
 
-    public QueryInstantClient(final WebClient.Builder webClientBuilder) {
-        WebClientAdapter webClientAdapter = WebClientAdapter.create(webClientBuilder.build());
-        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(webClientAdapter).build();
+    public QueryInstantClient(final RestClient restClient) {
+        HttpExchangeAdapter adapter = RestClientAdapter.create(restClient);
+        HttpServiceProxyFactory factory = HttpServiceProxyFactory.builderFor(adapter).build();
 
         this.queryInstantClient = factory.createClient(HttpQueryInstantClient.class);
     }

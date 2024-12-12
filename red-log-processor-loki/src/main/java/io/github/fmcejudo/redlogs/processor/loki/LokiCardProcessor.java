@@ -23,9 +23,7 @@ import org.apache.logging.log4j.util.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
-import org.springframework.web.reactive.function.client.ExchangeStrategies;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.client.RestClient;
 import reactor.netty.http.client.HttpClient;
 
 class LokiCardProcessor implements CardProcessor {
@@ -116,32 +114,22 @@ interface LokiClientFactory {
   public abstract LokiClient get(final CardQueryRequest cardQueryRequest);
 
   static LokiClientFactory createInstance(final LokiConnectionDetails connectionDetails) {
-    WebClient.Builder webClientBuilder = createWebClient(connectionDetails);
-    return (cardQueryRequest) -> {
-      if (cardQueryRequest instanceof CounterCardQueryRequest) {
-        return new QueryInstantClient(webClientBuilder);
-      } else if (cardQueryRequest instanceof SummaryCardQueryRequest) {
-        return new QueryRangeClient(webClientBuilder);
-      }
-      throw new RuntimeException("Unknown card query request");
-    };
-  }
 
-  private static WebClient.Builder createWebClient(final LokiConnectionDetails connectionDetails) {
-    final ExchangeStrategies strategies = ExchangeStrategies.builder()
-        .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(16 * 1024 * 1024))
-        .build();
-
-    HttpClient client = HttpClient.create().responseTimeout(Duration.ofSeconds(10));
-    return WebClient.builder()
-        .defaultHeader("X-Grafana-Org-Id", "1")
+    RestClient restClient = RestClient.builder().baseUrl(connectionDetails.url())
         .defaultHeader(
             HttpHeaders.AUTHORIZATION,
             buildBasicAuthorizationValue(connectionDetails)
         )
-        .exchangeStrategies(strategies)
-        .clientConnector(new ReactorClientHttpConnector(client))
-        .baseUrl(connectionDetails.url());
+        .build();
+
+    return (cardQueryRequest) -> {
+      if (cardQueryRequest instanceof CounterCardQueryRequest) {
+        return new QueryInstantClient(restClient);
+      } else if (cardQueryRequest instanceof SummaryCardQueryRequest) {
+        return new QueryRangeClient(restClient);
+      }
+      throw new RuntimeException("Unknown card query request");
+    };
   }
 
   private static String buildBasicAuthorizationValue(final LokiConnectionDetails connectionDetails) {

@@ -2,25 +2,25 @@
   "properties": [
     {
       "name": "redlog.writer.mongo.collection-name-prefix",
-      "type": "string",
+      "type": "String",
       "description": "define the prefix for collection used by red-log",
       "defaultValue": ""
     },
     {
-      "name": "redlog.writer.mongo.uri",
-      "type": "string",
+      "name": "redlog.writer.mongo.url",
+      "type": "String",
       "description": "define connection string to connect to mongo where store reports",
       "defaultValue": ""
     },
     {
       "name": "redlog.writer.mongo.username",
-      "type": "string",
+      "type": "String",
       "description": "define username if required to connect to mongo",
       "defaultValue": ""
     },
     {
       "name": "redlog.writer.mongo.password",
-      "type": "string",
+      "type": "String",
       "description": "define password if required to connect to mongo",
       "defaultValue": ""
     }

@@ -1,9 +1,11 @@
 package io.github.fmcejudo.redlogs.mongo;
 
+import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @AutoConfiguration
+@ConditionalOnRedlogEnabled
 @ConfigurationProperties(prefix = "redlog.writer.mongo")
 public class RedlogMongoProperties {
 
@@ -14,6 +16,8 @@ public class RedlogMongoProperties {
   private String password;
 
   private String database;
+
+  private String collectionNamePrefix;
 
   public String getUrl() {
     return url;
@@ -45,5 +49,13 @@ public class RedlogMongoProperties {
 
   public void setDatabase(String database) {
     this.database = database;
+  }
+
+  public String getCollectionNamePrefix() {
+    return collectionNamePrefix;
+  }
+
+  public void setCollectionNamePrefix(String collectionNamePrefix) {
+    this.collectionNamePrefix = collectionNamePrefix;
   }
 }

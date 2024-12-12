@@ -1,5 +1,7 @@
 package io.github.fmcejudo.redlogs.mongo.report;
 
+import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
+import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
 import io.github.fmcejudo.redlogs.report.ExecutionService;
 import io.github.fmcejudo.redlogs.report.ReportService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,20 +12,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @AutoConfiguration
+@ConditionalOnRedlogEnabled
 public class RedLogMongoReportConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(ReportService.class)
   @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
-  ReportService reportService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate) {
-    return new MongoReportService(mongoTemplate);
+  ReportService reportService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {
+    return new MongoReportService(mongoTemplate, redlogMongoProperties);
   }
 
   @Bean
   @ConditionalOnMissingBean(ExecutionService.class)
   @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
-  ExecutionService executionService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate) {
-    return new MongoExecutionService(mongoTemplate);
+  ExecutionService executionService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {
+    return new MongoExecutionService(mongoTemplate, redlogMongoProperties);
   }
 
 }

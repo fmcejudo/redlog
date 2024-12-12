@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.mongo.MongoNamingUtils;
+import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
 import io.github.fmcejudo.redlogs.report.ExecutionService;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,10 +17,10 @@ final class MongoExecutionService implements ExecutionService {
 
   private final String collectionName;
 
-  public MongoExecutionService(MongoTemplate mongoTemplate) {
+  public MongoExecutionService(MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {
     this.mongoTemplate = mongoTemplate;
     this.collectionName = MongoNamingUtils.composeCollectionName(
-        "test",
+        redlogMongoProperties.getCollectionNamePrefix(),
         "executions"
     );
   }
