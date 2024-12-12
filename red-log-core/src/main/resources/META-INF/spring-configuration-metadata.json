@@ -1,0 +1,88 @@
+{
+  "properties": [
+    {
+      "name": "redlog.enabled",
+      "type": "boolean",
+      "description": "enable redlog",
+      "defaultValue" : true
+    },
+    {
+      "name": "redlog.processor.loki.url",
+      "type": "String",
+      "description": "loki url to query",
+      "defaultValue" : "http://localhost:3100"
+    },
+    {
+      "name": "redlog.processor.loki.user",
+      "type": "String",
+      "description": "loki username",
+      "defaultValue" : ""
+    },
+    {
+      "name": "redlog.processor.loki.pass",
+      "type": "String",
+      "description": "loki password",
+      "defaultValue" : ""
+    },
+    {
+      "name": "redlog.processor.loki.dashboard-url",
+      "type": "String",
+      "description": "grafana loki explorer",
+      "defaultValue" : "http://localhost:9090"
+    },
+    {
+      "name": "redlog.processor.loki.datasource",
+      "type": "String",
+      "description": "grafana datasource identifier",
+      "defaultValue" : "default"
+    },
+    {
+      "name": "redlog.source.type",
+      "type": "com.github.fmcejudo.redlogs.config.SourceType",
+      "description": "Where the card are taken from.",
+      "defaultValue": "FILE"
+    },
+    {
+      "name": "redlog.source.file.files-path",
+      "type": "java.lang.String",
+      "description": "path to files",
+      "defaultValue": "classpath:."
+    },
+    {
+      "name": "redlog.source.github.github-token",
+      "type": "java.lang.String",
+      "description": "Token to connect to github where the cards are",
+      "defaultValue": "any"
+    },
+    {
+      "name": "redlog.source.github.url-mapper",
+      "type": "java.util.Map",
+      "description": "define for each application, where is the path in github",
+      "defaultValue": "any"
+    },
+    {
+      "name": "redlog.writer.type",
+      "type": "string",
+      "description": "define where the report information is stored and read from. It depends on the imported dependencies",
+      "defaultValue": ""
+    },
+    {
+      "name": "redlog.card.controller-path",
+      "type": "string",
+      "description": "define the path for card runner endpoints",
+      "defaultValue": "card-runner"
+    },
+    {
+      "name": "redlog.report.controller-path",
+      "type": "string",
+      "description": "define the path for report endpoints",
+      "defaultValue": "report"
+    },
+    {
+      "name": "redlog.execution.controller-path",
+      "type": "string",
+      "description": "define the path for execution endpoints",
+      "defaultValue": "execution"
+    }
+  ]
+}
