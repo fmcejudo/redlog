@@ -12,10 +12,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @AutoConfiguration
-@ConditionalOnRedlogEnabled
 public class RedLogMongoReportConfiguration {
 
   @Bean
+  @ConditionalOnRedlogEnabled
   @ConditionalOnMissingBean(ReportService.class)
   @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
   ReportService reportService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {
@@ -23,6 +23,7 @@ public class RedLogMongoReportConfiguration {
   }
 
   @Bean
+  @ConditionalOnRedlogEnabled
   @ConditionalOnMissingBean(ExecutionService.class)
   @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
   ExecutionService executionService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {

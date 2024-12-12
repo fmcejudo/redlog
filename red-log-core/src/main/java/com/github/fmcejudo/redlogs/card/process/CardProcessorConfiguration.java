@@ -14,11 +14,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@ConditionalOnRedlogEnabled
 @EnableConfigurationProperties(RedLogConfigProperties.class)
 class CardProcessorConfiguration {
 
   @Bean
+  @ConditionalOnRedlogEnabled
   CardProcessorFactory cardProcessorFactory(final RedLogConfigProperties redLogConfigProperties) {
     var loader = ServiceLoader.load(CardProcessorProvider.class);
     var loaderIterator = loader.iterator();

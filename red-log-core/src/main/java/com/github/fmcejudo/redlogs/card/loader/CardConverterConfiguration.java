@@ -6,10 +6,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@ConditionalOnRedlogEnabled
 public class CardConverterConfiguration {
 
     @Bean
+    @ConditionalOnRedlogEnabled
     @ConditionalOnMissingBean(CardConverter.class)
     CardConverter cardConverter() {
         return new DefaultCardConverter();

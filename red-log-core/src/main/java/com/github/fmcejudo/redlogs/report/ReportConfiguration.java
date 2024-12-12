@@ -17,27 +17,30 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@ConditionalOnRedlogEnabled
 public class ReportConfiguration {
 
   @Bean
+  @ConditionalOnRedlogEnabled
   @ConditionalOnMissingBean(AsciiDoctorContent.class)
   AsciiDoctorContent asciiDoctorContent() {
     return reports -> "content";
   }
 
   @Bean
+  @ConditionalOnRedlogEnabled
   @ConditionalOnMissingBean(DocumentFormat.class)
   DocumentFormat documentFormat(final AsciiDoctorContent asciiDoctorContent) {
     return new AsciiDoctorFormat(asciiDoctorContent);
   }
 
   @Bean
+  @ConditionalOnRedlogEnabled
   ReportReaderService reportServiceProxy(final ReportService reportService, final DocumentFormat documentFormat) {
     return new ReportReaderService(reportService, documentFormat);
   }
 
   @Bean(destroyMethod = "close")
+  @ConditionalOnRedlogEnabled
   CardRunner cardRunner(final CardLoader cardLoader,
       final CardProcessorFactory processorFactory,
       final CardExecutionWriter cardExecutionWriter,
@@ -46,12 +49,14 @@ public class ReportConfiguration {
   }
 
   @Bean
+  @ConditionalOnRedlogEnabled
   @ConditionalOnBean(CardRunner.class)
   CardController cardController(final CardRunner cardRunner) {
     return new CardController(cardRunner);
   }
 
   @Bean
+  @ConditionalOnRedlogEnabled
   @ConditionalOnBean(ReportReaderService.class)
   ReportController reportController(final ReportReaderService reportServiceProxy) {
     return new ReportController(reportServiceProxy);

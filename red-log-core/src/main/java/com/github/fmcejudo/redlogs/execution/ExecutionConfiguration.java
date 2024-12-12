@@ -9,16 +9,17 @@ import org.springframework.context.annotation.Bean;
 import reactor.core.publisher.Flux;
 
 @AutoConfiguration
-@ConditionalOnRedlogEnabled
 class ExecutionConfiguration {
 
   @Bean
   @ConditionalOnClass(value = Flux.class)
+  @ConditionalOnRedlogEnabled
   ReactiveExecutionController reactiveExecutionController(final ExecutionService executionService) {
     return new ReactiveExecutionController(executionService);
   }
 
   @Bean
+  @ConditionalOnRedlogEnabled
   @ConditionalOnMissingBean(ReactiveExecutionController.class)
   WebExecutionController webExecutionController(final ExecutionService executionService) {
     return new WebExecutionController(executionService);

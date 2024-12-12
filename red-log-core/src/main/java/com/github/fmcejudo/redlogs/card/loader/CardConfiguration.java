@@ -9,11 +9,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 
 @AutoConfiguration
-@ConditionalOnRedlogEnabled
 @EnableConfigurationProperties({RedLogConfigProperties.class})
 class CardConfiguration {
 
     @Bean
+    @ConditionalOnRedlogEnabled
     @ConditionalOnMissingBean(CardLoader.class)
     @ConditionalOnProperty(name = "redlog.source.type", havingValue = "GITHUB")
     public CardLoader githubCardLoader(final RedLogConfigProperties redLogConfigProperties,
@@ -22,6 +22,7 @@ class CardConfiguration {
     }
 
     @Bean
+    @ConditionalOnRedlogEnabled
     @ConditionalOnMissingBean(CardLoader.class)
     @ConditionalOnProperty(name = "redlog.source.type", havingValue = "FILE")
     public CardLoader fileCardLoader(final RedLogConfigProperties redLogConfigProperties,

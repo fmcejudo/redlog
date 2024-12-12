@@ -18,10 +18,10 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 
 @AutoConfiguration
-@ConditionalOnRedlogEnabled
 public class RedLogMongoConfiguration {
 
   @Bean(destroyMethod = "close")
+  @ConditionalOnRedlogEnabled
   @ConditionalOnProperty(name = "redlog.writer.type", havingValue = "mongo")
   @Qualifier("redlogMongoClient")
   MongoClient redlogMongoClient(final RedlogMongoProperties redlogMongoProperties) {
@@ -42,6 +42,7 @@ public class RedLogMongoConfiguration {
   }
 
   @Bean
+  @ConditionalOnRedlogEnabled
   @ConditionalOnProperty(name = "redlog.writer.type", havingValue = "mongo")
   @Qualifier("redlogMongoTemplate")
   MongoTemplate redlogMongoTemplate(final MongoClient redlogMongoClient, final RedlogMongoProperties redlogMongoProperties) {
