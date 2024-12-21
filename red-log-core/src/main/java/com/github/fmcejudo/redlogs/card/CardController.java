@@ -3,6 +3,7 @@ package com.github.fmcejudo.redlogs.card;
 import java.util.Map;
 
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
+import com.github.fmcejudo.redlogs.card.runner.CardRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ public class CardController {
 
         try {
             CardContext cardContext = CardContext.from(applicationName, params);
-            cardRunner.run(cardContext);
+            cardRunner.onCardContext(cardContext);
             return ResponseEntity.ok("ok");
         } catch (CardExecutionException cardExecutionException) {
             return ResponseEntity.badRequest().body(cardExecutionException.getMessage());

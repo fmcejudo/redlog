@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import io.github.fmcejudo.redlogs.card.domain.CardRequest;
+import io.github.fmcejudo.redlogs.card.CardMetadata;
+import io.github.fmcejudo.redlogs.card.CardRequest;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.mongo.RedLogMongoConfiguration;
 import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
@@ -72,12 +73,12 @@ class CardExecutionMongoWriterTest {
   @Test
   void shouldWriteAReportInDB() {
     //Given
-    CardRequest cardRequest = new CardRequest(
-        "appTest", LocalDate.now(), LocalDateTime.now().minusHours(1), LocalDateTime.now(), List.of(), Map.of()
-    );
+    CardMetadata cardMetadata = new CardMetadata("20", "application-test", LocalDateTime.now().minusMinutes(10), LocalDateTime.now());
+
+    Map<String, String> parameters = Map.of("range", "20h");
 
     //When
-    String executionId = cardExecutionWriter.writeCardExecution(cardRequest);
+    String executionId = cardExecutionWriter.writeCardExecution(cardMetadata, parameters);
 
     //Then
     Assertions.assertThat(executionId).isNotNull();

@@ -1,6 +1,6 @@
 package io.github.fmcejudo.redlogs.mongo.writer;
 
-import io.github.fmcejudo.redlogs.card.domain.CardQueryResponse;
+import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import io.github.fmcejudo.redlogs.report.domain.ReportSectionBuilder;

@@ -9,19 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "redlog")
 public class RedLogConfigProperties {
 
-    private SourceType sourceType;
-
     private RedLogSource source;
 
     private Map<String, String> processor;
-
-    public SourceType getSourceType() {
-        return sourceType;
-    }
-
-    public void setSourceType(SourceType sourceType) {
-        this.sourceType = sourceType;
-    }
 
     public RedLogSource getSource() {
         return source;

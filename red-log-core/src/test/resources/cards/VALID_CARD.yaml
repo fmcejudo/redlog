@@ -6,6 +6,7 @@ time: 07:00
 queries:
   - id: coffee
     description: People who like COFFEE
+    processor: LOKI
     type: COUNT
     query: |
         <common_query>
@@ -13,7 +14,18 @@ queries:
 
   - id: chocolate
     description: People who like CHOCOLATE
-    type: SUMMARY
-    query: |
-        <common_query>
-        |~ `likes chocolate`
+    processor: LOKI
+    custom:
+        type: SUMMARY
+        query: |
+            <common_query>
+            |~ `likes chocolate`
+
+  - id: entities
+    description: Read entity from DB
+    processor: MONGO
+    custom:
+        type: QUERY
+        query: |
+          {id: 'something'}
+        collection: my_collection

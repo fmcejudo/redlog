@@ -1,8 +1,9 @@
 package io.github.fmcejudo.redlogs.mongo.writer;
 
-import java.util.UUID;
+import java.util.Map;
 
-import io.github.fmcejudo.redlogs.card.domain.CardRequest;
+import io.github.fmcejudo.redlogs.card.CardMetadata;
+import io.github.fmcejudo.redlogs.card.CardRequest;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.report.domain.Execution;
 import io.github.fmcejudo.redlogs.report.domain.ExecutionBuilder;
@@ -21,15 +22,14 @@ class CardExecutionMongoWriter implements CardExecutionWriter {
   }
 
   @Override
-  public String writeCardExecution(CardRequest cardRequest) {
-    String executionId = UUID.randomUUID().toString();
-    log.info("it starts execution {}", cardRequest.executionId());
+  public String writeCardExecution(CardMetadata metadata, Map<String, String> parameters) { // executionId, applicationName, reportDate, parameters
+    log.info("it starts execution {}", metadata.executionId());
     Execution execution = ExecutionBuilder
-        .withExecutionIdAndApplication(executionId, cardRequest.applicationName())
-        .withParameters(cardRequest.getParameters())
-        .withReportDate(cardRequest.endTime().toLocalDate())
+        .withExecutionIdAndApplication(metadata.executionId(), metadata.applicationName())
+        .withParameters(parameters)
+        .withReportDate(metadata.endTime().toLocalDate())
         .build();
     mongoTemplate.save(execution, "redlogExecutions");
-    return executionId;
+    return metadata.executionId();
   }
 }

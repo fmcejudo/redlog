@@ -8,6 +8,7 @@ import static org.mockito.ArgumentMatchers.any;
 import java.util.List;
 import java.util.Map;
 
+import com.github.fmcejudo.redlogs.card.runner.CardRunner;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -44,7 +45,7 @@ class CardControllerTest {
             Assertions.assertThat(context.reportDate()).isEqualTo(now().format(ISO_LOCAL_DATE));
 
             return null;
-        }).when(cardRunner).run(any(CardContext.class));
+        }).when(cardRunner).onCardContext(any(CardContext.class));
 
         //When
         var response = webTestClient.get()
@@ -59,7 +60,7 @@ class CardControllerTest {
         //Then
         response.expectStatus().isOk();
 
-        Mockito.verify(cardRunner, Mockito.times(1)).run(any(CardContext.class));
+        Mockito.verify(cardRunner, Mockito.times(1)).onCardContext(any(CardContext.class));
     }
 
 }

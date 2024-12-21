@@ -1,5 +1,5 @@
-import io.github.fmcejudo.redlogs.card.processor.CardProcessorProvider;
-import io.github.fmcejudo.redlogs.processor.loki.LokiCardProcessorProvider;
+import io.github.fmcejudo.redlogs.card.RedlogPluginProvider;
+import io.github.fmcejudo.redlogs.loki.LokiRedlogPluginProvider;
 
 module red.log.processor.loki {
 
@@ -10,13 +10,17 @@ module red.log.processor.loki {
   requires reactor.netty.http;
   requires org.apache.logging.log4j;
   requires com.fasterxml.jackson.databind;
+  requires org.apache.commons.text;
+  requires spring.core;
 
-  exports io.github.fmcejudo.redlogs.processor.loki.instant to com.fasterxml.jackson.databind;
-  exports io.github.fmcejudo.redlogs.processor.loki.range to com.fasterxml.jackson.databind;
+  exports io.github.fmcejudo.redlogs.loki.processor.connection.instant to com.fasterxml.jackson.databind;
+  exports io.github.fmcejudo.redlogs.loki.processor.connection.range to com.fasterxml.jackson.databind;
 
-  opens io.github.fmcejudo.redlogs.processor.loki.instant to com.fasterxml.jackson.databind;
-  opens io.github.fmcejudo.redlogs.processor.loki.range to com.fasterxml.jackson.databind;
+  opens io.github.fmcejudo.redlogs.loki.processor.connection.instant to com.fasterxml.jackson.databind;
+  opens io.github.fmcejudo.redlogs.loki.processor.connection.range to com.fasterxml.jackson.databind;
+  opens io.github.fmcejudo.redlogs.loki.processor.connection to spring.core;
+  opens io.github.fmcejudo.redlogs.loki.processor to spring.core;
 
-  provides CardProcessorProvider with LokiCardProcessorProvider;
+  provides RedlogPluginProvider with LokiRedlogPluginProvider;
 
 }

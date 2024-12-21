@@ -1,13 +1,14 @@
 package com.github.fmcejudo.redlogs.report;
 
 import com.github.fmcejudo.redlogs.card.CardController;
-import com.github.fmcejudo.redlogs.card.CardRunner;
-import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
-import com.github.fmcejudo.redlogs.card.loader.CardLoader;
-import com.github.fmcejudo.redlogs.card.process.CardProcessorFactory;
+import com.github.fmcejudo.redlogs.card.converter.CardConverter;
+import com.github.fmcejudo.redlogs.card.loader.CardFileLoader;
+import com.github.fmcejudo.redlogs.card.process.CardProcessor;
+import com.github.fmcejudo.redlogs.card.runner.CardRunner;
 import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorContent;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorFormat;
+import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.report.ReportService;
@@ -39,13 +40,18 @@ public class ReportConfiguration {
     return new ReportReaderService(reportService, documentFormat);
   }
 
-  @Bean(destroyMethod = "close")
+  @Bean
   @ConditionalOnRedlogEnabled
-  CardRunner cardRunner(final CardLoader cardLoader,
-      final CardProcessorFactory processorFactory,
+  CardRunner cardRunner(final CardFileLoader cardFileLoader,
+      final CardConverter cardConverter,
+      final CardProcessor cardProcessor,
       final CardExecutionWriter cardExecutionWriter,
       final CardReportWriter cardReportWriter) {
-    return new CardRunner(cardLoader, processorFactory, cardExecutionWriter, cardReportWriter);
+
+    return CardRunner.load(cardFileLoader)
+        .transform(cardConverter)
+        .process(cardProcessor)
+        .run(cardReportWriter, cardExecutionWriter);
   }
 
   @Bean

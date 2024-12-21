@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import java.time.LocalDate;
 import java.util.List;
 
-import io.github.fmcejudo.redlogs.card.domain.CardQueryResponse;
+import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.mongo.RedLogMongoConfiguration;
 import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
