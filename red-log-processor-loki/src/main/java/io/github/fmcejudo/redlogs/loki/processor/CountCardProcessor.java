@@ -25,7 +25,7 @@ class CountCardProcessor implements CardQueryProcessor {
   public CardQueryResponse process(CardQueryRequest cardQueryRequest) {
     Assert.isInstanceOf(LokiCountCardRequest.class, cardQueryRequest);
     LokiRequest lokiRequest = createLokiRequest((LokiCountCardRequest) cardQueryRequest);
-    LokiResponse response = lokiClientFactory.get(QueryTypeEnum.RANGE).query(lokiRequest);
+    LokiResponse response = lokiClientFactory.get(QueryTypeEnum.INSTANT).query(lokiRequest);
     return cardQueryResponseParser.parse(response, cardQueryRequest);
   }
 

@@ -68,7 +68,7 @@ class LokiCardQueryProcessorTest {
     CardQuery cardQuery = new CardQuery("id", "LOKI", "description", Map.of(
         "type", "count",
         "query", """
-        {name="something"}\
+        count_over_time({name="something"}[24h])\
         """));
     CardMetadata metadata = new CardMetadata("20", "test", LocalDateTime.now().minusMinutes(3), LocalDateTime.now());
     CardQueryRequest cardQueryRequest = LokiCountCardRequest.from(cardQuery, metadata);
