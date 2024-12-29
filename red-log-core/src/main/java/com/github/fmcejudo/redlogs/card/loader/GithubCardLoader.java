@@ -27,7 +27,7 @@ class GithubCardLoader extends AbstractCardFileLoader {
         try {
             String filePath = repoUrl(application);
             String content = githubClient.download(filePath);
-            return this.load(content);
+            return this.load(content, cardContext);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

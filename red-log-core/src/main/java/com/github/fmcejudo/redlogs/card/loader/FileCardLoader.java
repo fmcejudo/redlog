@@ -5,6 +5,7 @@ import java.nio.file.Files;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
+import com.github.fmcejudo.redlogs.card.exception.ReplacementException;
 import com.github.fmcejudo.redlogs.config.RedLogFileProperties;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
@@ -24,7 +25,9 @@ public class FileCardLoader extends AbstractCardFileLoader {
     try {
       File file = resource.createRelative(application.toUpperCase() + ".yaml").getFile();
       String content = new String(Files.readAllBytes(file.toPath()));
-      return this.load(content);
+      return this.load(content, cardContext);
+    } catch (ReplacementException e) {
+      throw e;
     } catch (Exception e) {
       throw new CardExecutionException(e.getMessage());
     }

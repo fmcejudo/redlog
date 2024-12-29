@@ -1,6 +1,5 @@
-common_query: '{app="redlog-sample", environment="<environment>", host="<host>"}'
-parameters: ['environment', 'host']
-range: 24h
+parameters: ['environment', 'host', 'range']
+range: <range>
 time: 07:00
 
 queries:
@@ -9,7 +8,7 @@ queries:
     processor: LOKI
     type: COUNT
     query: |
-        <common_query>
+        {app="redlog-sample", environment="<environment>", host="<host>"}
         |~ `likes coffee`
 
   - id: chocolate
@@ -18,7 +17,7 @@ queries:
     custom:
         type: SUMMARY
         query: |
-            <common_query>
+            {app="redlog-sample", environment="<environment>", host="<host>"}
             |~ `likes chocolate`
 
   - id: entities

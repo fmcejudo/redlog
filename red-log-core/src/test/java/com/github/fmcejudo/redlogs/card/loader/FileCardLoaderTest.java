@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.converter.CardConverterConfiguration;
+import com.github.fmcejudo.redlogs.card.exception.ReplacementException;
 import com.github.fmcejudo.redlogs.config.RedLogConfigProperties;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -42,7 +43,8 @@ class FileCardLoaderTest {
                 CardContext.from(applicationName, Map.of(
                         "date", LocalDate.now().format(ISO_LOCAL_DATE),
                         "environment", "local",
-                        "host", "localhost"
+                        "host", "localhost",
+                        "range", "24h"
                 ));
 
         //When
@@ -50,6 +52,22 @@ class FileCardLoaderTest {
 
         //Then
         Assertions.assertThat(cardFile).isNotNull();
+
+    }
+
+    @Test
+    void shouldFailOnUnreplacedParameters() {
+        //Given
+        String applicationName = "VALID_CARD";
+        var cardExecutionContext =
+            CardContext.from(applicationName, Map.of(
+                "date", LocalDate.now().format(ISO_LOCAL_DATE),
+                "host", "localhost"
+            ));
+
+        //When && Then
+        Assertions.assertThatThrownBy(() -> cardLoader.load(cardExecutionContext)).isInstanceOf(ReplacementException.class)
+            .hasMessageContaining("parameters 'range' and 'environment' have not been found");
 
     }
 
