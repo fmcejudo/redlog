@@ -67,6 +67,7 @@ class LokiCardQueryProcessorTest {
     //Given
     CardQuery cardQuery = new CardQuery("id", "LOKI", "description", Map.of(
         "type", "count",
+        "grafana-dashboard", "http://localhost:3000",
         "query", """
         count_over_time({name="something"}[24h])\
         """));
@@ -79,6 +80,29 @@ class LokiCardQueryProcessorTest {
 
     //Then
     Assertions.assertThat(response.id()).isEqualTo("id");
+    Assertions.assertThat(response.link()).contains("http://localhost:3000/explore")
+        .contains("%22datasource%22:%22default%22")
+        .contains("queries");
+  }
+
+  @Test
+  void shouldCreateQueryProcessorWithoutLink() {
+    //Given
+    CardQuery cardQuery = new CardQuery("id", "LOKI", "description", Map.of(
+        "type", "count",
+        "query", """
+        count_over_time({name="something"}[24h])\
+        """));
+    CardMetadata metadata = new CardMetadata("20", "test", LocalDateTime.now().minusMinutes(3), LocalDateTime.now());
+    CardQueryRequest cardQueryRequest = LokiCountCardRequest.from(cardQuery, metadata);
+    CardQueryProcessor cardQueryProcessor = redlogPluginProvider.createProcessor(connectionDetails);
+
+    //When
+    CardQueryResponse response = cardQueryProcessor.process(cardQueryRequest);
+
+    //Then
+    Assertions.assertThat(response.id()).isEqualTo("id");
+    Assertions.assertThat(response.link()).isEqualTo("");
   }
 
   private static String getLokiUrl(final GenericContainer<?> lokiContainer) {

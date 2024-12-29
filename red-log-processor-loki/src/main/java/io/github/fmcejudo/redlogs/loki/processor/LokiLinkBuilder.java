@@ -1,4 +1,4 @@
-package io.github.fmcejudo.redlogs.loki.processor.connection;
+package io.github.fmcejudo.redlogs.loki.processor;
 
 import static java.time.ZoneOffset.UTC;
 

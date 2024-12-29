@@ -21,7 +21,8 @@ class LokiCardQueryConverterTest {
     RedlogPluginProvider redlogPluginProvider = new LokiRedlogPluginProvider();
     CardQueryConverter cardQueryConverter = redlogPluginProvider.createCardQueryConverter();
 
-    CardQuery cardQuery = new CardQuery("id", "LOKI", "description", Map.of("type", "count", "query", "{}"));
+    CardQuery cardQuery = new CardQuery("id", "LOKI", "description",
+        Map.of("type", "count", "query", "{}", "grafana-dashboard", "http://localhost:3000", "datasource", "default"));
     CardMetadata metadata = new CardMetadata("20", "application-test", LocalDateTime.now().minusMinutes(3), LocalDateTime.now());
 
     //When
@@ -31,6 +32,8 @@ class LokiCardQueryConverterTest {
     Assertions.assertThat(cardQueryRequest).isInstanceOf(LokiCountCardRequest.class);
     Assertions.assertThat((LokiCountCardRequest)cardQueryRequest).satisfies(lccqr -> {
       Assertions.assertThat(lccqr.query()).isEqualTo("{}");
+      Assertions.assertThat(lccqr.grafanaDashboard()).isEqualTo("http://localhost:3000");
+      Assertions.assertThat(lccqr.grafanaDatasource()).isEqualTo("default");
     });
   }
 }

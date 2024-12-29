@@ -12,6 +12,7 @@ module red.log.processor.loki {
   requires com.fasterxml.jackson.databind;
   requires org.apache.commons.text;
   requires spring.core;
+  requires org.apache.commons.lang3;
 
   exports io.github.fmcejudo.redlogs.loki.processor.connection.instant to com.fasterxml.jackson.databind;
   exports io.github.fmcejudo.redlogs.loki.processor.connection.range to com.fasterxml.jackson.databind;

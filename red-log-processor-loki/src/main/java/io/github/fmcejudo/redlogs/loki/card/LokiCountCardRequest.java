@@ -59,4 +59,12 @@ public class LokiCountCardRequest implements CardQueryRequest {
   public String query() {
     return cardQuery.properties().get("query");
   }
+
+  public String grafanaDashboard() {
+    return cardQuery.properties().get("grafana-dashboard");
+  }
+
+  public String grafanaDatasource() {
+    return cardQuery.properties().get("datasource");
+  }
 }

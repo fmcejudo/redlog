@@ -10,15 +10,16 @@ queries:
     query: |
         {app="redlog-sample", environment="<environment>", host="<host>"}
         |~ `likes coffee`
+    grafana-dashboard: http://localhost:3000/
 
   - id: chocolate
     description: People who like CHOCOLATE
     processor: LOKI
-    custom:
-        type: SUMMARY
-        query: |
-            {app="redlog-sample", environment="<environment>", host="<host>"}
-            |~ `likes chocolate`
+    type: SUMMARY
+    query: |
+        {app="redlog-sample", environment="<environment>", host="<host>"}
+        |~ `likes chocolate`
+    grafana-dashboard: http://localhost:3000/
 
   - id: entities
     description: Read entity from DB
