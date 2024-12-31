@@ -32,6 +32,7 @@ public interface LokiClientFactory {
   static LokiClientFactory createInstance(final LokiConnectionDetails connectionDetails) {
 
     RestClient restClient = RestClient.builder().baseUrl(connectionDetails.url())
+        .defaultHeader("X-Grafana-Org-Id", "1")
         .defaultHeader(
             HttpHeaders.AUTHORIZATION,
             buildBasicAuthorizationValue(connectionDetails)
