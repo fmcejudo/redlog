@@ -22,7 +22,7 @@ class ProcessorValidatorTest {
   @Test
   void shouldBeValidProcessors() {
     //Given
-    CardFile cardFile = new CardFile("", List.of(), LocalTime.now(), "24h", List.of(
+    CardFile cardFile = new CardFile(List.of(), LocalTime.now(), "24h", List.of(
         cardQueryBuilder.apply("valid-one", "LOKI"),
         cardQueryBuilder.apply("valid-two", "MONGO"),
         cardQueryBuilder.apply("valid-three", "BEAN")
@@ -38,7 +38,7 @@ class ProcessorValidatorTest {
   @Test
   void shouldBeInvalidProcessors() {
     //Given
-    CardFile cardFile = new CardFile("", List.of(), LocalTime.now(), "24h", List.of(
+    CardFile cardFile = new CardFile(List.of(), LocalTime.now(), "24h", List.of(
         cardQueryBuilder.apply("valid-one", "LOKI"),
         cardQueryBuilder.apply("valid-two", null),
         cardQueryBuilder.apply("valid-three", "")
@@ -58,7 +58,7 @@ class ProcessorValidatorTest {
   void shouldBeValidOnEmptyQueries() {
 
     //Given
-    CardFile cardFile = new CardFile("", List.of(), LocalTime.now(), "24h", List.of());
+    CardFile cardFile = new CardFile(List.of(), LocalTime.now(), "24h", List.of());
 
     //When
     CardValidation cardValidation = new ProcessorValidator().validateOn(cardFile, cardContext);

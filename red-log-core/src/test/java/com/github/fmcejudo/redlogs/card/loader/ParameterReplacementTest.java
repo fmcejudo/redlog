@@ -2,7 +2,6 @@ package com.github.fmcejudo.redlogs.card.loader;
 
 import java.util.Map;
 
-import com.github.fmcejudo.redlogs.card.exception.ReplacementException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ class ParameterReplacementTest {
     final String content = """
         The <animal> is <sound>\
         """;
-    final Map<String, String> parameters = Map.of("animal","dog", "sound", "barking");
+    final Map<String, String> parameters = Map.of("animal", "dog", "sound", "barking");
 
     //When
     String newContent = parameterReplacement.replace(content, parameters);
@@ -43,7 +42,7 @@ class ParameterReplacementTest {
   })
   void shouldNotReplaceAnyVariable(String content) {
     //Given
-    final Map<String, String> parameters = Map.of("animal","dog", "sound", "barking");
+    final Map<String, String> parameters = Map.of("animal", "dog", "sound", "barking");
 
     //When
     String newContent = parameterReplacement.replace(content, parameters);
@@ -90,10 +89,12 @@ class ParameterReplacementTest {
         """;
     final Map<String, String> parameters = Map.of();
 
-    //When && Then
-    Assertions.assertThatThrownBy(() -> parameterReplacement.replace(content, parameters))
-        .isInstanceOf(ReplacementException.class).hasMessageContaining("parameter 'animal' has not been found");
+    //When
 
+    String newContent = parameterReplacement.replace(content, parameters);
+
+    //Then
+    Assertions.assertThat(newContent).isEqualTo(content);
   }
 
 }

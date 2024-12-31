@@ -49,7 +49,7 @@ class CardRunnerTest {
 class TestCardFileLoader implements CardFileLoader {
 
   public CardFile load(CardContext cardExecutionContext) {
-    return new CardFile("common", List.of(), LocalTime.now(), "2h", List.of(
+    return new CardFile(List.of(), LocalTime.now(), "2h", List.of(
         new CardQuery("id-one", "processor", "description", Map.of()),
         new CardQuery("id-two", "processor", "description", Map.of()),
         new CardQuery("id-three", "processor", "description", Map.of())

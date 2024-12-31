@@ -4,7 +4,6 @@ import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
 import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
 import io.github.fmcejudo.redlogs.report.ExecutionService;
 import io.github.fmcejudo.redlogs.report.ReportService;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

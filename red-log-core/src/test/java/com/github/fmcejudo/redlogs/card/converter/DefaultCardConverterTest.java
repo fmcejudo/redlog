@@ -45,7 +45,7 @@ class DefaultCardConverterTest {
     final String processor = "test";
     cardConverter.register(processor, TestCardQueryRequest::new);
     CardContext cardContext = CardContext.from("application", Map.of());
-    CardFile cardFile = new CardFile("", List.of(), LocalTime.of(8, 0), "24h", List.of(
+    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0), "24h", List.of(
         new CardQuery("id-one", processor, "description-one", Map.of()),
         new CardQuery("id-two", processor, "description-two", Map.of())
     ));

@@ -5,9 +5,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.github.fmcejudo.redlogs.card.exception.ReplacementException;
+import org.apache.commons.lang3.NotImplementedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class ParameterReplacement {
+
+  private final Logger logger = LoggerFactory.getLogger(ParameterReplacement.class);
 
   public String replace(String content, Map<String, String> parameters) {
 
@@ -34,7 +38,7 @@ class ParameterReplacement {
     }
     if (!listOfUnknownVariables.isEmpty()) {
       List<String> variables = listOfUnknownVariables.stream().map(Replacement::name).toList();
-      throw new ReplacementException(variables);
+      logger.warn("There are some variables which have not been replaced, ensure they are correct: {}", variables);
     }
 
     return builder.toString();
@@ -93,7 +97,7 @@ class ParameterReplacement {
 
     @Override
     public String name() {
-      throw new ReplacementException("there is no replacement to take");
+      throw new NotImplementedException("This method should not be called");
     }
   }
 

@@ -32,7 +32,7 @@ class CardMetadataParserTest {
     //Given
     final LocalDate date = LocalDate.now();
     CardContext cardContext = CardContext.from("application", Map.of("date", date.format(DateTimeFormatter.ISO_DATE)));
-    CardFile cardFile = new CardFile("", List.of(), LocalTime.of(8, 0, 0), range, List.of());
+    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0, 0), range, List.of());
 
     //When
     CardMetadata cardMetadata = cardMetadataParser.parse(cardContext, cardFile);
@@ -49,7 +49,7 @@ class CardMetadataParserTest {
     //Given
     final LocalDate date = LocalDate.now();
     CardContext cardContext = CardContext.from("application", Map.of("date", date.format(DateTimeFormatter.ISO_DATE)));
-    CardFile cardFile = new CardFile("", List.of(), LocalTime.of(8, 0, 0), range, List.of());
+    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0, 0), range, List.of());
 
     //When && Then
     Assertions.assertThatThrownBy(() -> cardMetadataParser.parse(cardContext, cardFile)).isInstanceOf(RangeParseException.class);

@@ -1,5 +1,6 @@
 package com.github.fmcejudo.redlogs.card.exception;
 
+import java.util.Collection;
 import java.util.List;
 
 public class ReplacementException extends RuntimeException {
@@ -8,7 +9,7 @@ public class ReplacementException extends RuntimeException {
     super(message);
   }
 
-  public ReplacementException(List<String> variables) {
+  public ReplacementException(Collection<String> variables) {
     super(buildMessage(variables.stream().distinct().toList()));
   }
 

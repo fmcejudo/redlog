@@ -67,7 +67,8 @@ class FileCardLoaderTest {
 
         //When && Then
         Assertions.assertThatThrownBy(() -> cardLoader.load(cardExecutionContext)).isInstanceOf(ReplacementException.class)
-            .hasMessageContaining("parameters 'range' and 'environment' have not been found");
+            .hasMessageContaining("parameters 'environment' and 'range' have not been found");
+
 
     }
 

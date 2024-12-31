@@ -28,9 +28,6 @@ class CardValidatorTest {
         cardFileGenerator = CardFileGenerator.createInstance()
             .withRange("24h")
             .withTime(LocalTime.of(7, 0, 0))
-            .withCommonQuery("""
-                {"app"="<applicationName>", "name"="<name>"}
-                """)
             .withParameters(List.of("applicationName", "name"));
     }
 

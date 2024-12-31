@@ -7,6 +7,7 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
+import com.github.fmcejudo.redlogs.card.exception.ReplacementException;
 import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
 
 class GithubCardLoader extends AbstractCardFileLoader {
@@ -28,6 +29,8 @@ class GithubCardLoader extends AbstractCardFileLoader {
             String filePath = repoUrl(application);
             String content = githubClient.download(filePath);
             return this.load(content, cardContext);
+        } catch (ReplacementException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
