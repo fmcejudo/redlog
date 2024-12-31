@@ -17,16 +17,16 @@ public class RedLogMongoReportConfiguration {
   @Bean
   @ConditionalOnRedlogEnabled
   @ConditionalOnMissingBean(ReportService.class)
-  @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
-  ReportService reportService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {
+  @ConditionalOnBean(value = MongoTemplate.class)
+  ReportService reportService(final MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {
     return new MongoReportService(mongoTemplate, redlogMongoProperties);
   }
 
   @Bean
   @ConditionalOnRedlogEnabled
   @ConditionalOnMissingBean(ExecutionService.class)
-  @ConditionalOnBean(value = MongoTemplate.class, name = "redlogMongoTemplate")
-  ExecutionService executionService(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {
+  @ConditionalOnBean(value = MongoTemplate.class)
+  ExecutionService executionService(final MongoTemplate mongoTemplate, RedlogMongoProperties redlogMongoProperties) {
     return new MongoExecutionService(mongoTemplate, redlogMongoProperties);
   }
 

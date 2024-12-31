@@ -14,7 +14,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -52,7 +51,6 @@ class CardExecutionMongoWriterTest {
   CardExecutionWriter cardExecutionWriter;
 
   @Autowired
-  @Qualifier("redlogMongoTemplate")
   MongoTemplate mongoTemplate;
 
   @DynamicPropertySource

@@ -10,8 +10,8 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -23,7 +23,7 @@ public class RedLogMongoConfiguration {
   @Bean(destroyMethod = "close")
   @ConditionalOnRedlogEnabled
   @ConditionalOnProperty(name = "redlog.writer.type", havingValue = "mongo")
-  @Qualifier("redlogMongoClient")
+  @ConditionalOnMissingBean(value = MongoClient.class)
   MongoClient redlogMongoClient(final RedlogMongoProperties redlogMongoProperties) {
 
     Builder builder = MongoClientSettings.builder()
@@ -44,7 +44,7 @@ public class RedLogMongoConfiguration {
   @Bean
   @ConditionalOnRedlogEnabled
   @ConditionalOnProperty(name = "redlog.writer.type", havingValue = "mongo")
-  @Qualifier("redlogMongoTemplate")
+  @ConditionalOnMissingBean(value = MongoTemplate.class)
   MongoTemplate redlogMongoTemplate(final MongoClient redlogMongoClient, final RedlogMongoProperties redlogMongoProperties) {
     String database = getDatabaseName(new ConnectionString(redlogMongoProperties.getUrl()));
     return new MongoTemplate(new SimpleMongoClientDatabaseFactory(redlogMongoClient, database));

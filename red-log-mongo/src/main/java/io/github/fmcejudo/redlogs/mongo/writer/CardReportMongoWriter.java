@@ -6,7 +6,6 @@ import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import io.github.fmcejudo.redlogs.report.domain.ReportSectionBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 public class CardReportMongoWriter implements CardReportWriter {
@@ -15,7 +14,7 @@ public class CardReportMongoWriter implements CardReportWriter {
 
   private final MongoTemplate mongoTemplate;
 
-  public CardReportMongoWriter(@Qualifier("redlogMongoTemplate") final MongoTemplate mongoTemplate) {
+  public CardReportMongoWriter(final MongoTemplate mongoTemplate) {
     this.mongoTemplate = mongoTemplate;
   }
 

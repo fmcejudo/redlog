@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -56,7 +55,6 @@ class CardReportMongoWriterTest {
 
   @Autowired
   @SpyBean
-  @Qualifier("redlogMongoTemplate")
   MongoTemplate mongoTemplate;
 
   @DynamicPropertySource
