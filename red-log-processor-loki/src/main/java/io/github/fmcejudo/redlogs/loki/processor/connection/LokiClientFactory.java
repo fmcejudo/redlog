@@ -4,6 +4,7 @@ import static org.apache.logging.log4j.util.Base64Util.encode;
 
 import io.github.fmcejudo.redlogs.loki.processor.connection.instant.QueryInstantClient;
 import io.github.fmcejudo.redlogs.loki.processor.connection.range.QueryRangeClient;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestClient;
@@ -45,6 +46,9 @@ public interface LokiClientFactory {
   private static String buildBasicAuthorizationValue(final LokiConnectionDetails connectionDetails) {
     if (Strings.isBlank(connectionDetails.user()) || Strings.isBlank(connectionDetails.password())) {
       return "";
+    }
+    if (StringUtils.isNotBlank(connectionDetails.token())) {
+      return "Bearer " + connectionDetails.token();
     }
     return "Basic " + encode(String.join(":", connectionDetails.user(), connectionDetails.password()));
   }
