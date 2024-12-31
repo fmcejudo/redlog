@@ -35,7 +35,7 @@ class CountCardProcessor implements CardQueryProcessor {
 
   private String buildLink(final LokiCountCardRequest cardQueryRequest) {
     if (StringUtils.isBlank(cardQueryRequest.grafanaDashboard())) {
-      return "";
+      return null;
     }
     String datasource = Optional.ofNullable(cardQueryRequest.grafanaDatasource()).orElse("default");
     return LokiLinkBuilder.builder(cardQueryRequest.grafanaDashboard(), datasource)

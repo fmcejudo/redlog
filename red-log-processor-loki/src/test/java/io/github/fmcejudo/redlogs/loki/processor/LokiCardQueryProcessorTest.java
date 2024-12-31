@@ -102,7 +102,7 @@ class LokiCardQueryProcessorTest {
 
     //Then
     Assertions.assertThat(response.id()).isEqualTo("id");
-    Assertions.assertThat(response.link()).isEqualTo("");
+    Assertions.assertThat(response.link()).isNull();
   }
 
   private static String getLokiUrl(final GenericContainer<?> lokiContainer) {
