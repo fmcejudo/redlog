@@ -40,7 +40,6 @@ class LokiCardQueryProcessorTest {
 
   RedlogPluginProvider redlogPluginProvider;
 
-
   @BeforeEach
   void setUp() {
     this.redlogPluginProvider = new LokiRedlogPluginProvider();
@@ -48,29 +47,27 @@ class LokiCardQueryProcessorTest {
         "loki.url", getLokiUrl(lokiContainer),
         "loki.user", "username",
         "loki.pass", "password",
-        "loki.datasource", "datasource"
+        "loki.datasource", "default",
+        "loki.dashboardUrl", "http://localhost:3000"
     );
   }
 
   @DynamicPropertySource
   public static void configureProperties(DynamicPropertyRegistry registry) {
     Startables.deepStart(lokiContainer).join();
-    System.out.println(getLokiUrl(lokiContainer));
     registry.add("loki.url", () -> getLokiUrl(lokiContainer));
     registry.add("loki.username", () -> "username");
     registry.add("loki.password", () -> "password");
   }
-
 
   @Test
   void shouldCreateQueryProcessor() {
     //Given
     CardQuery cardQuery = new CardQuery("id", "LOKI", "description", Map.of(
         "type", "count",
-        "grafana-dashboard", "http://localhost:3000",
         "query", """
-        count_over_time({name="something"}[24h])\
-        """));
+            count_over_time({name="something"}[24h])\
+            """));
     CardMetadata metadata = new CardMetadata("20", "test", LocalDateTime.now().minusMinutes(3), LocalDateTime.now());
     CardQueryRequest cardQueryRequest = LokiCountCardRequest.from(cardQuery, metadata);
     CardQueryProcessor cardQueryProcessor = redlogPluginProvider.createProcessor(connectionDetails);
@@ -88,11 +85,17 @@ class LokiCardQueryProcessorTest {
   @Test
   void shouldCreateQueryProcessorWithoutLink() {
     //Given
+
+    Map<String, String> connectionDetails = Map.of(
+        "loki.url", getLokiUrl(lokiContainer),
+        "loki.user", "username",
+        "loki.pass", "password");
+
     CardQuery cardQuery = new CardQuery("id", "LOKI", "description", Map.of(
         "type", "count",
         "query", """
-        count_over_time({name="something"}[24h])\
-        """));
+            count_over_time({name="something"}[24h])\
+            """));
     CardMetadata metadata = new CardMetadata("20", "test", LocalDateTime.now().minusMinutes(3), LocalDateTime.now());
     CardQueryRequest cardQueryRequest = LokiCountCardRequest.from(cardQuery, metadata);
     CardQueryProcessor cardQueryProcessor = redlogPluginProvider.createProcessor(connectionDetails);

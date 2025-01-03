@@ -32,8 +32,6 @@ class LokiCardQueryConverterTest {
     Assertions.assertThat(cardQueryRequest).isInstanceOf(LokiCountCardRequest.class);
     Assertions.assertThat((LokiCountCardRequest)cardQueryRequest).satisfies(lccqr -> {
       Assertions.assertThat(lccqr.query()).isEqualTo("{}");
-      Assertions.assertThat(lccqr.grafanaDashboard()).isEqualTo("http://localhost:3000");
-      Assertions.assertThat(lccqr.grafanaDatasource()).isEqualTo("default");
     });
   }
 }

@@ -11,8 +11,9 @@ import io.github.fmcejudo.redlogs.loki.processor.connection.LokiConnectionDetail
 public interface LokiCardQueryProcessor extends CardQueryProcessor {
 
   static CardQueryProcessor withLokiConnectionDetails(final Map<String, String> connectionDetails) {
-    LokiClientFactory lokiClientFactory = LokiClientFactory.createInstance(LokiConnectionDetails.from(connectionDetails));
-    CountCardProcessor countCardProcessor = new CountCardProcessor(lokiClientFactory);
+    LokiConnectionDetails lokiConnectionDetails = LokiConnectionDetails.from(connectionDetails);
+    LokiClientFactory lokiClientFactory = LokiClientFactory.createInstance(lokiConnectionDetails);
+    CountCardProcessor countCardProcessor = new CountCardProcessor(lokiClientFactory, lokiConnectionDetails);
     return cardQueryRequest -> {
       if (cardQueryRequest instanceof LokiCountCardRequest lokiCountCardRequest) {
         return countCardProcessor.process(lokiCountCardRequest);

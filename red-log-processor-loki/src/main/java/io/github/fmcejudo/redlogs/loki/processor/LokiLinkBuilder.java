@@ -4,11 +4,9 @@ import static java.time.ZoneOffset.UTC;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.function.Function;
 import java.util.function.ToLongFunction;
 
 import org.springframework.web.util.UriComponentsBuilder;
-import org.yaml.snakeyaml.util.UriEncoder;
 
 final class LokiLinkBuilder {
 
