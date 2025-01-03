@@ -12,7 +12,7 @@ public record LokiConnectionDetails(String url, String user, String password, St
     String user = details.getOrDefault("user","");
     String pass = details.getOrDefault("pass","");
     String datasource = details.get("datasource");
-    String dashboardUrl = details.get("dashboardUrl");
+    String dashboardUrl = details.get("dashboard-url");
     String token = details.get("token");
     return new LokiConnectionDetails(url, user, pass, token, datasource, dashboardUrl);
   }

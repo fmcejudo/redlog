@@ -48,7 +48,7 @@ class LokiCardQueryProcessorTest {
         "loki.user", "username",
         "loki.pass", "password",
         "loki.datasource", "default",
-        "loki.dashboardUrl", "http://localhost:3000"
+        "loki.dashboard-url", "http://localhost:3000"
     );
   }
 
