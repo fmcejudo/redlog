@@ -18,7 +18,7 @@ class CountCardProcessor implements CardQueryProcessor {
 
   private final LokiClientFactory lokiClientFactory;
 
-  private final CardQueryResponseParser cardQueryResponseParser;
+  private final LokiCountCardResponseParser cardQueryResponseParser;
 
   private final String grafanaDashboard;
 
@@ -26,7 +26,7 @@ class CountCardProcessor implements CardQueryProcessor {
 
   CountCardProcessor(LokiClientFactory lokiClientFactory, LokiConnectionDetails lokiConnectionDetails) {
     this.lokiClientFactory = lokiClientFactory;
-    this.cardQueryResponseParser = CardQueryResponseParser.createParser();
+    this.cardQueryResponseParser = LokiCountCardResponseParser.createParser();
     this.grafanaDashboard = lokiConnectionDetails.dashboardUrl();
     this.grafanaDatasource = lokiConnectionDetails.datasource();
   }
@@ -34,10 +34,11 @@ class CountCardProcessor implements CardQueryProcessor {
   @Override
   public CardQueryResponse process(CardQueryRequest cardQueryRequest) {
     Assert.isInstanceOf(LokiCountCardRequest.class, cardQueryRequest);
-    LokiRequest lokiRequest = createLokiRequest((LokiCountCardRequest) cardQueryRequest);
+    LokiCountCardRequest lokiCountCardRequest = (LokiCountCardRequest) cardQueryRequest;
+    LokiRequest lokiRequest = createLokiRequest(lokiCountCardRequest);
     LokiResponse response = lokiClientFactory.get(QueryTypeEnum.INSTANT).query(lokiRequest);
-    String link = buildLink((LokiCountCardRequest) cardQueryRequest);
-    return cardQueryResponseParser.withLink(link).parse(response, cardQueryRequest);
+    String link = buildLink(lokiCountCardRequest);
+    return cardQueryResponseParser.withLink(link).parse(response, lokiCountCardRequest);
   }
 
   private String buildLink(final LokiCountCardRequest cardQueryRequest) {

@@ -8,19 +8,20 @@ import io.github.fmcejudo.redlogs.card.CardMetadata;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.CardQueryResponseEntry;
+import io.github.fmcejudo.redlogs.loki.card.LokiCountCardRequest;
 import io.github.fmcejudo.redlogs.loki.processor.connection.LokiResponse;
 
 @FunctionalInterface
-interface CardQueryResponseParser extends BiFunction<LokiResponse, CardQueryRequest, CardQueryResponse> {
+interface LokiCountCardResponseParser extends BiFunction<LokiResponse, LokiCountCardRequest, CardQueryResponse> {
 
   @Override
-  default CardQueryResponse apply(LokiResponse response, CardQueryRequest cardQueryRequest) {
+  default CardQueryResponse apply(LokiResponse response, LokiCountCardRequest cardQueryRequest) {
     return this.parse(response, cardQueryRequest);
   }
 
-  CardQueryResponse parse(final LokiResponse response, final CardQueryRequest cardQueryRequest);
+  CardQueryResponse parse(final LokiResponse response, final LokiCountCardRequest cardQueryRequest);
 
-  static CardQueryResponseParser createParser() {
+  static LokiCountCardResponseParser createParser() {
     return (response, cardQueryRequest) -> {
       CardMetadata metadata = cardQueryRequest.metadata();
       LocalDate date = metadata.endTime().toLocalDate();
@@ -31,7 +32,7 @@ interface CardQueryResponseParser extends BiFunction<LokiResponse, CardQueryRequ
     };
   }
 
-  default CardQueryResponseParser withLink(String link) {
+  default LokiCountCardResponseParser withLink(String link) {
     return (response, cardQueryRequest) -> {
       CardQueryResponse cqr = this.parse(response, cardQueryRequest);
       return new CardQueryResponse(cqr.date(), cqr.id(), cqr.executionId(), cqr.description(), cqr.currentEntries(), link, cqr.error());
@@ -44,9 +45,13 @@ interface CardQueryResponseParser extends BiFunction<LokiResponse, CardQueryRequ
     );
   }
 
-  private static CardQueryResponse createSuccessResponse(LokiResponse response, CardQueryRequest cardQueryRequest, LocalDate date) {
+  private static CardQueryResponse createSuccessResponse(LokiResponse response, LokiCountCardRequest cardQueryRequest, LocalDate date) {
+    
     List<CardQueryResponseEntry> entries =
-        response.result().stream().map(r -> new CardQueryResponseEntry(r.labels(), r.count())).toList();
+        response.result().stream()
+            .map(r -> new CardQueryResponseEntry(r.labels(), r.count()))
+            .filter(cre -> cre.count() >= cardQueryRequest.expectedAtLeast())
+            .toList();
 
     return CardQueryResponse.success(
         date, cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), "", entries

@@ -59,4 +59,10 @@ public class LokiCountCardRequest implements CardQueryRequest {
   public String query() {
     return cardQuery.properties().get("query");
   }
+
+  public int expectedAtLeast() {
+    String expectedAtLeast = cardQuery.properties().getOrDefault("expectedAtLeast", "1");
+    return Integer.parseInt(expectedAtLeast);
+  }
+
 }
