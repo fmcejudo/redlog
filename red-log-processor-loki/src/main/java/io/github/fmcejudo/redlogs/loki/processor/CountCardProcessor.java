@@ -18,7 +18,7 @@ class CountCardProcessor implements CardQueryProcessor {
 
   private final LokiClientFactory lokiClientFactory;
 
-  private final LokiCountCardResponseParser cardQueryResponseParser;
+  private final LokiCardResponseParser<LokiCountCardRequest> cardQueryResponseParser;
 
   private final String grafanaDashboard;
 
@@ -26,7 +26,7 @@ class CountCardProcessor implements CardQueryProcessor {
 
   CountCardProcessor(LokiClientFactory lokiClientFactory, LokiConnectionDetails lokiConnectionDetails) {
     this.lokiClientFactory = lokiClientFactory;
-    this.cardQueryResponseParser = LokiCountCardResponseParser.createParser();
+    this.cardQueryResponseParser = LokiCardResponseParser.createParser(LokiCountCardRequest.class);
     this.grafanaDashboard = lokiConnectionDetails.dashboardUrl();
     this.grafanaDatasource = lokiConnectionDetails.datasource();
   }
@@ -55,7 +55,7 @@ class CountCardProcessor implements CardQueryProcessor {
 
   private LokiRequest createLokiRequest(LokiCountCardRequest lokiCountCardRequest) {
     return new LokiRequest(
-        lokiCountCardRequest.query(), lokiCountCardRequest.metadata().startTime(), lokiCountCardRequest.metadata().endTime()
+        lokiCountCardRequest.executableQuery(), lokiCountCardRequest.metadata().startTime(), lokiCountCardRequest.metadata().endTime()
     );
   }
 

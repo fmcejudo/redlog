@@ -1,6 +1,5 @@
 package io.github.fmcejudo.redlogs.loki.processor.connection.range;
 
-import static java.time.ZoneOffset.ofHours;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.util.concurrent.TimeUnit.MINUTES;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
@@ -15,7 +14,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -30,32 +28,25 @@ public record QueryRangeResponse(String status, Data data) implements LokiRespon
     }
 
     public List<LokiResult> result() {
-        Map<String, List<LokiResult>> mapResult;
         if (data.resultType().equalsIgnoreCase("matrix")) {
             return matrixResult();
-        } else {
-            mapResult = streamsResult();
         }
-
-        return mapResult.entrySet().stream().sorted(Map.Entry.comparingByKey())
-                .map(e -> {
-                    Instant instant = Instant.ofEpochMilli(MINUTES.toMillis(Long.parseLong(e.getKey())));
-                    String time = LocalDateTime.ofInstant(instant, ofHours(2)).format(ISO_LOCAL_DATE_TIME);
-                    return new LokiResult(Map.of("time", time), e.getValue().size());
-                })
-                .toList();
+        return streamsResult().stream().sorted(Comparator.comparing(l -> l.labels().get("time"))).toList();
     }
 
-    private Map<String, List<LokiResult>> streamsResult() {
+    private List<LokiResult> streamsResult() {
         return data.result().stream().flatMap(r -> {
             List<StreamsValue> value = r.streamsResult().values();
+            Map<String, String> labels = r.streamsResult().stream();
             return value.stream().map(v -> {
-                Map<String, String> customLabels = new HashMap<>();
+                Map<String, String> customLabels = new HashMap<>(labels);
                 long minute = NANOSECONDS.toMinutes(Long.parseLong(v.nanoSeconds()));
-                customLabels.put("time", String.valueOf(minute));
+                Instant instant = Instant.ofEpochMilli(MINUTES.toMillis(minute));
+                String time = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Madrid")).format(ISO_LOCAL_DATE_TIME);
+                customLabels.put("time", time);
                 return new LokiResult(customLabels, 1L);
             });
-        }).collect(Collectors.groupingBy(l -> l.labels().get("time")));
+        }).toList();
     }
 
     private List<LokiResult> matrixResult() {

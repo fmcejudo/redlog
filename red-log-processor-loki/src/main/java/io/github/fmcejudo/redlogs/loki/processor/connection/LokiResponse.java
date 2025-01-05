@@ -9,7 +9,7 @@ public interface LokiResponse {
 
     List<LokiResult> result();
 
-    public record LokiResult(Map<String, String> labels, long count) {
+    public static record LokiResult(Map<String, String> labels, long count) {
 
     }
 }
