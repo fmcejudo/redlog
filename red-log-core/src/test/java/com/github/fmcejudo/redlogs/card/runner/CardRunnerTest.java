@@ -36,12 +36,15 @@ class CardRunnerTest {
     CardContext cardContext = CardContext.from("TEST", Map.of());
 
     //When
-    CardRunner.load(cardFileLoader).transform(cardConverter).process(cardProcessor).run(testReportWriter, executionWriter).onCardContext(cardContext);
+    String executionId = CardRunner.load(cardFileLoader).transform(cardConverter)
+        .process(cardProcessor)
+        .run(testReportWriter, executionWriter)
+        .onCardContext(cardContext);
 
     //Then
     Assertions.assertThat(testReportWriter.getSaved()).isEqualTo(3);
     Assertions.assertThat(testReportWriter.getError()).isEqualTo(0);
-
+    Assertions.assertThat(executionId).isNotNull().isNotEmpty();
   }
 
 }
@@ -94,7 +97,7 @@ class TestCardQueryRequest implements CardQueryRequest {
 
   @Override
   public String executionId() {
-    return null;
+    return cardMetadata.executionId();
   }
 
   @Override
@@ -113,7 +116,9 @@ class TestCardProcessor implements Function<CardQueryRequest, CardQueryResponse>
 
   @Override
   public CardQueryResponse apply(CardQueryRequest cardQueryRequest) {
-    return new CardQueryResponse(LocalDate.now(), cardQueryRequest.id(), null, cardQueryRequest.description(), List.of(), "", null);
+    return new CardQueryResponse(
+        LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), List.of(), "", null
+    );
   }
 }
 
