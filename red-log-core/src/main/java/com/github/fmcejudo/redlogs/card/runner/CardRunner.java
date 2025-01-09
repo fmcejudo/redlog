@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
+import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.loader.CardFile;
 import io.github.fmcejudo.redlogs.card.CardMetadata;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
@@ -17,7 +18,7 @@ import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 @FunctionalInterface
 public interface CardRunner {
 
-  void onCardContext(CardContext cardContext);
+  String onCardContext(CardContext cardContext);
 
   public static CardLoader load(Function<CardContext, CardFile> cardLoader) {
     return cardLoader::apply;
@@ -80,6 +81,10 @@ public interface CardRunner {
           }
         }
         reportWriter.onComplete();
+        if (cardQueryResponses.isEmpty()) {
+          throw new CardExecutionException("there is no response to write");
+        }
+        return cardQueryResponses.getFirst().executionId();
       };
     }
   }
