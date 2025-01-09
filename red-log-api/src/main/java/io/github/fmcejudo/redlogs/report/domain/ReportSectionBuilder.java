@@ -4,7 +4,7 @@ import static java.time.LocalDateTime.now;
 
 import java.util.List;
 
-import io.github.fmcejudo.redlogs.card.domain.CardQueryResponseEntry;
+import io.github.fmcejudo.redlogs.card.CardQueryResponseEntry;
 
 @FunctionalInterface
 public interface ReportSectionBuilder {

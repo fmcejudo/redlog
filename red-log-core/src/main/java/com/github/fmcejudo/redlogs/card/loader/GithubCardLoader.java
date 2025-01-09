@@ -7,31 +7,30 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
+import com.github.fmcejudo.redlogs.card.exception.ReplacementException;
 import com.github.fmcejudo.redlogs.config.RedLogGithubProperties;
-import io.github.fmcejudo.redlogs.card.domain.CardRequest;
 
-class GithubCardLoader implements CardLoader {
+class GithubCardLoader extends AbstractCardFileLoader {
 
     public final Map<String, String> urlMapper;
 
     private final GithubClient githubClient;
 
-    private final CardConverter cardConverter;
-
-    public GithubCardLoader(final RedLogGithubProperties redLogGithubProperties, final CardConverter cardConverter) {
+    public GithubCardLoader(final RedLogGithubProperties redLogGithubProperties) {
         this.githubClient = new GithubClient(redLogGithubProperties.getGithubToken());
         this.urlMapper = redLogGithubProperties.getUrlMapper();
-        this.cardConverter = cardConverter;
     }
 
     @Override
-    public CardRequest load(final CardContext cardContext) {
+    public CardFile load(final CardContext cardContext) {
 
         String application = cardContext.applicationName();
         try {
             String filePath = repoUrl(application);
             String content = githubClient.download(filePath);
-            return cardConverter.convert(content, cardContext);
+            return this.load(content, cardContext);
+        } catch (ReplacementException e) {
+            throw e;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

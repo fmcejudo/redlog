@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import java.time.LocalDate;
 import java.util.List;
 
-import io.github.fmcejudo.redlogs.card.domain.CardQueryResponse;
+import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.mongo.RedLogMongoConfiguration;
 import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -56,7 +55,6 @@ class CardReportMongoWriterTest {
 
   @Autowired
   @SpyBean
-  @Qualifier("redlogMongoTemplate")
   MongoTemplate mongoTemplate;
 
   @DynamicPropertySource

@@ -6,6 +6,7 @@ range: <range>
 queries:
 - id: something
   description: description
+  processor: LOKI
   type: COUNT
   query: |
     sum by(host)(
