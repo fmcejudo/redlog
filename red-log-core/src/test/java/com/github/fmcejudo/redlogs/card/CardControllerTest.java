@@ -5,9 +5,11 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE;
 
 import static org.mockito.ArgumentMatchers.any;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
+import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.runner.CardRunner;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,45 +24,78 @@ import org.springframework.util.LinkedMultiValueMap;
 
 @WebFluxTest(controllers = CardController.class)
 @ContextConfiguration(classes = {
-        CardController.class
+    CardController.class
 })
 class CardControllerTest {
 
-    private static final String CONTROLLER_PATH = "/card-runner";
+  private static final String CONTROLLER_PATH = "/card-runner";
 
-    @MockBean
-    CardRunner cardRunner;
+  @MockBean
+  CardRunner cardRunner;
 
-    @Autowired
-    WebTestClient webTestClient;
+  @Autowired
+  WebTestClient webTestClient;
 
-    @Test
-    void shouldTriggerReport() {
-        //Given
-        Mockito.doAnswer(a -> {
+  @Test
+  void shouldTriggerReport() {
+    //Given
+    Mockito.doAnswer(a -> {
 
-            CardContext context = a.getArgument(0);
-            Assertions.assertThat(context.applicationName()).isEqualTo("TEST");
-            Assertions.assertThat(context.parameters()).containsEntry("environment", "des").doesNotContainKey("date");
-            Assertions.assertThat(context.reportDate()).isEqualTo(now().format(ISO_LOCAL_DATE));
+      CardContext context = a.getArgument(0);
+      Assertions.assertThat(context.applicationName()).isEqualTo("TEST");
+      Assertions.assertThat(context.parameters()).containsEntry("environment", "des").doesNotContainKey("date");
+      Assertions.assertThat(context.reportDate()).isEqualTo(now().format(ISO_LOCAL_DATE));
 
-            return null;
-        }).when(cardRunner).onCardContext(any(CardContext.class));
+      return "20";
+    }).when(cardRunner).onCardContext(any(CardContext.class));
 
-        //When
-        var response = webTestClient.get()
-                .uri(uri -> uri.path(CONTROLLER_PATH.concat("/{applicationName}"))
-                        .queryParams(new LinkedMultiValueMap<>(Map.of(
-                                "date", List.of(now().format(ISO_LOCAL_DATE)),
-                                "environment", List.of("des")
-                        )))
-                        .build("TEST"))
-                .accept(MediaType.APPLICATION_JSON).exchange();
+    //When
+    var response = webTestClient.get()
+        .uri(uri -> uri.path(CONTROLLER_PATH.concat("/{applicationName}"))
+            .queryParams(new LinkedMultiValueMap<>(Map.of(
+                "date", List.of(now().format(ISO_LOCAL_DATE)),
+                "environment", List.of("des")
+            )))
+            .build("TEST"))
+        .accept(MediaType.APPLICATION_JSON).exchange();
 
-        //Then
-        response.expectStatus().isOk();
+    //Then
+    response.expectStatus().isOk().expectBody().json("""
+        {"applicationName":"TEST","executionId":"20","params":{"environment":"des","date":"%s"}}
+        """.formatted(LocalDate.now().format(ISO_LOCAL_DATE)));
 
-        Mockito.verify(cardRunner, Mockito.times(1)).onCardContext(any(CardContext.class));
-    }
+    Mockito.verify(cardRunner, Mockito.times(1)).onCardContext(any(CardContext.class));
+  }
+
+  @Test
+  void shouldThrowExceptionOnFailure() {
+    //Given
+    Mockito.doAnswer(a -> {
+
+      CardContext context = a.getArgument(0);
+      Assertions.assertThat(context.applicationName()).isEqualTo("TEST");
+      Assertions.assertThat(context.parameters()).containsEntry("environment", "des").doesNotContainKey("date");
+      Assertions.assertThat(context.reportDate()).isEqualTo(now().format(ISO_LOCAL_DATE));
+
+      throw new CardExecutionException("oh! an error!");
+    }).when(cardRunner).onCardContext(any(CardContext.class));
+
+    //When
+    var response = webTestClient.get()
+        .uri(uri -> uri.path(CONTROLLER_PATH.concat("/{applicationName}"))
+            .queryParams(new LinkedMultiValueMap<>(Map.of(
+                "date", List.of(now().format(ISO_LOCAL_DATE)),
+                "environment", List.of("des")
+            )))
+            .build("TEST"))
+        .accept(MediaType.APPLICATION_JSON).exchange();
+
+    //Then
+    response.expectStatus().isBadRequest().expectBody().json("""
+        {"applicationName":"TEST","error":"oh! an error!","params":{"date":"%s","environment":"des"}}
+        """.formatted(LocalDate.now().format(ISO_LOCAL_DATE)));
+
+    Mockito.verify(cardRunner, Mockito.times(1)).onCardContext(any(CardContext.class));
+  }
 
 }

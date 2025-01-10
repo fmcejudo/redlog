@@ -37,7 +37,7 @@ public class ReportConfiguration {
   @Bean
   @ConditionalOnRedlogEnabled
   ReportReaderService reportServiceProxy(final ReportService reportService, final DocumentFormat documentFormat) {
-    return new ReportReaderService(reportService, documentFormat);
+    return new DefaultReportReaderService(reportService, documentFormat);
   }
 
   @Bean
