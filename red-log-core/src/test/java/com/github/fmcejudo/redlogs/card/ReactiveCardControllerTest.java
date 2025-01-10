@@ -65,7 +65,12 @@ class ReactiveCardControllerTest {
 
     //Then
     response.expectStatus().isOk().expectBody().json("""
-        {"applicationName":"TEST","executionId":"20", "uri":"http://test-reactive:8080/report/execution/20" ,"params":{"environment":"des","date":"%s"}}
+        {
+        "applicationName":"TEST",
+        "executionId":"20", 
+        "uri":"http://test-reactive:8080/report/execution/20/doc" ,
+        "params":{"environment":"des","date":"%s"}
+        }
         """.formatted(LocalDate.now().format(ISO_LOCAL_DATE)));
 
     Mockito.verify(cardRunner, Mockito.times(1)).onCardContext(any(CardContext.class));

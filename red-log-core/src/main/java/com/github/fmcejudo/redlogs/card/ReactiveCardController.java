@@ -36,7 +36,12 @@ public class ReactiveCardController {
     try {
       CardContext cardContext = CardContext.from(applicationName, params);
       String executionId = cardRunner.onCardContext(cardContext);
-      String uri = UrlLinkBuilder.from(exchange.getRequest()).withPath(reportPath).withPath("execution").withPath(executionId).build();
+      String uri = UrlLinkBuilder.from(exchange.getRequest())
+          .withPath(reportPath)
+          .withPath("execution")
+          .withPath(executionId)
+          .withPath("doc")
+          .build();
       return ResponseEntity.ok(CardRunnerInfo.success(applicationName, uri, executionId, params));
     } catch (CardExecutionException cardExecutionException) {
       return ResponseEntity.badRequest().body(CardRunnerInfo.failure(applicationName, cardExecutionException.getMessage(), params));
