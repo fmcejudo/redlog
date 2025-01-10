@@ -17,7 +17,6 @@ import reactor.core.publisher.Flux;
 @AutoConfiguration
 class CardConfiguration {
 
-
   @Bean
   @ConditionalOnRedlogEnabled
   @ConditionalOnClass(value = Flux.class)
