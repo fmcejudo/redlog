@@ -33,7 +33,7 @@ class ReactiveExecutionController {
       @RequestParam final Map<String, String> params,
       final ServerWebExchange exchange) {
 
-    String urlBase = UrlLinkBuilder.from(exchange.getRequest()).build();
+    String urlBase = UrlLinkBuilder.from(exchange.getRequest()).withPath(reportPath).build();
     List<ExecutionDTO> executions = executionService.findExecutionWithParameters(applicationName, params)
         .stream().map(execution -> ExecutionDTO.from(execution, urlBase)).toList();
     return ResponseEntity.ok(executions);

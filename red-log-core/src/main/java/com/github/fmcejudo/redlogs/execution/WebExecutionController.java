@@ -32,7 +32,7 @@ class WebExecutionController {
   public ResponseEntity<List<ExecutionDTO>> getExecutionList(@PathVariable final String applicationName,
       @RequestParam final Map<String, String> params, HttpServletRequest request) {
 
-    String urlBase = UrlLinkBuilder.from(request).build();
+    String urlBase = UrlLinkBuilder.from(request).withPath(reportPath).build();
     List<ExecutionDTO> executions = executionService.findExecutionWithParameters(applicationName, params)
         .stream().map(execution -> ExecutionDTO.from(execution, urlBase)).toList();
     return ResponseEntity.ok(executions);

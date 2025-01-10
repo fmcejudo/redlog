@@ -18,7 +18,7 @@ final class WebUrlLinkBuilder implements UrlLinkBuilder {
   }
 
   public String build() {
-    URI uri = URI.create(httpServletRequest.getRequestURI());
+    URI uri = URI.create(httpServletRequest.getRequestURL().toString());
     final String origin;
     if (uri.getPort() > 0) {
       origin ="%s://%s:%d".formatted(uri.getScheme(), uri.getHost(), uri.getPort());

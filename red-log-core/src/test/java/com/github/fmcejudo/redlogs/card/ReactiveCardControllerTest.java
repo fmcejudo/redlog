@@ -22,11 +22,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.util.LinkedMultiValueMap;
 
-@WebFluxTest(controllers = CardController.class)
+@WebFluxTest(controllers = ReactiveCardController.class)
 @ContextConfiguration(classes = {
-    CardController.class
+    ReactiveCardController.class
 })
-class CardControllerTest {
+class ReactiveCardControllerTest {
 
   private static final String CONTROLLER_PATH = "/card-runner";
 
@@ -51,7 +51,11 @@ class CardControllerTest {
 
     //When
     var response = webTestClient.get()
-        .uri(uri -> uri.path(CONTROLLER_PATH.concat("/{applicationName}"))
+        .uri(uri -> uri
+            .scheme("http")
+            .host("test-reactive")
+            .port(8080)
+            .path(CONTROLLER_PATH.concat("/{applicationName}"))
             .queryParams(new LinkedMultiValueMap<>(Map.of(
                 "date", List.of(now().format(ISO_LOCAL_DATE)),
                 "environment", List.of("des")
@@ -61,7 +65,7 @@ class CardControllerTest {
 
     //Then
     response.expectStatus().isOk().expectBody().json("""
-        {"applicationName":"TEST","executionId":"20","params":{"environment":"des","date":"%s"}}
+        {"applicationName":"TEST","executionId":"20", "uri":"http://test-reactive:8080/report/execution/20" ,"params":{"environment":"des","date":"%s"}}
         """.formatted(LocalDate.now().format(ISO_LOCAL_DATE)));
 
     Mockito.verify(cardRunner, Mockito.times(1)).onCardContext(any(CardContext.class));

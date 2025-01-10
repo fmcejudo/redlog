@@ -65,7 +65,7 @@ class UrlLinkBuilderTest {
   void shouldBuildUrlFromWebRequest(final String urlBase) {
     //Given
 
-    HttpServletRequest httpServletRequest = new MockHttpServletRequest("GET", urlBase + "/something/path");
+    HttpServletRequest httpServletRequest = MockHttpServletRequestFactory.from(urlBase , null ,"/something/path");
 
     //When
     String link = UrlLinkBuilder.from(httpServletRequest).build();
@@ -85,8 +85,8 @@ class UrlLinkBuilderTest {
     //Given
     final String contextPath = "app";
 
-    MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("GET", urlBase + "/%s/something/path".formatted(contextPath));
-    httpServletRequest.setContextPath(contextPath);
+    MockHttpServletRequest httpServletRequest =
+        MockHttpServletRequestFactory.from(urlBase, contextPath, "/%s/something/path".formatted(contextPath));
 
     //When
     String link = UrlLinkBuilder.from(httpServletRequest).build();
@@ -107,14 +107,31 @@ class UrlLinkBuilderTest {
     //Given
     final String contextPath = "app";
 
-    MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("GET", urlBase + "/%s/something/path".formatted(contextPath));
-    httpServletRequest.setContextPath(contextPath);
+    MockHttpServletRequest httpServletRequest =
+        MockHttpServletRequestFactory.from(urlBase, contextPath, "/%s/something/path".formatted(contextPath));
 
     //When
     String link = UrlLinkBuilder.from(httpServletRequest).withPath(resource).build();
 
     //Then
     Assertions.assertThat(link).isEqualTo("%s/%s/report".formatted("http://localhost:8080", contextPath));
+  }
+
+  static class MockHttpServletRequestFactory {
+
+    static MockHttpServletRequest from(String urlBase, String contextPath, String resource) {
+      URI uri = URI.create(urlBase);
+      MockHttpServletRequest httpServletRequest = new MockHttpServletRequest("GET", resource);
+      httpServletRequest.setRemoteHost(uri.getHost());
+      httpServletRequest.setRemotePort(uri.getPort());
+      httpServletRequest.setLocalPort(uri.getPort());
+      httpServletRequest.setServerPort(uri.getPort());
+      httpServletRequest.setScheme(uri.getScheme());
+      if (contextPath != null) {
+        httpServletRequest.setContextPath(contextPath);
+      }
+      return httpServletRequest;
+    }
   }
 
 }
