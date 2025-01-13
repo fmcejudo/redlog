@@ -23,8 +23,8 @@ class ExecutionDTO  {
         this.parameters = parameters;
         this.reportDate = reportDate;
         this.links = List.of(
-            new Link("json", urlBase + "/report/execution/"+executionId+"/json"),
-            new Link("doc", urlBase + "/report/execution/"+executionId+"/doc")
+            new Link("json", urlBase + "/execution/"+executionId+"/json"),
+            new Link("doc", urlBase + "/execution/"+executionId+"/doc")
         );
     }
 

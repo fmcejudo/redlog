@@ -1,6 +1,7 @@
-com.github.fmcejudo.redlogs.card.loader.CardLoaderConfiguration
 com.github.fmcejudo.redlogs.config.RedlogPluginLoader
+com.github.fmcejudo.redlogs.card.loader.CardLoaderConfiguration
 com.github.fmcejudo.redlogs.card.process.CardProcessorConfiguration
 com.github.fmcejudo.redlogs.card.converter.CardConverterConfiguration
 com.github.fmcejudo.redlogs.report.ReportConfiguration
+com.github.fmcejudo.redlogs.card.CardConfiguration
 com.github.fmcejudo.redlogs.execution.ExecutionConfiguration

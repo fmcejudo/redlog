@@ -3,6 +3,7 @@ package com.github.fmcejudo.redlogs.execution;
 import java.util.List;
 import java.util.Map;
 
+import com.github.fmcejudo.redlogs.common.link.UrlLinkBuilder;
 import io.github.fmcejudo.redlogs.report.ExecutionService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,16 +32,11 @@ class WebExecutionController {
   public ResponseEntity<List<ExecutionDTO>> getExecutionList(@PathVariable final String applicationName,
       @RequestParam final Map<String, String> params, HttpServletRequest request) {
 
-    String urlBase = baseUrl(request);
+    String urlBase = UrlLinkBuilder.from(request).withPath(reportPath).build();
     List<ExecutionDTO> executions = executionService.findExecutionWithParameters(applicationName, params)
         .stream().map(execution -> ExecutionDTO.from(execution, urlBase)).toList();
     return ResponseEntity.ok(executions);
   }
 
-  private String baseUrl(final HttpServletRequest request) {
-    StringBuffer requestURL = request.getRequestURL();
-    int urlPath = requestURL.length();
-    int contextPath = request.getRequestURI().length();
-    return requestURL.substring(0, urlPath - contextPath);
-  }
+
 }

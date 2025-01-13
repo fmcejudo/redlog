@@ -1,16 +1,9 @@
 package com.github.fmcejudo.redlogs.report;
 
-import com.github.fmcejudo.redlogs.card.CardController;
-import com.github.fmcejudo.redlogs.card.converter.CardConverter;
-import com.github.fmcejudo.redlogs.card.loader.CardFileLoader;
-import com.github.fmcejudo.redlogs.card.process.CardProcessor;
-import com.github.fmcejudo.redlogs.card.runner.CardRunner;
 import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorContent;
 import com.github.fmcejudo.redlogs.report.formatter.asciidoctor.AsciiDoctorFormat;
 import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
-import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
-import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.report.ReportService;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -37,28 +30,7 @@ public class ReportConfiguration {
   @Bean
   @ConditionalOnRedlogEnabled
   ReportReaderService reportServiceProxy(final ReportService reportService, final DocumentFormat documentFormat) {
-    return new ReportReaderService(reportService, documentFormat);
-  }
-
-  @Bean
-  @ConditionalOnRedlogEnabled
-  CardRunner cardRunner(final CardFileLoader cardFileLoader,
-      final CardConverter cardConverter,
-      final CardProcessor cardProcessor,
-      final CardExecutionWriter cardExecutionWriter,
-      final CardReportWriter cardReportWriter) {
-
-    return CardRunner.load(cardFileLoader)
-        .transform(cardConverter)
-        .process(cardProcessor)
-        .run(cardReportWriter, cardExecutionWriter);
-  }
-
-  @Bean
-  @ConditionalOnRedlogEnabled
-  @ConditionalOnBean(CardRunner.class)
-  CardController cardController(final CardRunner cardRunner) {
-    return new CardController(cardRunner);
+    return new DefaultReportReaderService(reportService, documentFormat);
   }
 
   @Bean
