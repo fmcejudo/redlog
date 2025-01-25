@@ -1,7 +1,10 @@
 package io.github.fmcejudo.redlogs.processor;
 
+import java.time.LocalDate;
 import java.util.Map;
 
+import io.github.fmcejudo.redlogs.card.CardQueryRequest;
+import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.MongoCountCardRequest;
 import io.github.fmcejudo.redlogs.card.MongoListCardRequest;
 import io.github.fmcejudo.redlogs.card.processor.CardQueryProcessor;
@@ -15,12 +18,23 @@ public interface MongoCardQueryProcessor extends CardQueryProcessor {
     MongoCountCardProcessor mongoCountCardProcessor = new MongoCountCardProcessor(mongoTemplate);
     MongoListCardProcessor mongoListCardProcessor = new MongoListCardProcessor(mongoTemplate);
     return cardQueryRequest -> {
-      if (cardQueryRequest instanceof MongoCountCardRequest mongoCountCardRequest) {
-        return mongoCountCardProcessor.process(mongoCountCardRequest);
-      } else if (cardQueryRequest instanceof MongoListCardRequest mongoListCardRequest) {
-        return mongoListCardProcessor.process(mongoListCardRequest);
+      try {
+        return processCardRequest(cardQueryRequest, mongoCountCardProcessor, mongoListCardProcessor);
+      } catch (Exception e) {
+        return CardQueryResponse.failure(
+            LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), e.getMessage()
+        );
       }
-      throw new RuntimeException("Unknown card type");
     };
+  }
+
+  private static CardQueryResponse processCardRequest(CardQueryRequest cardQueryRequest, MongoCountCardProcessor mongoCountCardProcessor,
+      MongoListCardProcessor mongoListCardProcessor) {
+    if (cardQueryRequest instanceof MongoCountCardRequest mongoCountCardRequest) {
+      return mongoCountCardProcessor.process(mongoCountCardRequest);
+    } else if (cardQueryRequest instanceof MongoListCardRequest mongoListCardRequest) {
+      return mongoListCardProcessor.process(mongoListCardRequest);
+    }
+    throw new RuntimeException("Unknown card type");
   }
 }

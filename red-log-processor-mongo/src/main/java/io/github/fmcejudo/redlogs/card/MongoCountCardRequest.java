@@ -1,6 +1,5 @@
 package io.github.fmcejudo.redlogs.card;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
@@ -55,7 +54,7 @@ public class MongoCountCardRequest implements CardQueryRequest {
     return cardQuery.properties().get("query");
   }
 
-  public List<String> fields() {
-    return Stream.of(cardQuery.properties().getOrDefault("fields", "").split(",")).map(String::trim).toList();
+  public String [] fields() {
+    return Stream.of(cardQuery.properties().getOrDefault("fields", "").split(",")).map(String::trim).toArray(String[]::new);
   }
 }

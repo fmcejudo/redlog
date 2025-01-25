@@ -1,6 +1,5 @@
 package io.github.fmcejudo.redlogs.card;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
@@ -53,5 +52,9 @@ public class MongoListCardRequest implements CardQueryRequest {
 
   public String collection() {
     return cardQuery.properties().get("collection");
+  }
+
+  public String query() {
+    return cardQuery.properties().get("query");
   }
 }

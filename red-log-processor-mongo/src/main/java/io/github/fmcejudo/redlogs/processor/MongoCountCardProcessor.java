@@ -14,12 +14,14 @@ import io.github.fmcejudo.redlogs.card.CardQueryResponseEntry;
 import io.github.fmcejudo.redlogs.card.MongoCountCardRequest;
 import io.github.fmcejudo.redlogs.card.processor.CardQueryProcessor;
 import org.bson.Document;
+import org.springframework.data.mongodb.MongoExpression;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.MatchOperation;
 import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
-import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.util.Assert;
 
 class MongoCountCardProcessor implements CardQueryProcessor {
@@ -41,11 +43,10 @@ class MongoCountCardProcessor implements CardQueryProcessor {
 
   private List<CardQueryResponseEntry> retrieveRecordsFromDB(MongoCountCardRequest mccr) {
 
-    String[] fields = mccr.fields().toArray(String[]::new);
     Aggregation aggregation = Aggregation.newAggregation(
         createMatchOperation(mccr.query()),
-        Aggregation.group(fields).count().as("count"),
-        createProjectAggregation(fields)
+        Aggregation.group(mccr.fields()).count().as("count"),
+        createProjectAggregation(mccr.fields())
     );
 
     AggregationResults<Document> aggregate = mongoTemplate.aggregate(aggregation, mccr.collection(), Document.class);
@@ -62,10 +63,12 @@ class MongoCountCardProcessor implements CardQueryProcessor {
     return entries;
   }
 
-  private MatchOperation createMatchOperation(String query) {
-    Criteria criteria = Criteria.where("role").is("Sith Lord");
+  private MatchOperation createMatchOperation(String jsonQuery) {
+    BasicQuery query = new BasicQuery(jsonQuery);
+    Document filterDocument = query.getQueryObject();
+    MongoExpression mongoExpression = () -> filterDocument;
 
-    return Aggregation.match(criteria);
+    return Aggregation.match(AggregationExpression.from(mongoExpression));
   }
 
   private ProjectionOperation createProjectAggregation(String... fields) {

@@ -59,7 +59,7 @@ class MongoCardQueryProcessorTest {
     CardQuery cardQuery = new CardQuery(
         "mongo-count-card", "MONGO", "mongo-count-card",
         Map.of("type", "COUNT", "query", """
-            {"role": "Sith Lord"}\
+            {"role" : "Sith Lord"}
             """, "collection", "characters", "fields", "name")
     );
 
@@ -71,6 +71,7 @@ class MongoCardQueryProcessorTest {
 
     //Then
     Assertions.assertThat(response.executionId()).isEqualTo("40");
+    Assertions.assertThat(response.error()).isNull();
     Assertions.assertThat(response.currentEntries()).hasSize(2);
   }
 
@@ -90,7 +91,28 @@ class MongoCardQueryProcessorTest {
 
     //Then
     Assertions.assertThat(response.executionId()).isEqualTo("40");
+    Assertions.assertThat(response.error()).isNull();
     Assertions.assertThat(response.currentEntries()).hasSize(2);
+  }
+
+  @Test
+  void shouldCatchExceptions() {
+    //Given
+    CardQuery cardQuery = new CardQuery("mongo-list-card", "MONGO", "mongo-list-card",
+        Map.of("type", "LIST", "query", """
+            {"role: "Sith Lord"}\
+            """, "collection", "characters", "fields", "name")
+    );
+    CardMetadata cardMetadata = new CardMetadata("40", "test", LocalDateTime.now(), LocalDateTime.now());
+    CardQueryRequest cardQueryRequest = new MongoListCardRequest(cardQuery, cardMetadata);
+
+    //When
+    CardQueryResponse response = cardQueryProcessor.process(cardQueryRequest);
+
+    //Then
+    Assertions.assertThat(response.executionId()).isEqualTo("40");
+    Assertions.assertThat(response.error()).contains("JSON reader was expecting");
+    Assertions.assertThat(response.currentEntries()).hasSize(0);
   }
 
 }
