@@ -2,9 +2,6 @@ package com.github.fmcejudo.redlogs.card;
 
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.runner.CardRunner;
 import com.github.fmcejudo.redlogs.common.link.UrlLinkBuilder;
