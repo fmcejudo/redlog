@@ -1,0 +1,34 @@
+{
+  "properties": [
+    {
+      "name": "redlog.processor.mongo.host",
+      "type": "String",
+      "description": "mongo host to connect",
+      "defaultValue": ""
+    },
+    {
+      "name": "redlog.processor.mongo.port",
+      "type": "String",
+      "description": "mongo port",
+      "defaultValue": ""
+    },
+    {
+      "name": "redlog.processor.mongo.user",
+      "type": "String",
+      "description": "connection user",
+      "defaultValue": ""
+    },
+    {
+      "name": "redlog.processor.mongo.pass",
+      "type": "String",
+      "description": "connection password",
+      "defaultValue": ""
+    },
+    {
+      "name": "redlog.processor.mongo.database",
+      "type": "String",
+      "description": "database name",
+      "defaultValue": ""
+    }
+  ]
+}
