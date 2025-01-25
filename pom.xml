@@ -21,6 +21,7 @@
     <module>red-log-api</module>
     <module>red-log-core</module>
     <module>red-log-processor-loki</module>
+    <module>red-log-processor-mongo</module>
     <module>red-log-mongo</module>
   </modules>
   <scm>
