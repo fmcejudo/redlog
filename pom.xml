@@ -22,6 +22,7 @@
     <module>red-log-core</module>
     <module>red-log-processor-loki</module>
     <module>red-log-processor-mongo</module>
+    <module>red-log-processor-healthcheck</module>
     <module>red-log-mongo</module>
   </modules>
   <scm>
@@ -95,7 +96,7 @@
           </execution>
         </executions>
       </plugin>
-     
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-gpg-plugin</artifactId>
