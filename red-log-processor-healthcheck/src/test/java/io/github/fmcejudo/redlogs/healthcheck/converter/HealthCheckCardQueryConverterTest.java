@@ -11,7 +11,6 @@ import io.github.fmcejudo.redlogs.healthcheck.HealthCheckRedlogPluginProvider;
 import io.github.fmcejudo.redlogs.healthcheck.card.HealthCheckQueryRequest;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.api.InstanceOfAssertFactories;
-import org.assertj.core.api.InstanceOfAssertFactory;
 import org.junit.jupiter.api.Test;
 
 class HealthCheckCardQueryConverterTest {

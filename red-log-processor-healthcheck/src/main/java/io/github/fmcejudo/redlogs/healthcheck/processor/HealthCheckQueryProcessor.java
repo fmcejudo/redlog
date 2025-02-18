@@ -26,7 +26,7 @@ import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
 
 public interface HealthCheckQueryProcessor extends CardQueryProcessor {
 
-  public static HealthCheckQueryProcessor createInstance() {
+  static HealthCheckQueryProcessor createInstance() {
     RestClient.Builder builder = RestClient.builder().defaultHeaders(httpHeaders -> httpHeaders.add(CONTENT_TYPE, APPLICATION_JSON_VALUE));
     return cardQueryRequest -> {
       Assert.isInstanceOf(
