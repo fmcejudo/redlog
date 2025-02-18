@@ -4,40 +4,13 @@ import java.util.stream.Stream;
 
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
 
-public class MongoCountCardRequest implements CardQueryRequest {
+public class MongoCountCardRequest extends AbstractCardQueryRequest implements CardQueryRequest {
 
   private final CardQuery cardQuery;
 
-  private final CardMetadata cardMetadata;
-
   public MongoCountCardRequest(final CardQuery cardQuery, CardMetadata cardMetadata) {
+    super(cardQuery, cardMetadata);
     this.cardQuery = cardQuery;
-    this.cardMetadata = cardMetadata;
-  }
-
-  @Override
-  public String id() {
-    return cardQuery.id();
-  }
-
-  @Override
-  public String description() {
-    return cardQuery.description();
-  }
-
-  @Override
-  public String executionId() {
-    return cardMetadata.executionId();
-  }
-
-  @Override
-  public String processor() {
-    return cardQuery.processor();
-  }
-
-  @Override
-  public CardMetadata metadata() {
-    return cardMetadata;
   }
 
   @Override
@@ -54,7 +27,7 @@ public class MongoCountCardRequest implements CardQueryRequest {
     return cardQuery.properties().get("query");
   }
 
-  public String [] fields() {
+  public String[] fields() {
     return Stream.of(cardQuery.properties().getOrDefault("fields", "").split(",")).map(String::trim).toArray(String[]::new);
   }
 }

@@ -12,6 +12,7 @@ import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.converter.CardConverter;
 import com.github.fmcejudo.redlogs.card.loader.CardFile;
 import com.github.fmcejudo.redlogs.card.loader.CardFileLoader;
+import io.github.fmcejudo.redlogs.card.AbstractCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardMetadata;
 import io.github.fmcejudo.redlogs.card.CardQuery;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
@@ -70,39 +71,15 @@ class TestCardConverter implements CardConverter {
   }
 }
 
-class TestCardQueryRequest implements CardQueryRequest {
-
-  private final CardQuery cardQuery;
-  private final CardMetadata cardMetadata;
+class TestCardQueryRequest extends AbstractCardQueryRequest implements CardQueryRequest {
 
   TestCardQueryRequest(final CardQuery cardQuery, CardMetadata cardMetadata) {
-    this.cardQuery = cardQuery;
-    this.cardMetadata = cardMetadata;
-  }
-
-  @Override
-  public String id() {
-    return cardQuery.id();
-  }
-
-  @Override
-  public String description() {
-    return cardQuery.description();
+    super(cardQuery, cardMetadata);
   }
 
   @Override
   public String processor() {
     return "test";
-  }
-
-  @Override
-  public String executionId() {
-    return cardMetadata.executionId();
-  }
-
-  @Override
-  public CardMetadata metadata() {
-    return cardMetadata;
   }
 
   @Override

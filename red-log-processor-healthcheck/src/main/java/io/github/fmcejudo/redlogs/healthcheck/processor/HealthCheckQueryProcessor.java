@@ -3,7 +3,6 @@ package io.github.fmcejudo.redlogs.healthcheck.processor;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +12,11 @@ import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.CardQueryResponseEntry;
 import io.github.fmcejudo.redlogs.card.processor.CardQueryProcessor;
 import io.github.fmcejudo.redlogs.healthcheck.card.HealthCheckQueryRequest;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.util.Assert;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClient.Builder;
-import org.springframework.web.client.RestClient.ResponseSpec;
-import org.springframework.web.client.RestClient.ResponseSpec.ErrorHandler;
 
 public interface HealthCheckQueryProcessor extends CardQueryProcessor {
 

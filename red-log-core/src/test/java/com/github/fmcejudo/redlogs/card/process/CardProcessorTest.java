@@ -89,6 +89,11 @@ class TestCardQueryRequest implements CardQueryRequest {
   }
 
   @Override
+  public List<String> tags() {
+    return List.of();
+  }
+
+  @Override
   public CardMetadata metadata() {
     return null;
   }
