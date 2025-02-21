@@ -8,6 +8,7 @@ public record CardQueryResponse(
         String id,
         String executionId,
         String description,
+        List<String> tags,
         List<CardQueryResponseEntry> currentEntries,
         String link,
         String error) {
@@ -19,6 +20,7 @@ public record CardQueryResponse(
             String executionId,
             String description,
             String link,
+            List<String> tags,
             List<CardQueryResponseEntry> entries) {
 
         return new CardQueryResponse(
@@ -26,6 +28,7 @@ public record CardQueryResponse(
                 id,
                 executionId,
                 description,
+                tags,
                 entries,
                 link,
                 null
@@ -45,6 +48,7 @@ public record CardQueryResponse(
                 executionId,
                 description,
                 List.of(),
+                java.util.List.of(),
                 null,
                 error);
     }

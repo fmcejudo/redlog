@@ -4,21 +4,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import io.github.fmcejudo.redlogs.card.AbstractCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardMetadata;
 import io.github.fmcejudo.redlogs.card.CardQuery;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
 import org.apache.commons.lang3.StringUtils;
 
-public class LokiCountCardRequest implements CardQueryRequest {
+public class LokiCountCardRequest extends AbstractCardQueryRequest implements CardQueryRequest {
 
   private final CardQuery cardQuery;
 
-  private final CardMetadata cardMetadata;
-
   private LokiCountCardRequest(CardQuery cardQuery, CardMetadata cardMetadata) {
+    super(cardQuery, cardMetadata);
     this.cardQuery = cardQuery;
-    this.cardMetadata = cardMetadata;
   }
 
   public static LokiCountCardRequest from(CardQuery cardQuery, CardMetadata cardMetadata) {
@@ -27,31 +26,6 @@ public class LokiCountCardRequest implements CardQueryRequest {
       throw new RuntimeException("Illegal card creation");
     }
     return new LokiCountCardRequest(cardQuery, cardMetadata);
-  }
-
-  @Override
-  public String id() {
-    return cardQuery.id();
-  }
-
-  @Override
-  public String description() {
-    return cardQuery.description();
-  }
-
-  @Override
-  public String executionId() {
-    return cardMetadata.executionId();
-  }
-
-  @Override
-  public String processor() {
-    return cardQuery.processor();
-  }
-
-  @Override
-  public CardMetadata metadata() {
-    return cardMetadata;
   }
 
   @Override
@@ -99,10 +73,10 @@ public class LokiCountCardRequest implements CardQueryRequest {
     }
 
     return """
-          sum by(%s) (count_over_time(
-            %s
-            | json [%s]
-          ))
-          """.formatted(String.join(",", groupBy()), query(), range());
+        sum by(%s) (count_over_time(
+          %s
+          | json [%s]
+        ))
+        """.formatted(String.join(",", groupBy()), query(), range());
   }
 }

@@ -31,7 +31,7 @@ class SummaryCardResponseParser implements LokiCardResponseParser<LokiSummaryCar
         .toList();
 
     return CardQueryResponse.success(
-        date, cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), "", entries
+        date, cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), "", cardQueryRequest.tags(), entries
     );
   }
 

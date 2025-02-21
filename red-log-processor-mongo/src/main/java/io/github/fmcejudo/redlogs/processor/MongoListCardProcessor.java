@@ -28,16 +28,16 @@ class MongoListCardProcessor implements MongoCardQueryProcessor {
   @Override
   public CardQueryResponse process(CardQueryRequest cardQueryRequest) {
     Assert.isInstanceOf(MongoListCardRequest.class, cardQueryRequest);
-    MongoListCardRequest mongoListCardRequest = (MongoListCardRequest) cardQueryRequest;
-    List<CardQueryResponseEntry> entries = retrieveList(mongoListCardRequest);
+    MongoListCardRequest mlr = (MongoListCardRequest) cardQueryRequest;
+    List<CardQueryResponseEntry> entries = retrieveList(mlr);
     return CardQueryResponse.success(
-        LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), null, entries
+        LocalDate.now(), mlr.id(), mlr.executionId(), mlr.description(), null, mlr.tags(), entries
     );
   }
 
   private List<CardQueryResponseEntry> retrieveList(final MongoListCardRequest mlcr) {
     Query query = new BasicQuery(mlcr.query());
-    query.fields().include(mlcr.fields()).exclude("_id");
+    query.fields().include(mlcr.fields());
     List<Document> documents = mongoTemplate.find(query, Document.class, mlcr.collection());
     List<CardQueryResponseEntry> result = new ArrayList<>();
     for (Document document : documents) {

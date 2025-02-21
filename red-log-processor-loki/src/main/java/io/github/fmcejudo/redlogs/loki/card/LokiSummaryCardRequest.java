@@ -4,20 +4,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
+import io.github.fmcejudo.redlogs.card.AbstractCardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardMetadata;
 import io.github.fmcejudo.redlogs.card.CardQuery;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
 import org.apache.commons.lang3.StringUtils;
 
-public class LokiSummaryCardRequest implements CardQueryRequest {
+public class LokiSummaryCardRequest extends AbstractCardQueryRequest implements CardQueryRequest {
 
   private final CardQuery cardQuery;
 
-  private final CardMetadata cardMetadata;
-
   private LokiSummaryCardRequest(CardQuery cardQuery, CardMetadata cardMetadata) {
-    this.cardMetadata = cardMetadata;
+    super(cardQuery, cardMetadata);
     this.cardQuery = cardQuery;
   }
 
@@ -27,31 +26,6 @@ public class LokiSummaryCardRequest implements CardQueryRequest {
       throw new RuntimeException("Illegal card creation");
     }
     return new LokiSummaryCardRequest(cardQuery, cardMetadata);
-  }
-
-  @Override
-  public String id() {
-    return cardQuery.id();
-  }
-
-  @Override
-  public String description() {
-    return cardQuery.description();
-  }
-
-  @Override
-  public String executionId() {
-    return cardMetadata.executionId();
-  }
-
-  @Override
-  public String processor() {
-    return cardQuery.processor();
-  }
-
-  @Override
-  public CardMetadata metadata() {
-    return cardMetadata;
   }
 
   @Override

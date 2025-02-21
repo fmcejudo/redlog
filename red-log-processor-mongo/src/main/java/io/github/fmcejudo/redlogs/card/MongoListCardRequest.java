@@ -4,40 +4,13 @@ import java.util.stream.Stream;
 
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
 
-public class MongoListCardRequest implements CardQueryRequest {
+public class MongoListCardRequest extends AbstractCardQueryRequest implements CardQueryRequest {
 
   private final CardQuery cardQuery;
 
-  private final CardMetadata cardMetadata;
-
   public MongoListCardRequest(final CardQuery cardQuery, final CardMetadata cardMetadata) {
+    super(cardQuery, cardMetadata);
     this.cardQuery = cardQuery;
-    this.cardMetadata = cardMetadata;
-  }
-
-  @Override
-  public String id() {
-    return cardQuery.id();
-  }
-
-  @Override
-  public String description() {
-    return cardQuery.description();
-  }
-
-  @Override
-  public String executionId() {
-    return cardMetadata.executionId();
-  }
-
-  @Override
-  public String processor() {
-    return cardQuery.processor();
-  }
-
-  @Override
-  public CardMetadata metadata() {
-    return cardMetadata;
   }
 
   @Override

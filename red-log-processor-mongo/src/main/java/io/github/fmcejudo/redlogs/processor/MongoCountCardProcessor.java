@@ -38,7 +38,7 @@ class MongoCountCardProcessor implements CardQueryProcessor {
     List<CardQueryResponseEntry> entries = Function.<MongoCountCardRequest>identity()
         .andThen(this::retrieveRecordsFromDB)
         .apply(mccr);
-    return CardQueryResponse.success(LocalDate.now(), mccr.id(), mccr.executionId(), mccr.description(), null, entries);
+    return CardQueryResponse.success(LocalDate.now(), mccr.id(), mccr.executionId(), mccr.description(), null, mccr.tags(), entries);
   }
 
   private List<CardQueryResponseEntry> retrieveRecordsFromDB(MongoCountCardRequest mccr) {
