@@ -1,5 +1,7 @@
 package io.github.fmcejudo.redlogs.loki.processor;
 
+import java.util.Optional;
+
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.processor.CardQueryProcessor;
@@ -10,6 +12,7 @@ import io.github.fmcejudo.redlogs.loki.processor.connection.LokiClientFactory.Qu
 import io.github.fmcejudo.redlogs.loki.processor.connection.LokiConnectionDetails;
 import io.github.fmcejudo.redlogs.loki.processor.connection.LokiRequest;
 import io.github.fmcejudo.redlogs.loki.processor.connection.LokiResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.Assert;
 
 class SummaryCardProcessor implements CardQueryProcessor {
@@ -34,13 +37,26 @@ class SummaryCardProcessor implements CardQueryProcessor {
     Assert.isInstanceOf(LokiSummaryCardRequest.class, cardQueryRequest, "This processor is for summary card requests");
     LokiSummaryCardRequest cardRequest = (LokiSummaryCardRequest) cardQueryRequest;
     LokiResponse lokiResponse = executeQuery(cardRequest);
-    return lokiCardResponseParser.parse(lokiResponse, cardRequest);
+    String link = buildLink(cardRequest);
+    return lokiCardResponseParser.withLink(link).parse(lokiResponse, cardRequest);
   }
 
   private LokiResponse executeQuery(LokiSummaryCardRequest cardRequest) {
     LokiClient lokiClient = lokiClientFactory.get(QueryTypeEnum.RANGE);
     LokiRequest lokiRequest = new LokiRequest(cardRequest.query(), cardRequest.metadata().startTime(), cardRequest.metadata().endTime());
     return lokiClient.query(lokiRequest);
+  }
+
+  private String buildLink(LokiSummaryCardRequest summaryCardRequest) {
+    if (StringUtils.isBlank(grafanaDashboard)) {
+      return null;
+    }
+    String datasource = Optional.ofNullable(grafanaDatasource).orElse("default");
+    return LokiLinkBuilder.builder(grafanaDashboard, datasource)
+        .query(summaryCardRequest.query())
+        .from(summaryCardRequest.metadata().startTime())
+        .to(summaryCardRequest.metadata().endTime())
+        .build();
   }
 
 }
