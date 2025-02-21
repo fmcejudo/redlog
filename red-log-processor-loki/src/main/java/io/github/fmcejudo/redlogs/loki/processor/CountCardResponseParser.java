@@ -29,7 +29,7 @@ class CountCardResponseParser implements LokiCardResponseParser<LokiCountCardReq
             .toList();
 
     return CardQueryResponse.success(
-        date, cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), "", entries
+        date, cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), "", cardQueryRequest.tags(), entries
     );
   }
 }

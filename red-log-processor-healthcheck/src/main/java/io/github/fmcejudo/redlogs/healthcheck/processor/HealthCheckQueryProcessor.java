@@ -50,7 +50,7 @@ public interface HealthCheckQueryProcessor extends CardQueryProcessor {
             new CardQueryResponseEntry(Map.of("status", "down", "url", hcqr.url()), 1);
         entries.add(cardQueryResponseEntry);
       }
-      return CardQueryResponse.success(LocalDate.now(), hcqr.id(), hcqr.executionId(), hcqr.description(), "", entries);
+      return CardQueryResponse.success(LocalDate.now(), hcqr.id(), hcqr.executionId(), hcqr.description(), "", hcqr.tags(), entries);
     };
   }
 

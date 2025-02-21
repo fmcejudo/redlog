@@ -94,7 +94,8 @@ class TestCardProcessor implements Function<CardQueryRequest, CardQueryResponse>
   @Override
   public CardQueryResponse apply(CardQueryRequest cardQueryRequest) {
     return new CardQueryResponse(
-        LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), List.of(), "", null
+        LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(),
+        cardQueryRequest.description(), cardQueryRequest.tags(), List.of(), "", null
     );
   }
 }

@@ -31,7 +31,9 @@ interface LokiCardResponseParser<T extends CardQueryRequest> extends BiFunction<
   default LokiCardResponseParser<T> withLink(String link) {
     return (response, cardQueryRequest) -> {
       CardQueryResponse cqr = this.parse(response, cardQueryRequest);
-      return new CardQueryResponse(cqr.date(), cqr.id(), cqr.executionId(), cqr.description(), cqr.currentEntries(), link, cqr.error());
+      return new CardQueryResponse(
+          cqr.date(), cqr.id(), cqr.executionId(), cqr.description(),cqr.tags(), cqr.currentEntries(), link, cqr.error()
+      );
     };
   }
 

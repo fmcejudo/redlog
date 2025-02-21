@@ -55,7 +55,8 @@ class TestCardQueryResponse {
 
   static CardQueryResponse from(CardQueryRequest cardQueryRequest) {
    return CardQueryResponse.success(
-       LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), "link", List.of()
+       LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(),
+       cardQueryRequest.description(), "link", cardQueryRequest.tags(), List.of()
    );
   }
 }

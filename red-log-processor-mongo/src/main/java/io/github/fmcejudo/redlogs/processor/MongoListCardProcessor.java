@@ -28,10 +28,10 @@ class MongoListCardProcessor implements MongoCardQueryProcessor {
   @Override
   public CardQueryResponse process(CardQueryRequest cardQueryRequest) {
     Assert.isInstanceOf(MongoListCardRequest.class, cardQueryRequest);
-    MongoListCardRequest mongoListCardRequest = (MongoListCardRequest) cardQueryRequest;
-    List<CardQueryResponseEntry> entries = retrieveList(mongoListCardRequest);
+    MongoListCardRequest mlr = (MongoListCardRequest) cardQueryRequest;
+    List<CardQueryResponseEntry> entries = retrieveList(mlr);
     return CardQueryResponse.success(
-        LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), null, entries
+        LocalDate.now(), mlr.id(), mlr.executionId(), mlr.description(), null, mlr.tags(), entries
     );
   }
 

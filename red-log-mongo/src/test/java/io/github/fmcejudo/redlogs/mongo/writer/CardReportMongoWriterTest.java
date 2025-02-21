@@ -74,7 +74,7 @@ class CardReportMongoWriterTest {
   void shouldWriteAReportInDB() {
     //Given
     CardQueryResponse cardQueryResponse =
-        CardQueryResponse.success(LocalDate.now(), "id", "executionId", "description", "http://link", List.of());
+        CardQueryResponse.success(LocalDate.now(), "id", "executionId", "description", "http://link", List.of(), List.of());
 
     //When && Then
     List<ReportSection> reportSections =
@@ -95,7 +95,6 @@ class CardReportMongoWriterTest {
     //Then
     Mockito.verify(mongoTemplate, Mockito.never()).save(any());
   }
-
 
   @Test
   void shouldManageErrors() {
