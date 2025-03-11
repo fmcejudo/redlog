@@ -10,7 +10,7 @@
   </parent>
 
   <artifactId>red-log-processor-mongo</artifactId>
-  <name>red-logs-processor-mongo</name>
+  <name>red-log-processor-mongo</name>
 
   <properties>
     <java.version>21</java.version>

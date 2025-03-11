@@ -15,7 +15,7 @@
   <version>0.0.13-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>red-logs</name>
+  <name>red-log</name>
 
   <modules>
     <module>red-log-api</module>
@@ -23,6 +23,7 @@
     <module>red-log-processor-loki</module>
     <module>red-log-processor-mongo</module>
     <module>red-log-processor-healthcheck</module>
+    <module>red-log-formatter-asciidoc</module>
     <module>red-log-mongo</module>
   </modules>
   <scm>
