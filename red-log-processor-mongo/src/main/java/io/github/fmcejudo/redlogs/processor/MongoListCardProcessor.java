@@ -1,6 +1,5 @@
 package io.github.fmcejudo.redlogs.processor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +29,7 @@ class MongoListCardProcessor implements MongoCardQueryProcessor {
     Assert.isInstanceOf(MongoListCardRequest.class, cardQueryRequest);
     MongoListCardRequest mlr = (MongoListCardRequest) cardQueryRequest;
     List<CardQueryResponseEntry> entries = retrieveList(mlr);
-    return CardQueryResponse.success(
-        LocalDate.now(), mlr.id(), mlr.executionId(), mlr.description(), null, mlr.tags(), entries
-    );
+    return CardQueryResponse.from(mlr).success(null, entries);
   }
 
   private List<CardQueryResponseEntry> retrieveList(final MongoListCardRequest mlcr) {

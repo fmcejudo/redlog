@@ -11,13 +11,13 @@ import io.github.fmcejudo.redlogs.loki.processor.connection.LokiResponse;
 
 class CountCardResponseParser implements LokiCardResponseParser<LokiCountCardRequest> {
 
-   public CardQueryResponse parse(LokiResponse response, LokiCountCardRequest cardRequest) {
-      CardMetadata metadata = cardRequest.metadata();
-      LocalDate date = metadata.endTime().toLocalDate();
-      if (!response.isSuccess()) {
-        return createFailureResponse(cardRequest, date);
-      }
-      return createSuccessResponse(response, cardRequest, date);
+  public CardQueryResponse parse(LokiResponse response, LokiCountCardRequest cardRequest) {
+    CardMetadata metadata = cardRequest.metadata();
+    LocalDate date = metadata.endTime().toLocalDate();
+    if (!response.isSuccess()) {
+      return createFailureResponse(cardRequest, date);
+    }
+    return createSuccessResponse(response, cardRequest, date);
   }
 
   private CardQueryResponse createSuccessResponse(LokiResponse response, LokiCountCardRequest cardQueryRequest, LocalDate date) {
@@ -28,8 +28,6 @@ class CountCardResponseParser implements LokiCardResponseParser<LokiCountCardReq
             .filter(cre -> cre.count() >= cardQueryRequest.expectedAtLeast())
             .toList();
 
-    return CardQueryResponse.success(
-        date, cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), "", cardQueryRequest.tags(), entries
-    );
+    return CardQueryResponse.from(cardQueryRequest).withDate(date).success("", entries);
   }
 }
