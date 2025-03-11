@@ -3,15 +3,64 @@ package io.github.fmcejudo.redlogs.card;
 import java.time.LocalDate;
 import java.util.List;
 
-public record CardQueryResponse(
-    LocalDate date,
-    String id,
-    String executionId,
-    String description,
-    List<String> tags,
-    List<CardQueryResponseEntry> currentEntries,
-    String link,
-    String error) {
+public class CardQueryResponse {
+
+  private final LocalDate date;
+  private final String id;
+  private final String executionId;
+  private final String description;
+  private final List<String> tags;
+  private final List<CardQueryResponseEntry> currentEntries;
+  private final String link;
+  private final String error;
+
+  private CardQueryResponse(LocalDate date, String id, String executionId, String description, List<String> tags,
+      List<CardQueryResponseEntry> currentEntries, String link, String error) {
+    this.date = date;
+    this.id = id;
+    this.executionId = executionId;
+    this.description = description;
+    this.tags = tags;
+    this.currentEntries = currentEntries;
+    this.link = link;
+    this.error = error;
+  }
+
+  public LocalDate date() {
+    return date;
+  }
+
+  public String id() {
+    return id;
+  }
+
+  public String executionId() {
+    return executionId;
+  }
+
+  public String description() {
+    return description;
+  }
+
+  public List<String> tags() {
+    return tags;
+  }
+
+  public List<CardQueryResponseEntry> currentEntries() {
+    return currentEntries;
+  }
+
+  public String link() {
+    return link;
+  }
+
+  public String error() {
+    return error;
+  }
+
+  public CardQueryResponse withLink(String link) {
+    return new CardQueryResponse(this.date, this.id, this.executionId, this.description, this.tags, this.currentEntries, link, this.error);
+  }
 
   public static CardQueryResponseBuilder from(CardQueryRequest cardQueryRequest) {
     return new CardQueryResponseBuilder(cardQueryRequest);
