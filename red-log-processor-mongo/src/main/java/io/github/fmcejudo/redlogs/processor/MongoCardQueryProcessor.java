@@ -1,6 +1,5 @@
 package io.github.fmcejudo.redlogs.processor;
 
-import java.time.LocalDate;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
@@ -21,9 +20,7 @@ public interface MongoCardQueryProcessor extends CardQueryProcessor {
       try {
         return processCardRequest(cardQueryRequest, mongoCountCardProcessor, mongoListCardProcessor);
       } catch (Exception e) {
-        return CardQueryResponse.failure(
-            LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), e.getMessage()
-        );
+        return CardQueryResponse.from(cardQueryRequest).failure(e.getMessage());
       }
     };
   }

@@ -3,7 +3,6 @@ package io.github.fmcejudo.redlogs.healthcheck.processor;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,15 +32,13 @@ public interface HealthCheckQueryProcessor extends CardQueryProcessor {
       ResponseEntity<HealthCheck> response = queryUrl(builder, hcqr);
 
       if (!response.getStatusCode().is2xxSuccessful()) {
-        return CardQueryResponse.failure(
-            LocalDate.now(), hcqr.id(), hcqr.executionId(), hcqr.description(), "url returned status " + response.getStatusCode()
-        );
+        return CardQueryResponse.from(cardQueryRequest).failure("url returned status " + response.getStatusCode());
       }
 
       HealthCheck healthCheck = response.getBody();
 
       if (healthCheck == null) {
-        return CardQueryResponse.failure(LocalDate.now(), hcqr.id(), hcqr.executionId(), hcqr.description(), "body does not match");
+        return CardQueryResponse.from(cardQueryRequest).failure("body does not match");
       }
 
       List<CardQueryResponseEntry> entries = new ArrayList<>();
@@ -50,9 +47,8 @@ public interface HealthCheckQueryProcessor extends CardQueryProcessor {
             new CardQueryResponseEntry(Map.of("status", "down", "url", hcqr.url()), 1);
         entries.add(cardQueryResponseEntry);
       }
-      return CardQueryResponse.success(
-          LocalDate.now(), hcqr.id(), hcqr.executionId(), hcqr.description(), hcqr.url(), hcqr.tags(), entries
-      );
+
+      return CardQueryResponse.from(cardQueryRequest).success(hcqr.url(), entries);
     };
   }
 
