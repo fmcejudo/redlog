@@ -47,6 +47,7 @@ class LokiCardQueryProcessorTest {
         "loki.url", getLokiUrl(lokiContainer),
         "loki.user", "username",
         "loki.pass", "password",
+        "loki.headers.Content-Type", "application/json",
         "loki.datasource", "default",
         "loki.dashboard-url", "http://localhost:3000"
     );

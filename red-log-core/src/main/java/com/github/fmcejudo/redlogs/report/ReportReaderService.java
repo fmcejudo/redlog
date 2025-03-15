@@ -1,6 +1,6 @@
 package com.github.fmcejudo.redlogs.report;
 
-import com.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
+import io.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
 import io.github.fmcejudo.redlogs.report.ReportService;
 import io.github.fmcejudo.redlogs.report.domain.Report;
 

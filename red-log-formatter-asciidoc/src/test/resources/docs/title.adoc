@@ -1,0 +1,66 @@
+= DISNEY+
+Redlog
+:icons: font
+:toc: left
+:toc-title: Table Of Content
+
+++++
+<style>
+.tag {
+  background-color: #ff6347;
+  color: white;
+  font-size: 0.5em;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.shadow-box {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 20px 0;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-box p {
+  margin: 0;
+}
+</style>
+++++
+
+
+== Marvel Characters -  [.tag]#marvel# [.tag]#important#
+
+before adding items
+name: Captain America
+[.shadow-box]
+====
+[cols="1,2", options="header"]
+|===
+|name
+|Captain America
+
+|===
+
+Count:: 1
+
+*description*
+
+[source,text]
+----
+This is a very long description which should not be render in the main table as it is very long and it might bother
+the people trying to follow the details of this item in the report.
+
+This is a very long description which should not be render in the main table as it is very long and it might bother
+the people trying to follow the details of this item in the report.
+
+This is a very long description which should not be render in the main table as it is very long and it might bother
+the people trying to follow the details of this item in the report.
+
+----
+
+====
+
+
+after adding items

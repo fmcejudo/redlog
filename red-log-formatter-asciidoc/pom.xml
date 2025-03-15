@@ -18,7 +18,6 @@
         <commons-io.version>2.16.1</commons-io.version>
         <asciidoctorj.version>2.5.12</asciidoctorj.version>
         <jackson.version>2.17.0</jackson.version>
-        <mongodb-driver.version>4.10.0</mongodb-driver.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
     </properties>
@@ -31,6 +30,11 @@
             <version>${project.parent.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>${asciidoctorj.version}</version>
+        </dependency>
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
