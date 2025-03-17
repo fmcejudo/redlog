@@ -50,9 +50,9 @@ public final class RedlogAsciiSectionRender implements AsciiSectionRender {
     }
 
     if (!CollectionUtils.isEmpty(reportSection.tags())) {
-      writer.blankLine().addContent("[.tag-container]").addContent("====");
+      writer.blankLine().addContent("[.tag-container]").addContent("--");
       reportSection.tags().forEach(t -> writer.addContent("[.tag]#" + t + "# "));
-      writer.addContent("====");
+      writer.addContent("--");
     }
 
     for (ReportItem item : reportSection.items()) {

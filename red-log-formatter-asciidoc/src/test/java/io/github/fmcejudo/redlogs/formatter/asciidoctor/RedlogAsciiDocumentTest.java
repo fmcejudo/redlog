@@ -229,9 +229,9 @@ class RedlogAsciiDocumentTest {
     //Given
     Report report = new Report("DISNEY+", LocalDate.now(), Map.of("name", "redlog"), List.of(
         new ReportSection("10", "star-wars", "Star Wars Characters", "https://star-wars.com", List.of(
-            new ReportItem(Map.of("name", "Anakin Skywalker"), 1L),
-            new ReportItem(Map.of("name", "Qui Gon"), 1L),
-            new ReportItem(Map.of("name", "Obi-wan Kenobi"), 1L)
+            new ReportItem(Map.of("name", "Anakin Skywalker", "role", "jedi"), 1L),
+            new ReportItem(Map.of("name", "Qui Gon", "role", "jedi"), 1L),
+            new ReportItem(Map.of("name", "Obi-wan Kenobi", "role", "jedi"), 1L)
         ), List.of("star-wars", "disney"))
     ));
 
@@ -244,6 +244,8 @@ class RedlogAsciiDocumentTest {
 
     //Then
     Assertions.assertThat(document).contains("[.tag-container]");
+
+    System.out.println(document);
 
   }
 

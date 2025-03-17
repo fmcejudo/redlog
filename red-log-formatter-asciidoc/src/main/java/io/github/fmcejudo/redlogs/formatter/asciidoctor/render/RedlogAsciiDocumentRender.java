@@ -12,33 +12,108 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
   private static final String CSS_STYLE = """
       ++++
       <style>
+      /* Importing a clean modern font */
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
       
+      /* Base document styling */
+      body {
+        font-family: 'Inter', sans-serif;
+        color: #333;
+        background-color: white;
+        line-height: 1.6;
+        font-size: 15px;
+        padding: 20px;
+      }
+      
+      /* Headings */
+      h1, h2, h3, h4 {
+        color: #222;
+        font-weight: 600;
+        margin: 1.5em 0 0.75em;
+      }
+      
+      h1 {
+        font-size: 1.8em;
+        border-bottom: 3px solid #ccc;
+        padding-bottom: 0.3em;
+      }
+      
+      h2 {
+        font-size: 1.5em;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 0.2em;
+      }
+      
+      h3 {
+        font-size: 1.2em;
+      }
+      
+      /* Tag container */
       .tag-container {
-        padding: 12px;
-        border-radius: 8px;
-        background: #f9f9f9;
-        margin: 12px 0;
+        padding: 8px 0;
+        margin: 16px 0;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
       }
       
+      /* Individual tag */
       .tag {
-        background-color: #ff6347;
-        color: white;
-        font-size: 0.5em;
-        padding: 3px 8px;
+        background-color: #e6e6e6;
+        color: #333;
+        font-size: 0.75em;
+        padding: 4px 10px;
         border-radius: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
       }
       
+      /* Box for key data (cards) */
       .shadow-box {
-        border: 1px solid #ddd;
+        border: 1px solid #dcdcdc;
         border-radius: 8px;
         padding: 16px;
         margin: 20px 0;
-        background: white;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background: #fafafa;
       }
       
-      .shadow-box p {
-        margin: 0;
+      /* Tables inside boxes */
+      .shadow-box table {
+        border-collapse: collapse;
+        width: 100%;
+        margin: 0.5em 0;
+      }
+      
+      .shadow-box td, .shadow-box th {
+        padding: 8px 10px;
+        vertical-align: top;
+      }
+      
+      .shadow-box table tr:nth-child(even) {
+        background: #f2f2f2;
+      }
+      
+      .shadow-box th {
+        background: #e0e0e0;
+        font-weight: 600;
+      }
+      
+      /* Inline key-value pair (count/summary) */
+      .shadow-box p, .shadow-box dl {
+        margin: 0.5em 0 0;
+        font-size: 0.9em;
+        color: #555;
+      }
+      
+      /* Link styling */
+      a {
+        color: #0066cc;
+        text-decoration: none;
+      }
+      
+      a:hover {
+        text-decoration: underline;
       }
       </style>
       ++++

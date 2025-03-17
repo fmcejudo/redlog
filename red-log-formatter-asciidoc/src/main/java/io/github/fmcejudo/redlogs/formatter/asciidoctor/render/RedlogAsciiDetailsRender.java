@@ -19,7 +19,7 @@ public class RedlogAsciiDetailsRender implements AsciiDetailsRender {
   public String content(ReportItem reportItem) {
     var writer = RedlogAsciiWriter.instance()
         .addContent("[.shadow-box]")
-        .addContent("====");
+        .addContent("--");
 
     Map<String, String> shortLabels = shortLabels(reportItem.labels());
     Map<String, String> longLabels = longLabels(reportItem.labels());
@@ -29,7 +29,7 @@ public class RedlogAsciiDetailsRender implements AsciiDetailsRender {
       renderLongLabels(longLabels, writer);
     }
 
-    writer.addContent("====");
+    writer.addContent("--");
     return writer.toString();
   }
 
@@ -47,7 +47,7 @@ public class RedlogAsciiDetailsRender implements AsciiDetailsRender {
 
   private void renderShortLabels(ReportItem reportItem, RedlogAsciiWriter writer, Map<String, String> tableMessages) {
     writer
-        .addContent("[cols=\"1,2\", options=\"header\"]")
+        .addContent("[cols=\"1,2\"]")
         .addContent("|===");
 
     tableMessages.forEach((key, value) ->
