@@ -16,8 +16,8 @@ class AsciiDoctorDocumentFormatTest {
   void shouldCreateAPDF() throws Exception {
     //Given
     Report report = new Report("TEST", LocalDate.now(), Map.of("country", "Spain"), List.of(
-        new ReportSection("10", "first-section", "First Section", "my link", List.of()),
-        new ReportSection("10", "second-section", "Second Section", "my link", List.of())
+        new ReportSection("10", "first-section", "First Section", "my link", List.of(), List.of("important")),
+        new ReportSection("10", "second-section", "Second Section", "my link", List.of(), List.of())
     ));
 
     //When

@@ -14,6 +14,9 @@ import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 class RedlogAsciiDocumentTest {
 
@@ -21,7 +24,7 @@ class RedlogAsciiDocumentTest {
   void shouldCreateAScaffoldingDocument() {
     //Given
     Report report = new Report("TEST", LocalDate.now(), Map.of("country", "Spain"), List.of(
-        new ReportSection("10", "My report", "my description", "my link", List.of())
+        new ReportSection("10", "My report", "my description", "my link", List.of(), List.of())
     ));
 
     //When
@@ -44,7 +47,7 @@ class RedlogAsciiDocumentTest {
   void shouldFailWhenNoSectionRenderMatch() {
     //Given
     Report report = new Report("TEST", LocalDate.now(), Map.of("country", "Spain"), List.of(
-        new ReportSection("10", "My report", "my description", "my link", List.of())
+        new ReportSection("10", "My report", "my description", "my link", List.of(), List.of())
     ));
 
     //When
@@ -69,8 +72,8 @@ class RedlogAsciiDocumentTest {
 
     //Given
     Report report = new Report("TEST", LocalDate.now(), Map.of("country", "Spain"), List.of(
-        new ReportSection("10", "first-section", "my description", "my link", List.of()),
-        new ReportSection("10", "second-section", "my description", "my link", List.of())
+        new ReportSection("10", "first-section", "my description", "my link", List.of(), List.of()),
+        new ReportSection("10", "second-section", "my description", "my link", List.of(), List.of())
     ));
 
     //When
@@ -105,12 +108,12 @@ class RedlogAsciiDocumentTest {
     Report report = new Report("DISNEY+", LocalDate.now(), Map.of("name", "redlog"), List.of(
         new ReportSection("10", "marvel", "Marvel Characters", "http://marvel.com", List.of(
             new ReportItem(Map.of("name", "Captain America"), 1L)
-        )),
+        ), List.of()),
         new ReportSection("10", "star-wars", "Star Wars Characters", "http://star-wars.com", List.of(
             new ReportItem(Map.of("name", "Anakin Skywalker"), 1L),
             new ReportItem(Map.of("name", "Qui Gon"), 1L),
             new ReportItem(Map.of("name", "Obi-wan Kenobi"), 1L)
-        ))
+        ), List.of())
     ));
 
     //When
@@ -136,22 +139,22 @@ class RedlogAsciiDocumentTest {
   void shouldLongValuesRenderOutside() {
 
     //Given
+    ReportItem reportItem = new ReportItem(Map.of(
+        "name", "Captain America",
+        "description", """
+            This is a very long description which should not be render in the main table as it is very long and it might bother
+            the people trying to follow the details of this item in the report.
+            
+            This is a very long description which should not be render in the main table as it is very long and it might bother
+            the people trying to follow the details of this item in the report.
+            
+            This is a very long description which should not be render in the main table as it is very long and it might bother
+            the people trying to follow the details of this item in the report.
+            """
+    ), 1L);
+
     Report report = new Report("DISNEY+", LocalDate.now(), Map.of("name", "redlog"), List.of(
-        new ReportSection("10", "marvel", "Marvel Characters", "http://marvel.com", List.of(
-            new ReportItem(Map.of(
-                "name", "Captain America",
-                "description", """
-                    This is a very long description which should not be render in the main table as it is very long and it might bother
-                    the people trying to follow the details of this item in the report.
-                    
-                    This is a very long description which should not be render in the main table as it is very long and it might bother
-                    the people trying to follow the details of this item in the report.
-                    
-                    This is a very long description which should not be render in the main table as it is very long and it might bother
-                    the people trying to follow the details of this item in the report.
-                    """
-            ), 1L)
-        ))
+        new ReportSection("10", "marvel", "Marvel Characters", "http://marvel.com", List.of(reportItem), List.of())
     ));
 
     //When
@@ -170,6 +173,78 @@ class RedlogAsciiDocumentTest {
     //Then
     Assertions.assertThat(document).isNotNull();
     System.out.println(document);
+  }
+
+  @Test
+  void shouldRenderLink() {
+    //Given
+    String link = "http://star-wars.com";
+
+    Report report = new Report("DISNEY+", LocalDate.now(), Map.of("name", "redlog"), List.of(
+        new ReportSection("10", "star-wars", "Star Wars Characters", link, List.of(
+            new ReportItem(Map.of("name", "Anakin Skywalker"), 1L),
+            new ReportItem(Map.of("name", "Qui Gon"), 1L),
+            new ReportItem(Map.of("name", "Obi-wan Kenobi"), 1L)
+        ), List.of())
+    ));
+
+    //When
+    String document = RedlogAsciiDocument.config(RedlogAsciiConfigBuilder::withDefault).withTitle(Report::applicationName)
+        .withSectionRender(RedlogAsciiSectionRender.createSectionRender()
+            .withTitle(ReportSection::description)
+            .withDetailsRender(RedlogAsciiDetailsRender.createDetailsRender())
+        ).build(report);
+
+    //Then
+    Assertions.assertThat(document).contains(link, "// section link");
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = "")
+  @NullSource
+  void shouldNotRenderLink(String link) {
+    //Given
+    Report report = new Report("DISNEY+", LocalDate.now(), Map.of("name", "redlog"), List.of(
+        new ReportSection("10", "star-wars", "Star Wars Characters", link, List.of(
+            new ReportItem(Map.of("name", "Anakin Skywalker"), 1L),
+            new ReportItem(Map.of("name", "Qui Gon"), 1L),
+            new ReportItem(Map.of("name", "Obi-wan Kenobi"), 1L)
+        ), List.of())
+    ));
+
+    //When
+    String document = RedlogAsciiDocument.config(RedlogAsciiConfigBuilder::withDefault).withTitle(Report::applicationName)
+        .withSectionRender(RedlogAsciiSectionRender.createSectionRender()
+            .withTitle(ReportSection::description)
+            .withDetailsRender(RedlogAsciiDetailsRender.createDetailsRender())
+        ).build(report);
+
+    //Then
+    Assertions.assertThat(document).doesNotContain("// section link");
+  }
+
+  @Test
+  void shouldRenderTags() {
+
+    //Given
+    Report report = new Report("DISNEY+", LocalDate.now(), Map.of("name", "redlog"), List.of(
+        new ReportSection("10", "star-wars", "Star Wars Characters", "https://star-wars.com", List.of(
+            new ReportItem(Map.of("name", "Anakin Skywalker"), 1L),
+            new ReportItem(Map.of("name", "Qui Gon"), 1L),
+            new ReportItem(Map.of("name", "Obi-wan Kenobi"), 1L)
+        ), List.of("star-wars", "disney"))
+    ));
+
+    //When
+    String document = RedlogAsciiDocument.config(RedlogAsciiConfigBuilder::withDefault).withTitle(Report::applicationName)
+        .withSectionRender(RedlogAsciiSectionRender.createSectionRender()
+            .withTitle(ReportSection::description)
+            .withDetailsRender(RedlogAsciiDetailsRender.createDetailsRender())
+        ).build(report);
+
+    //Then
+    Assertions.assertThat(document).contains("[.tag-container]");
+
   }
 
 }

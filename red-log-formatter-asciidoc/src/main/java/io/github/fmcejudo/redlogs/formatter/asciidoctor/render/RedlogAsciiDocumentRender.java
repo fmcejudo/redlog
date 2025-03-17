@@ -7,11 +7,19 @@ import io.github.fmcejudo.redlogs.formatter.asciidoctor.exception.SectionRenderE
 import io.github.fmcejudo.redlogs.report.domain.Report;
 import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 
-public class RedlogAsciiDocumentRender {
+public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
 
   private static final String CSS_STYLE = """
       ++++
       <style>
+      
+      .tag-container {
+        padding: 12px;
+        border-radius: 8px;
+        background: #f9f9f9;
+        margin: 12px 0;
+      }
+      
       .tag {
         background-color: #ff6347;
         color: white;
@@ -42,7 +50,7 @@ public class RedlogAsciiDocumentRender {
 
   private final RedlogAsciiConfig config;
 
-  private List<RedlogAsciiSectionRender> sectionRenderList;
+  private List<AsciiSectionRender> sectionRenderList;
 
   private RedlogAsciiDocumentRender(RedlogAsciiConfig config) {
     this.config = config;
@@ -58,7 +66,7 @@ public class RedlogAsciiDocumentRender {
     return this;
   }
 
-  public RedlogAsciiDocumentRender withSectionRenderList(final List<RedlogAsciiSectionRender> sectionRenderList) {
+  public RedlogAsciiDocumentRender withSectionRenderList(final List<AsciiSectionRender> sectionRenderList) {
     this.sectionRenderList = sectionRenderList;
     return this;
   }
@@ -77,14 +85,14 @@ public class RedlogAsciiDocumentRender {
         .addContent(CSS_STYLE);
 
     report.sections().forEach(reportSection -> {
-      RedlogAsciiSectionRender sectionRender = findFirstRenderer(reportSection);
+      AsciiSectionRender sectionRender = findFirstRenderer(reportSection);
       writer.blankLine().addContent(sectionRender.render(reportSection));
     });
 
     return writer.toString();
   }
 
-  private RedlogAsciiSectionRender findFirstRenderer(final ReportSection reportSection) {
+  private AsciiSectionRender findFirstRenderer(final ReportSection reportSection) {
     return sectionRenderList.stream().filter(sr -> sr.match(reportSection))
         .findFirst()
         .orElseThrow(() -> new SectionRenderException("There is no matching render for section id " + reportSection.id()));

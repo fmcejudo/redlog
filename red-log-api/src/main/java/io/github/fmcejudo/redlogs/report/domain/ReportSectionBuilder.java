@@ -13,20 +13,20 @@ public interface ReportSectionBuilder {
 
   static ReportSectionBuilder fromExecutionIdAndReportId(final String executionId, final String reportId) {
     String id = String.join(".", reportId, executionId);
-    return () -> new ReportSection(id, executionId, reportId, null, null, List.of(), now());
+    return () -> new ReportSection(id, executionId, reportId, null, null, List.of(), now(), List.of());
   }
 
   default ReportSectionBuilder withDescription(final String description) {
     return () -> {
       ReportSection r = this.build();
-      return new ReportSection(r.id(), r.executionId(), r.reportId(), description, r.link(), r.items(), now());
+      return new ReportSection(r.id(), r.executionId(), r.reportId(), description, r.link(), r.items(), now(), r.tags());
     };
   }
 
   default ReportSectionBuilder withLink(final String link) {
     return () -> {
       ReportSection r = this.build();
-      return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), link, r.items(), now());
+      return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), link, r.items(), now(), r.tags());
     };
   }
 
@@ -34,7 +34,14 @@ public interface ReportSectionBuilder {
     return () -> {
       ReportSection r = this.build();
       var reportItems = items.stream().map(cqr -> new ReportItem(cqr.labels(), cqr.count())).toList();
-      return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), r.link(), reportItems, now());
+      return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), r.link(), reportItems, now(), r.tags());
+    };
+  }
+
+  default ReportSectionBuilder withTags(final List<String> tags) {
+    return () -> {
+      ReportSection r = this.build();
+      return new ReportSection(r.id(), r.executionId(), r.reportId(), r.description(), r.link(), r.items(), now(), tags);
     };
   }
 }

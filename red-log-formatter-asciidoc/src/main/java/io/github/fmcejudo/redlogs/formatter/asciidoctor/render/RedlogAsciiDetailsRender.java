@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import io.github.fmcejudo.redlogs.report.domain.ReportItem;
 
-public class RedlogAsciiDetailsRender {
+public class RedlogAsciiDetailsRender implements AsciiDetailsRender {
 
   private RedlogAsciiDetailsRender() {
   }
@@ -15,6 +15,7 @@ public class RedlogAsciiDetailsRender {
     return new RedlogAsciiDetailsRender();
   }
 
+  @Override
   public String content(ReportItem reportItem) {
     var writer = RedlogAsciiWriter.instance()
         .addContent("[.shadow-box]")

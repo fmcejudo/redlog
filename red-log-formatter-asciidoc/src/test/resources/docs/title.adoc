@@ -6,10 +6,19 @@ Redlog
 
 ++++
 <style>
+
+.tag-container {
+  border: 1px solid #ddd;
+  padding: 12px;
+  border-radius: 8px;
+  background: white;
+  margin: 12px 0;
+}
+
 .tag {
   background-color: #ff6347;
   color: white;
-  font-size: 0.5em;
+  font-size: 0.8em;
   padding: 3px 8px;
   border-radius: 12px;
 }
@@ -26,41 +35,78 @@ Redlog
 .shadow-box p {
   margin: 0;
 }
+
 </style>
 ++++
 
+== Document Parameters
 
-== Marvel Characters -  [.tag]#marvel# [.tag]#important#
 
-before adding items
-name: Captain America
+[cols="1,3"]
+|===
+| Project
+| Rocket Design
+
+| Version
+| 1.0.3
+
+| Status
+| Draft
+
+| Owner
+| SpaceTech Engineering Team
+|===
+
+
+<<<
+
+== Star Wars Characters
+
+// section link
+https://star-wars.com
+
+
+[.tag-container]
+====
+[.tag]#star-wars# [.tag]#disney#
+====
+
+
 [.shadow-box]
 ====
 [cols="1,2", options="header"]
 |===
 |name
-|Captain America
+|Anakin Skywalker
 
 |===
 
-Count:: 1
-
-*description*
-
-[source,text]
-----
-This is a very long description which should not be render in the main table as it is very long and it might bother
-the people trying to follow the details of this item in the report.
-
-This is a very long description which should not be render in the main table as it is very long and it might bother
-the people trying to follow the details of this item in the report.
-
-This is a very long description which should not be render in the main table as it is very long and it might bother
-the people trying to follow the details of this item in the report.
-
-----
-
+*Count*:: 1
 ====
 
 
-after adding items
+[.shadow-box]
+====
+[cols="1,2", options="header"]
+|===
+|name
+|Qui Gon
+
+|===
+
+*Count*:: 1
+====
+
+
+[.shadow-box]
+====
+[cols="1,2", options="header"]
+|===
+|name
+|Obi-wan Kenobi
+
+|===
+
+*Count*:: 1
+====
+

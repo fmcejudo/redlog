@@ -7,8 +7,10 @@ import java.util.function.Predicate;
 
 import io.github.fmcejudo.redlogs.report.domain.ReportItem;
 import io.github.fmcejudo.redlogs.report.domain.ReportSection;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
-public final class RedlogAsciiSectionRender {
+public final class RedlogAsciiSectionRender implements AsciiSectionRender {
 
   private final AsciiSectionContext context;
 
@@ -30,18 +32,31 @@ public final class RedlogAsciiSectionRender {
     return this;
   }
 
-  public RedlogAsciiSectionRender withDetailsRender(RedlogAsciiDetailsRender detailsRender) {
+  public RedlogAsciiSectionRender withDetailsRender(AsciiDetailsRender detailsRender) {
     this.context.addDetailsRender(detailsRender);
     return this;
   }
 
+  @Override
   public String render(ReportSection reportSection) {
 
     var writer = RedlogAsciiWriter.instance();
-    writer.addContent("== " + context.titleFn().apply(reportSection) + " [.tag]#important#").blankLine();
+    writer.addContent("== " + context.titleFn().apply(reportSection)).blankLine();
+
+    if (StringUtils.isNotBlank(reportSection.link())) {
+      writer
+          .addContent("// section link")
+          .addContent(reportSection.link()).blankLine();
+    }
+
+    if (!CollectionUtils.isEmpty(reportSection.tags())) {
+      writer.blankLine().addContent("[.tag-container]").addContent("====");
+      reportSection.tags().forEach(t -> writer.addContent("[.tag]#" + t + "# "));
+      writer.addContent("====");
+    }
 
     for (ReportItem item : reportSection.items()) {
-      RedlogAsciiDetailsRender detailsRender = this.context.detailsRenderList.getFirst();
+      AsciiDetailsRender detailsRender = this.context.detailsRenderList.getFirst();
       writer.addContent(detailsRender.content(item)).blankLine();
     }
 
@@ -52,14 +67,13 @@ public final class RedlogAsciiSectionRender {
     return context.useRenderPredicate().test(reportSection);
   }
 
-
   private static class AsciiSectionContext {
 
     private Function<ReportSection, String> titleFn;
 
     private Predicate<ReportSection> useRenderPredicate = r -> true;
 
-    private final List<RedlogAsciiDetailsRender> detailsRenderList = new ArrayList<>();
+    private final List<AsciiDetailsRender> detailsRenderList = new ArrayList<>();
 
     public Function<ReportSection, String> titleFn() {
       return titleFn;
@@ -81,7 +95,7 @@ public final class RedlogAsciiSectionRender {
       return this;
     }
 
-    public AsciiSectionContext addDetailsRender(RedlogAsciiDetailsRender detailsRender) {
+    public AsciiSectionContext addDetailsRender(AsciiDetailsRender detailsRender) {
       detailsRenderList.add(detailsRender);
       return this;
     }

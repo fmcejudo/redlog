@@ -26,6 +26,7 @@ public class CardReportMongoWriter implements CardReportWriter {
         .withDescription(response.description())
         .withLink(response.link())
         .withItems(response.currentEntries())
+        .withTags(response.tags())
         .build();
     mongoTemplate.save(reportSection, "redlogReports");
   }

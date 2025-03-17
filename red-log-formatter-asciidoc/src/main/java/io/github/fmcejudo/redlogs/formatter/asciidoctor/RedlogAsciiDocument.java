@@ -4,17 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
+import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.AsciiDocumentRender;
+import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.AsciiSectionRender;
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiConfig;
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiConfigBuilder;
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiDocumentRender;
-import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiSectionRender;
 import io.github.fmcejudo.redlogs.report.domain.Report;
 
 public class RedlogAsciiDocument {
 
   private final RedlogAsciiConfig config;
 
-  private final List<RedlogAsciiSectionRender> sectionRenderList;
+  private final List<AsciiSectionRender> sectionRenderList;
 
   private Function<Report, String> titleFn;
 
@@ -34,7 +35,7 @@ public class RedlogAsciiDocument {
     return this;
   }
 
-  public RedlogAsciiDocument withSectionRender(RedlogAsciiSectionRender render) {
+  public RedlogAsciiDocument withSectionRender(AsciiSectionRender render) {
     this.sectionRenderList.add(render);
     return this;
   }
@@ -43,7 +44,7 @@ public class RedlogAsciiDocument {
     return this.build(RedlogAsciiDocumentRender.withConfig(config).withTitle(titleFn).withSectionRenderList(sectionRenderList), report);
   }
 
-  public String build(RedlogAsciiDocumentRender documentRender, Report report) {
+  public String build(AsciiDocumentRender documentRender, Report report) {
     return documentRender.render(report);
   }
 
