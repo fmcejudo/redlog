@@ -1,9 +1,6 @@
 package io.github.fmcejudo.redlogs.card;
 
 import java.util.List;
-import java.util.stream.Stream;
-
-import io.micrometer.common.util.StringUtils;
 
 public abstract class AbstractCardQueryRequest implements CardQueryRequest{
 
@@ -37,11 +34,7 @@ public abstract class AbstractCardQueryRequest implements CardQueryRequest{
 
   @Override
   public List<String> tags() {
-    String tags = cardQuery.properties().get("tags");
-    if (StringUtils.isBlank(tags)) {
-      return List.of();
-    }
-    return Stream.of(tags.split(",")).map(String::trim).toList();
+    return cardQuery.tags();
   }
 
   @Override
