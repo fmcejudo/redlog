@@ -1,6 +1,7 @@
 package io.github.fmcejudo.redlogs.healthcheck.converter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.card.CardMetadata;
@@ -19,7 +20,7 @@ class HealthCheckCardQueryConverterTest {
   void shouldCreateAHealthCheckCardQuery() {
     //Given
     final CardQuery cardQuery = new CardQuery(
-        "health-check", "HEALTHCHECK", "health-check", Map.of("url", "http://url.io/health")
+        "health-check", "HEALTHCHECK", "health-check", List.of(), Map.of("url", "http://url.io/health")
     );
 
     final CardMetadata metadata = new CardMetadata("60", "test-healthcheck", LocalDateTime.now(), LocalDateTime.now());

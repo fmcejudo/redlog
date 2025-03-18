@@ -1,6 +1,7 @@
 package io.github.fmcejudo.redlogs.loki.processor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.card.CardMetadata;
@@ -50,7 +51,7 @@ class LokiCardResponseParserTest {
     LokiResponse lokiResponse = lokiResponseGenerator.generate();
 
     LokiCountCardRequest cardRequest = LokiCountCardRequest.from(
-        new CardQuery("summary-id", "LOKI", "test", Map.of("type", "count")),
+        new CardQuery("summary-id", "LOKI", "test", List.of(), Map.of("type", "count")),
         new CardMetadata("20", "test", LocalDateTime.now().minusDays(1), LocalDateTime.now())
     );
 
@@ -68,7 +69,7 @@ class LokiCardResponseParserTest {
     LokiResponse lokiResponse = lokiResponseGenerator.generate();
 
     LokiSummaryCardRequest cardRequest = LokiSummaryCardRequest.from(
-        new CardQuery("summary-id", "LOKI", "test", Map.of("type", "summary")),
+        new CardQuery("summary-id", "LOKI", "test", List.of(), Map.of("type", "summary")),
         new CardMetadata("30", "test", LocalDateTime.now().minusDays(1), LocalDateTime.now())
     );
 

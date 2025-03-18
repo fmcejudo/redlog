@@ -1,6 +1,7 @@
 package io.github.fmcejudo.redlogs.healthcheck.processor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.card.CardMetadata;
@@ -49,7 +50,7 @@ class HealthCheckQueryProcessorTest {
     mockServerClient.reset();
 
     cardQuery = new CardQuery(
-        "health-check", "HEALTHCHECK", "health-check", Map.of("url", mockServer.getEndpoint().concat("/health"))
+        "health-check", "HEALTHCHECK", "health-check", List.of(), Map.of("url", mockServer.getEndpoint().concat("/health"))
     );
     metadata = new CardMetadata("50", "test", LocalDateTime.now(), LocalDateTime.now());
   }

@@ -11,6 +11,7 @@ import com.github.fmcejudo.redlogs.card.exception.ReplacementException;
 import com.github.fmcejudo.redlogs.config.RedLogConfigProperties;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
@@ -69,6 +70,29 @@ class FileCardLoaderTest {
         Assertions.assertThatThrownBy(() -> cardLoader.load(cardExecutionContext)).isInstanceOf(ReplacementException.class)
             .hasMessageContaining("parameters 'environment' and 'range' have not been found");
 
+
+    }
+
+    @Test
+    void shouldLoadTagsWithinTemplate() {
+        //Given
+        String applicationName = "VALID_TAGS_CARD";
+        var cardExecutionContext =
+            CardContext.from(applicationName, Map.of(
+                "date", LocalDate.now().format(ISO_LOCAL_DATE),
+                "environment", "local",
+                "host", "localhost",
+                "range", "24h"
+            ));
+
+        //When
+        CardFile cardFile = cardLoader.load(cardExecutionContext);
+
+        //Then
+        Assertions.assertThat(cardFile).isNotNull();
+        Assertions.assertThat(cardFile.queries()).allSatisfy(cq -> {
+            Assertions.assertThat(cq.tags()).contains("tag");
+        });
 
     }
 

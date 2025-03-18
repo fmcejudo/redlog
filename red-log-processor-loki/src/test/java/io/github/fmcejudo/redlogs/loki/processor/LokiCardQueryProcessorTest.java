@@ -1,6 +1,7 @@
 package io.github.fmcejudo.redlogs.loki.processor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.card.CardMetadata;
@@ -64,13 +65,14 @@ class LokiCardQueryProcessorTest {
   @Test
   void shouldCreateQueryProcessor() {
     //Given
-    CardQuery cardQuery = new CardQuery("id", "LOKI", "description", Map.of(
-        "type", "count",
-        "groupByLabels", "name",
-        "queryRange", "24h",
-        "query", """
-            {name="something"}\
-            """));
+    CardQuery cardQuery = new CardQuery("id", "LOKI", "description", List.of(),
+        Map.of(
+            "type", "count",
+            "groupByLabels", "name",
+            "queryRange", "24h",
+            "query", """
+                {name="something"}\
+                """));
     CardMetadata metadata = new CardMetadata("20", "test", LocalDateTime.now().minusMinutes(3), LocalDateTime.now());
     CardQueryRequest cardQueryRequest = LokiCountCardRequest.from(cardQuery, metadata);
     CardQueryProcessor cardQueryProcessor = redlogPluginProvider.createProcessor(connectionDetails);
@@ -94,7 +96,7 @@ class LokiCardQueryProcessorTest {
         "loki.user", "username",
         "loki.pass", "password");
 
-    CardQuery cardQuery = new CardQuery("id", "LOKI", "description", Map.of(
+    CardQuery cardQuery = new CardQuery("id", "LOKI", "description", List.of(), Map.of(
         "type", "count",
         "groupByLabels", "name",
         "queryRange", "24h",

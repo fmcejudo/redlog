@@ -1,6 +1,7 @@
 package io.github.fmcejudo.redlogs.loki.processor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.card.CardMetadata;
@@ -37,7 +38,7 @@ class SummaryCardProcessorTest {
   @Test
   void shouldNotProcessCountQueryRequest() {
     //Give
-    CardQuery cardQuery = new CardQuery("count-request", "LOKI", "description", Map.of(
+    CardQuery cardQuery = new CardQuery("count-request", "LOKI", "description", List.of(), Map.of(
         "type", "COUNT"
     ));
     CardMetadata cardMetadata = new CardMetadata("20", "test", LocalDateTime.now().minusDays(1), LocalDateTime.now());
@@ -52,7 +53,7 @@ class SummaryCardProcessorTest {
   @Test
   void shouldProcessSummaryQueryRequest() {
     //Give
-    CardQuery cardQuery = new CardQuery("summary-request", "LOKI", "description", Map.of(
+    CardQuery cardQuery = new CardQuery("summary-request", "LOKI", "description", List.of(), Map.of(
         "type", "SUMMARY", "query", "{}"
     ));
     CardMetadata cardMetadata = new CardMetadata("20", "test", LocalDateTime.now().minusDays(1), LocalDateTime.now());

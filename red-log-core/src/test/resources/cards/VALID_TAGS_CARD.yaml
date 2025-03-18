@@ -1,0 +1,14 @@
+parameters: ['environment', 'host', 'range']
+range: <range>
+time: 07:00
+
+queries:
+  - id: coffee
+    description: People who like COFFEE
+    processor: LOKI
+    type: COUNT
+    tags: tag
+    query: |
+        {app="redlog-sample", environment="<environment>", host="<host>"}
+        |~ `likes coffee`
+    grafana-dashboard: http://localhost:3000/
