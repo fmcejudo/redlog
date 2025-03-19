@@ -1,6 +1,7 @@
 package io.github.fmcejudo.redlogs.loki.converter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.card.CardMetadata;
@@ -22,6 +23,7 @@ class LokiCardQueryConverterTest {
     CardQueryConverter cardQueryConverter = redlogPluginProvider.createCardQueryConverter();
 
     CardQuery cardQuery = new CardQuery("id", "LOKI", "description",
+        List.of("tag"),
         Map.of("type", "count", "query", "{}", "grafana-dashboard", "http://localhost:3000", "datasource", "default"));
     CardMetadata metadata = new CardMetadata("20", "application-test", LocalDateTime.now().minusMinutes(3), LocalDateTime.now());
 

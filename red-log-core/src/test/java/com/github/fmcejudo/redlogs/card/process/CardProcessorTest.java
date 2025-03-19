@@ -1,6 +1,5 @@
 package com.github.fmcejudo.redlogs.card.process;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import io.github.fmcejudo.redlogs.card.CardMetadata;
@@ -54,10 +53,7 @@ class CardProcessorTest {
 class TestCardQueryResponse {
 
   static CardQueryResponse from(CardQueryRequest cardQueryRequest) {
-   return CardQueryResponse.success(
-       LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(),
-       cardQueryRequest.description(), "link", cardQueryRequest.tags(), List.of()
-   );
+    return CardQueryResponse.from(cardQueryRequest).success("link", List.of());
   }
 }
 

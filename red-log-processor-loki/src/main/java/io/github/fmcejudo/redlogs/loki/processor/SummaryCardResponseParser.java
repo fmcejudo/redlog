@@ -30,9 +30,7 @@ class SummaryCardResponseParser implements LokiCardResponseParser<LokiSummaryCar
         .map(r -> createResponseEntryWithDefinedLabels(cardQueryRequest.showLabels(), r))
         .toList();
 
-    return CardQueryResponse.success(
-        date, cardQueryRequest.id(), cardQueryRequest.executionId(), cardQueryRequest.description(), "", cardQueryRequest.tags(), entries
-    );
+    return CardQueryResponse.from(cardQueryRequest).withDate(date).success("", entries);
   }
 
   private CardQueryResponseEntry createResponseEntryWithDefinedLabels(List<String> definedLabels, LokiResult r) {

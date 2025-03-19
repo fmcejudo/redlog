@@ -54,9 +54,9 @@ class TestCardFileLoader implements CardFileLoader {
 
   public CardFile load(CardContext cardExecutionContext) {
     return new CardFile(List.of(), LocalTime.now(), "2h", List.of(
-        new CardQuery("id-one", "processor", "description", Map.of()),
-        new CardQuery("id-two", "processor", "description", Map.of()),
-        new CardQuery("id-three", "processor", "description", Map.of())
+        new CardQuery("id-one", "processor", "description", List.of(), Map.of()),
+        new CardQuery("id-two", "processor", "description", List.of(), Map.of()),
+        new CardQuery("id-three", "processor", "description", List.of(), Map.of())
     ));
   }
 }
@@ -93,10 +93,7 @@ class TestCardProcessor implements Function<CardQueryRequest, CardQueryResponse>
 
   @Override
   public CardQueryResponse apply(CardQueryRequest cardQueryRequest) {
-    return new CardQueryResponse(
-        LocalDate.now(), cardQueryRequest.id(), cardQueryRequest.executionId(),
-        cardQueryRequest.description(), cardQueryRequest.tags(), List.of(), "", null
-    );
+    return CardQueryResponse.from(cardQueryRequest).success("", List.of());
   }
 }
 

@@ -2,6 +2,8 @@ package io.github.fmcejudo.redlogs.loki.processor.connection;
 
 import static org.apache.logging.log4j.util.Base64Util.encode;
 
+import java.util.Map;
+
 import io.github.fmcejudo.redlogs.loki.processor.connection.instant.QueryInstantClient;
 import io.github.fmcejudo.redlogs.loki.processor.connection.range.QueryRangeClient;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +20,8 @@ public interface LokiClientFactory {
       public LokiClient createLokiClient(RestClient restClient) {
         return new QueryRangeClient(restClient);
       }
-    }, INSTANT {
+    },
+    INSTANT {
       @Override
       public LokiClient createLokiClient(RestClient restClient) {
         return new QueryInstantClient(restClient);
@@ -32,15 +35,17 @@ public interface LokiClientFactory {
 
   static LokiClientFactory createInstance(final LokiConnectionDetails connectionDetails) {
 
+    Map<String, String> headers = connectionDetails.headers();
+
     RestClient restClient = RestClient.builder().baseUrl(connectionDetails.url())
-        .defaultHeader("X-Grafana-Org-Id", "1")
         .defaultHeader(
             HttpHeaders.AUTHORIZATION,
             buildBasicAuthorizationValue(connectionDetails)
         )
+        .defaultHeaders(hc -> headers.forEach(hc::addIfAbsent))
         .build();
 
-    return (queryTypeEnum) -> queryTypeEnum.createLokiClient(restClient);
+    return queryTypeEnum -> queryTypeEnum.createLokiClient(restClient);
   }
 
   private static String buildBasicAuthorizationValue(final LokiConnectionDetails connectionDetails) {

@@ -1,6 +1,7 @@
 package io.github.fmcejudo.redlogs.converter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.MongoRedlogPluginProvider;
@@ -30,7 +31,7 @@ class MongoCardQueryConverterTest {
   @Test
   void shouldFailWithoutCardType() {
     //Given
-    CardQuery cardQuery = new CardQuery("mongo-count-card", "MONGO", "mongo-count-card", Map.of());
+    CardQuery cardQuery = new CardQuery("mongo-count-card", "MONGO", "mongo-count-card", List.of(), Map.of());
 
     //When
     Throwable throwable = Assertions.catchThrowable(() -> cardQueryConverter.convert(cardQuery, cardMetadata));
@@ -44,7 +45,7 @@ class MongoCardQueryConverterTest {
   @Test
   void shouldFailOnWrongCardType() {
     //Given
-    CardQuery cardQuery = new CardQuery("mongo-count-card", "MONGO", "mongo-count-card", Map.of("type", "BAD"));
+    CardQuery cardQuery = new CardQuery("mongo-count-card", "MONGO", "mongo-count-card", List.of(), Map.of("type", "BAD"));
 
     //When
     Throwable throwable = Assertions.catchThrowable(() -> cardQueryConverter.convert(cardQuery, cardMetadata));
@@ -58,7 +59,7 @@ class MongoCardQueryConverterTest {
   @Test
   void shouldCreateAMongoCountCard() {
     //Given
-    CardQuery cardQuery = new CardQuery("mongo-count-card", "MONGO", "mongo-count-card", Map.of("type", "COUNT"));
+    CardQuery cardQuery = new CardQuery("mongo-count-card", "MONGO", "mongo-count-card", List.of("mongo"), Map.of("type", "COUNT"));
     CardMetadata cardMetadata = new CardMetadata("40", "test", LocalDateTime.now().minusHours(1), LocalDateTime.now());
 
     //When
@@ -75,7 +76,7 @@ class MongoCardQueryConverterTest {
   @Test
   void shouldCreateAMongoListCard() {
     //Given
-    CardQuery cardQuery = new CardQuery("mongo-list-card", "MONGO", "mongo-list-card", Map.of("type", "LIST"));
+    CardQuery cardQuery = new CardQuery("mongo-list-card", "MONGO", "mongo-list-card", List.of(), Map.of("type", "LIST"));
     CardMetadata cardMetadata = new CardMetadata("50", "test", LocalDateTime.now().minusHours(1), LocalDateTime.now());
 
     //When

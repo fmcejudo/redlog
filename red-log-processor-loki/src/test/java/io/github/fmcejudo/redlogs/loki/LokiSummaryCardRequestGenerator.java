@@ -16,7 +16,8 @@ public interface LokiSummaryCardRequestGenerator {
   static LokiSummaryCardRequestGenerator withCardRequestId(String cardRequestId) {
     return () -> {
       CardQuery cardQuery =
-          new CardQuery(cardRequestId, "LOKI", "description for " + cardRequestId, Map.of("type", "summary", "query", "{}"));
+          new CardQuery(cardRequestId, "LOKI", "description for " + cardRequestId, List.of("tag"),
+              Map.of("type", "summary", "query", "{}"));
       CardMetadata cardMetadata = new CardMetadata("30", "test", LocalDateTime.now().minusDays(1), LocalDateTime.now());
 
       return LokiSummaryCardRequest.from(cardQuery, cardMetadata);
@@ -27,7 +28,7 @@ public interface LokiSummaryCardRequestGenerator {
     return () -> {
       LokiSummaryCardRequest generate = this.generate();
       Map<String, String> properties = Map.of("type", "summary", "query", generate.query(), "showLabels", String.join(",", labels));
-      CardQuery cardQuery = new CardQuery(generate().id(), generate.processor(), generate.description(), properties);
+      CardQuery cardQuery = new CardQuery(generate().id(), generate.processor(), generate.description(), List.of("tag"), properties);
       return LokiSummaryCardRequest.from(cardQuery, generate.metadata());
     };
   }

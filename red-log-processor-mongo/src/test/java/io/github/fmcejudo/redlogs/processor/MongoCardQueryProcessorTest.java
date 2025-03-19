@@ -1,6 +1,7 @@
 package io.github.fmcejudo.redlogs.processor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 import io.github.fmcejudo.redlogs.MongoRedlogPluginProvider;
@@ -58,6 +59,7 @@ class MongoCardQueryProcessorTest {
     //Given
     CardQuery cardQuery = new CardQuery(
         "mongo-count-card", "MONGO", "mongo-count-card",
+        List.of(),
         Map.of("type", "COUNT", "query", """
             {"role" : "Sith Lord"}
             """, "collection", "characters", "fields", "name")
@@ -79,6 +81,7 @@ class MongoCardQueryProcessorTest {
   void shouldProcessAListCountCard() {
     //Given
     CardQuery cardQuery = new CardQuery("mongo-list-card", "MONGO", "mongo-list-card",
+        List.of(),
         Map.of("type", "LIST", "query", """
             {"role": "Sith Lord"}\
             """, "collection", "characters", "fields", "name")
@@ -99,6 +102,7 @@ class MongoCardQueryProcessorTest {
   void shouldCatchExceptions() {
     //Given
     CardQuery cardQuery = new CardQuery("mongo-list-card", "MONGO", "mongo-list-card",
+        List.of(),
         Map.of("type", "LIST", "query", """
             {"role: "Sith Lord"}\
             """, "collection", "characters", "fields", "name")

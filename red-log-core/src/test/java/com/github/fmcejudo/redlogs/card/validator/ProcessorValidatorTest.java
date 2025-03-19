@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 class ProcessorValidatorTest {
 
   final BiFunction<String, String, CardQuery> cardQueryBuilder = (id, processor) ->
-      new CardQuery(id, processor, "description", Map.of());
+      new CardQuery(id, processor, "description", List.of(), Map.of());
 
   final CardContext cardContext = CardContext.from("sample", Map.of());
 

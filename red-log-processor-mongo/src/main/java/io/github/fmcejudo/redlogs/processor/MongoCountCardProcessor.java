@@ -1,6 +1,5 @@
 package io.github.fmcejudo.redlogs.processor;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ class MongoCountCardProcessor implements CardQueryProcessor {
     List<CardQueryResponseEntry> entries = Function.<MongoCountCardRequest>identity()
         .andThen(this::retrieveRecordsFromDB)
         .apply(mccr);
-    return CardQueryResponse.success(LocalDate.now(), mccr.id(), mccr.executionId(), mccr.description(), null, mccr.tags(), entries);
+    return CardQueryResponse.from(mccr).success(null, entries);
   }
 
   private List<CardQueryResponseEntry> retrieveRecordsFromDB(MongoCountCardRequest mccr) {

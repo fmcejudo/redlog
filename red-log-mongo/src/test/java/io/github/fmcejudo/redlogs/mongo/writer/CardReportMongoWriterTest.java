@@ -2,10 +2,12 @@ package io.github.fmcejudo.redlogs.mongo.writer;
 
 import static org.mockito.ArgumentMatchers.any;
 
-import java.time.LocalDate;
 import java.util.List;
 
+import io.github.fmcejudo.redlogs.card.CardMetadata;
+import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardQueryResponse;
+import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.mongo.RedLogMongoConfiguration;
 import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
@@ -73,8 +75,10 @@ class CardReportMongoWriterTest {
   @Test
   void shouldWriteAReportInDB() {
     //Given
-    CardQueryResponse cardQueryResponse =
-        CardQueryResponse.success(LocalDate.now(), "id", "executionId", "description", "http://link", List.of(), List.of());
+
+    CardQueryRequest cardQueryRequest = new SampleCardQueryRequest("id", "executionId", "description", List.of("tag"));
+
+    CardQueryResponse cardQueryResponse = CardQueryResponse.from(cardQueryRequest).success("http://link.io", List.of());
 
     //When && Then
     List<ReportSection> reportSections =
@@ -103,5 +107,22 @@ class CardReportMongoWriterTest {
 
     //Then
     Mockito.verify(mongoTemplate, Mockito.never()).save(any());
+  }
+}
+
+record SampleCardQueryRequest(String id, String executionId, String description, List<String> tags) implements CardQueryRequest {
+
+  public String processor() {
+    return "test";
+  }
+
+  @Override
+  public CardMetadata metadata() {
+    return null;
+  }
+
+  @Override
+  public CardQueryValidator cardQueryValidator() {
+    return null;
   }
 }
