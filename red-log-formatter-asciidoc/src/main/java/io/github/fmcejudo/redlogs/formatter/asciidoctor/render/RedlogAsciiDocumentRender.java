@@ -152,13 +152,8 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
       #toc a {
         color: black;
         text-decoration: none;
-        font-size: 1.1em;
+        font-size: 1em;
         padding: 6px 8px;
-      }
-      
-      #toc a:hover {
-        background: #f0f0f0;
-        border-radius: 4px;
       }
       
       #toc ul {
