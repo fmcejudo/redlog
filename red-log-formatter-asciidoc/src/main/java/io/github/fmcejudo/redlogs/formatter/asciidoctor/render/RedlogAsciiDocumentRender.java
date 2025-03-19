@@ -1,6 +1,9 @@
 package io.github.fmcejudo.redlogs.formatter.asciidoctor.render;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.exception.SectionRenderException;
@@ -48,7 +51,6 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
         font-size: 1.2em;
       }
       
-      /* Tag container */
       .tag-container {
         padding: 8px 0;
         margin: 16px 0;
@@ -57,7 +59,6 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
         flex-wrap: wrap;
       }
       
-      /* Individual tag */
       .tag {
         background-color: #e6e6e6;
         color: #333;
@@ -69,7 +70,6 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
         letter-spacing: 0.3px;
       }
       
-      /* Box for key data (cards) */
       .shadow-box {
         border: 1px solid #dcdcdc;
         border-radius: 8px;
@@ -78,7 +78,24 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
         background: #fafafa;
       }
       
-      /* Tables inside boxes */
+      .cover-table {
+        width: 60%;
+        margin: 0 auto;
+        border-collapse: collapse;
+      }
+      
+      .cover-table th,
+      .cover-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ccc;
+        text-align: left;
+      }
+      
+      .cover-table th {
+        font-weight: bold;
+        background-color: #f2f2f2;
+      }
+      
       .shadow-box table {
         border-collapse: collapse;
         width: 100%;
@@ -99,14 +116,12 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
         font-weight: 600;
       }
       
-      /* Inline key-value pair (count/summary) */
       .shadow-box p, .shadow-box dl {
         margin: 0.5em 0 0;
         font-size: 0.9em;
         color: #555;
       }
       
-      /* Link styling */
       a {
         color: #0066cc;
         text-decoration: none;
@@ -159,12 +174,31 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
         .blankLine()
         .addContent(CSS_STYLE);
 
+    writer.addContent(renderCoverage(report.reportDate(), report.params())).blankLine();
+
     report.sections().forEach(reportSection -> {
       AsciiSectionRender sectionRender = findFirstRenderer(reportSection);
       writer.blankLine().addContent(sectionRender.render(reportSection));
     });
 
     return writer.toString();
+  }
+
+  private String renderCoverage(LocalDate reportDate, Map<String, String> params) {
+
+    RedlogAsciiWriter coverage = RedlogAsciiWriter.instance();
+    coverage.addContent("[.coverage-table]")
+        .addContent("|===")
+        .addContent("| Parameter | Value")
+        .blankLine()
+        .addContent("| Date Report ").addContent("| *" + reportDate.format(DateTimeFormatter.ISO_LOCAL_DATE) + "*")
+        .blankLine();
+    params.forEach((key, value) ->
+        coverage.addContent("| " + key).addContent("| " + value).blankLine());
+
+    coverage.addContent("|===").addContent("<<<");
+    return coverage.toString();
+
   }
 
   private AsciiSectionRender findFirstRenderer(final ReportSection reportSection) {
