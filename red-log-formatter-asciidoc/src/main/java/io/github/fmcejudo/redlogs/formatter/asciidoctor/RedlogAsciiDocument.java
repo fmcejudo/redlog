@@ -19,6 +19,8 @@ public class RedlogAsciiDocument {
 
   private Function<Report, String> titleFn;
 
+  private boolean showEmptySections = true;
+
   private RedlogAsciiDocument(final RedlogAsciiConfig config) {
     this.config = config;
     this.titleFn = Report::applicationName;
@@ -35,13 +37,24 @@ public class RedlogAsciiDocument {
     return this;
   }
 
+  public RedlogAsciiDocument withShowEmptySections(final boolean showEmptySections) {
+    this.showEmptySections = showEmptySections;
+    return this;
+  }
+
   public RedlogAsciiDocument withSectionRender(AsciiSectionRender render) {
     this.sectionRenderList.add(render);
     return this;
   }
 
   public String build(Report report) {
-    return this.build(RedlogAsciiDocumentRender.withConfig(config).withTitle(titleFn).withSectionRenderList(sectionRenderList), report);
+    RedlogAsciiDocumentRender documentRender = RedlogAsciiDocumentRender
+        .withConfig(config)
+        .withTitle(titleFn)
+        .showEmptyReports(showEmptySections)
+        .withSectionRenderList(sectionRenderList);
+
+    return this.build(documentRender, report);
   }
 
   public String build(AsciiDocumentRender documentRender, Report report) {

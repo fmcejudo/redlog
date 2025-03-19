@@ -249,4 +249,26 @@ class RedlogAsciiDocumentTest {
 
   }
 
+  @Test
+  void shouldNotShowEmptySections() {
+
+    //Given
+    Report report = new Report("DISNEY+", LocalDate.now(), Map.of("name", "redlog"), List.of(
+        new ReportSection("10", "star-wars", "Star Wars Characters", "https://star-wars.com", List.of(), List.of())
+    ));
+
+    //When
+    String document = RedlogAsciiDocument.config(RedlogAsciiConfigBuilder::withDefault)
+        .withTitle(Report::applicationName)
+        .withShowEmptySections(false)
+        .withSectionRender(RedlogAsciiSectionRender.createSectionRender()
+            .withTitle(ReportSection::description)
+            .withDetailsRender(RedlogAsciiDetailsRender.createDetailsRender())
+        ).build(report);
+
+    //Then
+    Assertions.assertThat(document).doesNotContain("Star Wars Characters");
+
+  }
+
 }
