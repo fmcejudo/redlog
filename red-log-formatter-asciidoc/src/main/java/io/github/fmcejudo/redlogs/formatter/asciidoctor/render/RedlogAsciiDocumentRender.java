@@ -36,7 +36,8 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
       }
       
       h1 {
-        font-size: 1.8em;
+        font-size: 2.8em;
+        text-align: center;
         border-bottom: 3px solid #ccc;
         padding-bottom: 0.3em;
       }
@@ -129,6 +130,44 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
       
       a:hover {
         text-decoration: underline;
+      }
+      
+     
+      #toctitle {
+        font-family: 'Inter', sans-serif;
+        color: black;
+        font-weight: bold;
+        font-size: 1.4em;
+        text-align: center;
+      }
+      
+      #toc {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 16px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      #toc a {
+        color: black;
+        text-decoration: none;
+        font-size: 1.1em;
+        padding: 6px 8px;
+      }
+      
+      #toc a:hover {
+        background: #f0f0f0;
+        border-radius: 4px;
+      }
+      
+      #toc ul {
+        list-style: none;
+        padding-left: 10px;
+      }
+      
+      #toc ul li {
+        margin: 8px 0;
       }
       </style>
       ++++
