@@ -9,6 +9,7 @@ import java.util.function.Function;
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.exception.SectionRenderException;
 import io.github.fmcejudo.redlogs.report.domain.Report;
 import io.github.fmcejudo.redlogs.report.domain.ReportSection;
+import org.springframework.util.CollectionUtils;
 
 public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
 
@@ -152,7 +153,7 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
       #toc a {
         color: black;
         text-decoration: none;
-        font-size: 1em;
+        font-size: 0.9em;
         padding: 6px 8px;
       }
       
@@ -162,7 +163,7 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
       }
       
       #toc ul li {
-        margin: 8px 0;
+        margin: 8px 2px;
       }
       </style>
       ++++
@@ -190,6 +191,11 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
     return this;
   }
 
+  public RedlogAsciiDocumentRender showEmptyReports(boolean showEmpty) {
+    this.context.setShowEmpty(showEmpty);
+    return this;
+  }
+
   public RedlogAsciiDocumentRender withSectionRenderList(final List<AsciiSectionRender> sectionRenderList) {
     this.sectionRenderList = sectionRenderList;
     return this;
@@ -211,6 +217,9 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
     writer.addContent(renderCoverage(report.reportDate(), report.params())).blankLine();
 
     report.sections().forEach(reportSection -> {
+      if (!this.context.showEmpty() && CollectionUtils.isEmpty(reportSection.items())) {
+        return;
+      }
       AsciiSectionRender sectionRender = findFirstRenderer(reportSection);
       writer.blankLine().addContent(sectionRender.render(reportSection));
     });
@@ -245,6 +254,8 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
 
     private Function<Report, String> titleFn;
 
+    public boolean showEmpty = true;
+
     public Function<Report, String> titleFn() {
       return titleFn;
     }
@@ -252,6 +263,15 @@ public class RedlogAsciiDocumentRender implements AsciiDocumentRender {
     public RedlogDocumentContext setTitleFn(
         Function<Report, String> titleFn) {
       this.titleFn = titleFn;
+      return this;
+    }
+
+    public boolean showEmpty() {
+      return showEmpty;
+    }
+
+    public RedlogDocumentContext setShowEmpty(boolean showEmpty) {
+      this.showEmpty = showEmpty;
       return this;
     }
   }

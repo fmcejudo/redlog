@@ -46,7 +46,7 @@ public final class RedlogAsciiSectionRender implements AsciiSectionRender {
     if (StringUtils.isNotBlank(reportSection.link())) {
       writer
           .addContent("// section link")
-          .addContent("link:++%s++[%s]".formatted(reportSection.link(), "link")).blankLine();
+          .addContent("link:++%s++[%s, window=\"_blank\"]".formatted(reportSection.link(), "link")).blankLine();
     }
 
     if (!CollectionUtils.isEmpty(reportSection.tags())) {
