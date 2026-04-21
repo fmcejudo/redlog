@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.3.4</version>
+    <version>4.0.5</version>
     <relativePath />
     <!-- lookup parent from repository -->
   </parent>
@@ -38,9 +38,24 @@
     <commons-text.version>1.12.0</commons-text.version>
     <commons-io.version>2.16.1</commons-io.version>
     <asciidoctorj.version>2.5.12</asciidoctorj.version>
-    <jackson.version>2.17.0</jackson.version>
     <nexus.plugin.version>1.6.13</nexus.plugin.version>
+    <testcontainers.version>1.21.4</testcontainers.version>
   </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.testcontainers</groupId>
+        <artifactId>mongodb</artifactId>
+        <version>${testcontainers.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <build>
     <plugins>

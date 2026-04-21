@@ -1,19 +1,21 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.core.JacksonException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.ObjectCodec;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import io.github.fmcejudo.redlogs.card.CardQuery;
-import org.apache.commons.lang3.StringUtils;
+import tools.jackson.core.JsonParser;
+import tools.jackson.databind.DeserializationContext;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.deser.std.StdDeserializer;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
+import tools.jackson.databind.node.StringNode;
 
 public class CardQueryDeserializer extends StdDeserializer<CardQuery> {
 
@@ -22,30 +24,69 @@ public class CardQueryDeserializer extends StdDeserializer<CardQuery> {
   }
 
   @Override
-  public CardQuery deserialize(JsonParser parser, DeserializationContext deserializationContext) throws IOException {
+  public CardQuery deserialize(JsonParser parser, DeserializationContext deserializationContext) {
 
-    ObjectCodec codec = parser.getCodec();
-    JsonNode node = codec.readTree(parser);
+    JsonNode node = parser.readValueAsTree();
 
-    String id = node.get("id").asText();
-    String processor = node.get("processor").asText();
-    String description = node.get("description").asText();
-    JsonNode tagsNode = node.get("tags");
-
+    String id = readStringNode(node, "id");
+    String processor = readStringNode(node, "processor");
+    String description = readStringNode(node, "description");
+    List<String> tags = readArrayOfStrings(node, "tags");
 
     Map<String, String> properties = new HashMap<>();
-    node.fields().forEachRemaining(e -> {
+    node.properties().iterator().forEachRemaining(e -> {
       if (List.of("id", "processor", "description", "tags").contains(e.getKey())) {
         return;
       }
-      properties.put(e.getKey(), e.getValue().asText());
+      JsonNode jsonNode = e.getValue();
+      if (jsonNode instanceof StringNode sn) {
+        properties.put(e.getKey(), sn.stringValue());
+      } else if (jsonNode instanceof ObjectNode on) {
+        Map<String, String> complexMap = resolve(e.getKey(), on.properties().iterator());
+        properties.putAll(complexMap);
+      }
     });
 
-    if (tagsNode != null) {
-      return new CardQuery(id, processor, description, Stream.of(tagsNode.asText().split(",")).map(String::trim).toList(), properties);
-    }
+    return new CardQuery(id, processor, description, tags, properties);
+  }
 
-    return new CardQuery(id, processor, description, List.of(), properties);
+  private String readStringNode(JsonNode node, String property) {
+    JsonNode childNode = node.get(property);
+    if (childNode == null || childNode.isNull()) {
+      return null;
+    }
+    if (childNode instanceof StringNode stringNode) {
+      return stringNode.asString();
+    }
+    return null;
+  }
+
+  private List<String> readArrayOfStrings(JsonNode node, String property) {
+    JsonNode childNode = node.get(property);
+    if (childNode == null || childNode.isNull()) {
+      return List.of();
+    }
+    if (childNode instanceof StringNode sn) {
+      return Arrays.stream(sn.asString().split(",")).map(String::trim).toList();
+    }
+    if (childNode instanceof ArrayNode arrayNode) {
+      return arrayNode.elements().stream().map(JsonNode::asString).toList();
+    }
+    return List.of();
+  }
+
+  private static Map<String, String> resolve(String rootKey, Iterator<Entry<String, JsonNode>> node) {
+    Map<String, String> result = new HashMap<>();
+    while (node.hasNext()) {
+      Entry<String, JsonNode> entry = node.next();
+      JsonNode jsonNode = entry.getValue();
+      if (jsonNode instanceof StringNode stringNode) {
+        result.put(String.join(".", rootKey, entry.getKey()), stringNode.stringValue());
+      } else {
+        throw new RuntimeException("Multilevel properties is not yet recognised.");
+      }
+    }
+    return Map.copyOf(result);
   }
 
 }

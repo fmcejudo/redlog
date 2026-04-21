@@ -12,7 +12,7 @@ import io.github.fmcejudo.redlogs.card.CardQuery;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.NumberUtils;
 
-public class DefaultCardValidator implements CardValidator {
+class DefaultCardValidator implements CardValidator {
 
   private final CardValidator cardValidator;
 

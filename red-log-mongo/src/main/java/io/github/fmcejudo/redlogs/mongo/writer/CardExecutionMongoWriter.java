@@ -14,7 +14,7 @@ class CardExecutionMongoWriter implements CardExecutionWriter {
 
   private static final Logger log = LoggerFactory.getLogger(CardExecutionMongoWriter.class);
 
-  private MongoTemplate mongoTemplate;
+  private final MongoTemplate mongoTemplate;
 
   public CardExecutionMongoWriter(final MongoTemplate mongoTemplate) {
     this.mongoTemplate = mongoTemplate;

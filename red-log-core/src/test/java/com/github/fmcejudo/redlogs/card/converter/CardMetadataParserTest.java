@@ -10,6 +10,7 @@ import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.exception.RangeParseException;
 import com.github.fmcejudo.redlogs.card.loader.CardFile;
 import io.github.fmcejudo.redlogs.card.CardMetadata;
+import io.github.fmcejudo.redlogs.card.CardQuery;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +33,9 @@ class CardMetadataParserTest {
     //Given
     final LocalDate date = LocalDate.now();
     CardContext cardContext = CardContext.from("application", Map.of("date", date.format(DateTimeFormatter.ISO_DATE)));
-    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0, 0), range, List.of());
+    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0, 0), range, List.of(
+        new CardQuery("test-id" , "LOKI", "test description", List.of(), Map.of())
+    ));
 
     //When
     CardMetadata cardMetadata = cardMetadataParser.parse(cardContext, cardFile);
@@ -49,7 +52,9 @@ class CardMetadataParserTest {
     //Given
     final LocalDate date = LocalDate.now();
     CardContext cardContext = CardContext.from("application", Map.of("date", date.format(DateTimeFormatter.ISO_DATE)));
-    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0, 0), range, List.of());
+    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0, 0), range, List.of(
+        new CardQuery("test-id" , "LOKI", "test description", List.of(), Map.of())
+    ));
 
     //When && Then
     Assertions.assertThatThrownBy(() -> cardMetadataParser.parse(cardContext, cardFile)).isInstanceOf(RangeParseException.class);

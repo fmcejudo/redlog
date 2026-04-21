@@ -19,7 +19,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.test.context.ContextConfiguration;
@@ -49,7 +49,7 @@ import org.testcontainers.utility.MountableFile;
 class MongoReportServiceTest {
 
   @Container
-  static CustomMongoDBContainer mongoDBContainer = CustomMongoDBContainer.fromMongoVersion("5");
+  static CustomMongoDBContainer mongoDBContainer = CustomMongoDBContainer.fromMongoVersion("7");
 
   @Autowired
   private MongoTemplate mongoTemplate;
@@ -127,8 +127,7 @@ class CustomMongoDBContainer extends GenericContainer<CustomMongoDBContainer> {
         .withEnv("MONGO_INITDB_DATABASE", "admin")
         .withEnv("MONGO_INITDB_ROOT_USERNAME", "root")
         .withEnv("MONGO_INITDB_ROOT_PASSWORD", "pass")
-        .waitingFor(Wait.forLogMessage("(?i).*waiting for connections.*", 2))
-        .withStartupTimeout(Duration.ofSeconds(10));
+        .waitingFor(Wait.defaultWaitStrategy().withStartupTimeout(Duration.ofSeconds(20)));
   }
 
   public static CustomMongoDBContainer fromMongoVersion(final String version) {
@@ -144,6 +143,6 @@ class CustomMongoDBContainer extends GenericContainer<CustomMongoDBContainer> {
   }
 
   public void updateConfig(DynamicPropertyRegistry registry) {
-    registry.add("spring.data.mongodb.uri", this::getReplicaSetUrl);
+    registry.add("spring.mongodb.uri", this::getReplicaSetUrl);
   }
 }

@@ -28,7 +28,7 @@ final class DefaultCardConverter implements CardConverter {
       if (cardQueryConverterMap.isEmpty()) {
         throw new CardExecutionException("There are no processors registered yet");
       }
-      return cardFile.queries().stream().map(cq -> cardQueryConverterMap.get(cq.processor()).convert(cq,cardMetadata)).iterator();
+      return cardFile.queries().stream().map(cq -> cardQueryConverterMap.get(cq.processor()).convert(cq, cardMetadata)).iterator();
     } catch (Exception e) {
       throw new CardExecutionException(e.getMessage());
     }

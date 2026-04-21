@@ -15,6 +15,7 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.lifecycle.Startables;
@@ -29,7 +30,12 @@ class LokiClientTest {
 
   @Container
   static GenericContainer<?> lokiContainer = new GenericContainer(DockerImageName.parse("grafana/loki:2.9.5"))
-      .withExposedPorts(3100);
+      .withExposedPorts(3100)
+      .waitingFor(
+          Wait.forHttp("/ready")
+              .forPort(3100)
+              .forStatusCode(200)
+      );
 
   Map<String, String> connectionDetails;
 

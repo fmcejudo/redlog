@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.loader.CardFile;
+import io.github.fmcejudo.redlogs.card.CardQuery;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,10 +26,11 @@ class CardValidatorTest {
                 .thenValidate(new TimeValidator())
                 .thenValidate(new ParameterValidator());
 
-        cardFileGenerator = CardFileGenerator.createInstance()
+        cardFileGenerator = CardFileGenerator.withCardQuery(new CardQuery("mongo-id", "MONGO", "first card query", List.of(), Map.of()))
             .withRange("24h")
             .withTime(LocalTime.of(7, 0, 0))
-            .withParameters(List.of("applicationName", "name"));
+            .withParameters(List.of("applicationName", "name"))
+            .addLokiQuery("test-id", "loki query test", List.of(), Map.of());
     }
 
     @Test

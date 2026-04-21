@@ -42,7 +42,7 @@ public interface LokiClientFactory {
             HttpHeaders.AUTHORIZATION,
             buildBasicAuthorizationValue(connectionDetails)
         )
-        .defaultHeaders(hc -> headers.forEach(hc::addIfAbsent))
+        .defaultHeaders(hc -> headers.forEach(hc::add))
         .build();
 
     return queryTypeEnum -> queryTypeEnum.createLokiClient(restClient);

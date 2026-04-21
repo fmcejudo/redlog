@@ -12,7 +12,7 @@ class CardConfigurationTest {
     @Test
     void shouldCreateAGithubCardLoader() {
         //Given && When && Then
-        new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(RedLogConfigProperties.class, CardLoaderConfiguration.class))
+        new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(CardLoaderConfiguration.class))
                 .withBean(CardConverter.class, () -> ((content, cardContext) -> null))
                 .withPropertyValues(
                     "redlog.source.type=GITHUB",
@@ -28,7 +28,7 @@ class CardConfigurationTest {
     @Test
     void shouldCreateAFileCardLoader() {
         //Given && When && Then
-        new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(RedLogConfigProperties.class, CardLoaderConfiguration.class))
+        new ApplicationContextRunner().withConfiguration(AutoConfigurations.of(CardLoaderConfiguration.class))
                 .withBean(CardConverter.class, () -> ((content, cardContext) -> null))
                 .withPropertyValues("redlog.source.type=FILE", "redlog.source.file.files-path=/tmp")
                 .run(context -> {

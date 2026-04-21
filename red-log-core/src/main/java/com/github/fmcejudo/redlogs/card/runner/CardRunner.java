@@ -9,11 +9,14 @@ import java.util.function.Function;
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.loader.CardFile;
+import com.github.fmcejudo.redlogs.card.validator.CardValidation;
+import com.github.fmcejudo.redlogs.card.validator.CardValidator;
 import io.github.fmcejudo.redlogs.card.CardMetadata;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
+import javax.smartcardio.Card;
 
 @FunctionalInterface
 public interface CardRunner {
@@ -30,13 +33,18 @@ public interface CardRunner {
     CardFile get(CardContext cardContext);
 
     default CardTransformer transform(BiFunction<CardContext, CardFile, Iterator<CardQueryRequest>> transformer) {
+      CardValidator cardValidator = CardValidator.defaultValidator();
       return (cardContext) -> {
         CardFile cardFile = this.get(cardContext);
-        return transformer.apply(cardContext, cardFile);
+        CardValidation cardValidation = cardValidator.validateOn(cardFile, cardContext);
+        if (cardValidation.isSuccess()) {
+          return transformer.apply(cardContext, cardFile);
+        } else {
+          throw new CardExecutionException("card file validation fails with errors: " + String.join("; ", cardValidation.errors()));
+        }
       };
     }
   }
-
 
   @FunctionalInterface
   interface CardTransformer {

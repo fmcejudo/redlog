@@ -7,11 +7,16 @@ import com.github.fmcejudo.redlogs.card.runner.CardRunner;
 import io.github.fmcejudo.redlogs.annotation.ConditionalOnRedlogEnabled;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnSingleCandidate;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 
 @AutoConfiguration
@@ -31,20 +36,22 @@ class CardConfiguration {
         .run(cardReportWriter, cardExecutionWriter);
   }
 
-  @Bean
-  @ConditionalOnRedlogEnabled
-  @ConditionalOnClass(value = Flux.class)
-  @ConditionalOnBean(CardRunner.class)
-  ReactiveCardController reactiveCardController(final CardRunner cardRunner) {
-    return new ReactiveCardController(cardRunner);
-  }
 
   @Bean
   @ConditionalOnRedlogEnabled
-  @ConditionalOnMissingBean(ReactiveCardController.class)
+  @ConditionalOnClass(HttpServletRequest.class)
   @ConditionalOnBean(CardRunner.class)
   WebCardController webCardController(final CardRunner cardRunner) {
     return new WebCardController(cardRunner);
   }
+
+  @Bean
+  @ConditionalOnRedlogEnabled
+  @ConditionalOnMissingBean(WebCardController.class)
+  @ConditionalOnBean({CardRunner.class})
+  ReactiveCardController reactiveCardController(final CardRunner cardRunner) {
+    return new ReactiveCardController(cardRunner);
+  }
+
 
 }

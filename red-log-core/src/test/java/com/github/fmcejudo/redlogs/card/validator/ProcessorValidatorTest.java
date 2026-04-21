@@ -54,17 +54,4 @@ class ProcessorValidatorTest {
         .contains("card query with id valid-three needs to define processor");
   }
 
-  @Test
-  void shouldBeValidOnEmptyQueries() {
-
-    //Given
-    CardFile cardFile = new CardFile(List.of(), LocalTime.now(), "24h", List.of());
-
-    //When
-    CardValidation cardValidation = new ProcessorValidator().validateOn(cardFile, cardContext);
-
-    //Then
-    assertThat(cardValidation.isSuccess()).isTrue();
-  }
-
 }

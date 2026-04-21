@@ -2,11 +2,12 @@ package io.github.fmcejudo.redlogs.loki.processor.connection.instant;
 
 import java.io.IOException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.module.SimpleModule;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import tools.jackson.dataformat.yaml.YAMLMapper;
 
 class InstantDataDeserializerTest {
 
@@ -14,10 +15,12 @@ class InstantDataDeserializerTest {
 
     @BeforeEach
     void setUp() {
-        mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addDeserializer(Data.class, new DataDeserializer());
-        mapper.registerModules(module);
+        mapper = YAMLMapper.builder()
+            .addModule(module)
+            .build();
+
     }
 
     @Test

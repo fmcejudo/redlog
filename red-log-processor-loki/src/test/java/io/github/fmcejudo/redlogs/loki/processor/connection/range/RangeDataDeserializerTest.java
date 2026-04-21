@@ -1,7 +1,8 @@
 package io.github.fmcejudo.redlogs.loki.processor.connection.range;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,10 +13,9 @@ class RangeDataDeserializerTest {
 
     @BeforeEach
     void setUp() {
-        mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addDeserializer(Data.class, new DataDeserializer());
-        mapper.registerModules(module);
+        mapper = JsonMapper.builder().addModule(module).build();
     }
 
     @Test
