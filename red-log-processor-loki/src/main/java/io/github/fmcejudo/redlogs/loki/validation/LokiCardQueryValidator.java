@@ -2,12 +2,23 @@ package io.github.fmcejudo.redlogs.loki.validation;
 
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
+import io.github.fmcejudo.redlogs.loki.card.LokiCountCardRequest;
+import io.github.fmcejudo.redlogs.loki.card.LokiSummaryCardRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LokiCardQueryValidator implements CardQueryValidator {
 
-  @Override
-  public void validate(CardQueryRequest cardQueryRequest) {
+  private static final Logger log = LoggerFactory.getLogger(LokiCardQueryValidator.class);
 
+  @Override
+  public CardQueryValidation validate(CardQueryRequest cardQueryRequest) {
+    if (cardQueryRequest instanceof LokiCountCardRequest lccr) {
+      log.info("[ count-loki-card-request-validation ] - validating {}", lccr.id());
+    } else if (cardQueryRequest instanceof LokiSummaryCardRequest lscr) {
+      log.info("[ summary-loki-card-request-validation ] - validating {}", lscr.id());
+    }
+    return CardQueryValidation.success();
   }
 
   /*

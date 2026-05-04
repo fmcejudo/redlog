@@ -6,7 +6,6 @@ import java.util.stream.Collectors;
 import io.github.fmcejudo.redlogs.card.RedlogPluginProvider;
 import io.github.fmcejudo.redlogs.card.converter.CardQueryConverter;
 import io.github.fmcejudo.redlogs.card.processor.CardQueryProcessor;
-import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
 import io.github.fmcejudo.redlogs.converter.MongoCardQueryConverter;
 import io.github.fmcejudo.redlogs.processor.MongoCardQueryProcessor;
 
@@ -24,11 +23,6 @@ public class MongoRedlogPluginProvider implements RedlogPluginProvider {
   @Override
   public CardQueryConverter createCardQueryConverter() {
     return MongoCardQueryConverter.createInstance();
-  }
-
-  @Override
-  public CardQueryValidator createCardQueryValidator() {
-    return c -> {};
   }
 
   @Override

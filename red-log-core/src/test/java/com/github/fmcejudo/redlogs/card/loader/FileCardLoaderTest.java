@@ -11,7 +11,6 @@ import com.github.fmcejudo.redlogs.card.exception.ReplacementException;
 import com.github.fmcejudo.redlogs.config.RedLogConfigProperties;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;

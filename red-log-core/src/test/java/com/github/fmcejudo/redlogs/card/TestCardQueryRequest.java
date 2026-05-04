@@ -5,6 +5,7 @@ import io.github.fmcejudo.redlogs.card.CardMetadata;
 import io.github.fmcejudo.redlogs.card.CardQuery;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
+import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator.CardQueryValidation;
 
 public class TestCardQueryRequest extends AbstractCardQueryRequest implements CardQueryRequest {
 
@@ -14,6 +15,6 @@ public class TestCardQueryRequest extends AbstractCardQueryRequest implements Ca
 
   @Override
   public CardQueryValidator cardQueryValidator() {
-    return null;
+    return cqr -> CardQueryValidation.success();
   }
 }

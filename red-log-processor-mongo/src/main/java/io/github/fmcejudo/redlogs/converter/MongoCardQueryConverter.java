@@ -3,10 +3,12 @@ package io.github.fmcejudo.redlogs.converter;
 import io.github.fmcejudo.redlogs.card.MongoCountCardRequest;
 import io.github.fmcejudo.redlogs.card.MongoListCardRequest;
 import io.github.fmcejudo.redlogs.card.converter.CardQueryConverter;
+import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
+import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator.CardQueryValidation;
 import org.springframework.util.Assert;
 
 @FunctionalInterface
-public interface MongoCardQueryConverter extends CardQueryConverter  {
+public interface MongoCardQueryConverter extends CardQueryConverter {
 
   public static CardQueryConverter createInstance() {
     return (cardQuery, cardMetadata) -> {
@@ -18,5 +20,10 @@ public interface MongoCardQueryConverter extends CardQueryConverter  {
         default -> throw new IllegalStateException("MONGO cards only accepts LIST and COUNT");
       };
     };
+  }
+
+  @Override
+  default CardQueryValidator validator() {
+    return cqr -> CardQueryValidation.success();
   }
 }
