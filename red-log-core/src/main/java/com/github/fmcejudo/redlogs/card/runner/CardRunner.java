@@ -16,7 +16,6 @@ import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
-import javax.smartcardio.Card;
 
 @FunctionalInterface
 public interface CardRunner {
@@ -54,6 +53,10 @@ public interface CardRunner {
     default CardQueryExecutor process(Function<CardQueryRequest, CardQueryResponse> cardQueryRequestConsumer) {
       return cardContext -> {
         Iterator<CardQueryRequest> cardQueryRequestIterator = this.get(cardContext);
+        if (!cardQueryRequestIterator.hasNext()) {
+          throw new CardExecutionException("card file does not have queries to execute");
+        }
+
         List<CardQueryResponse> collector = new ArrayList<>();
         CardMetadata cardMetadata = null;
         while (cardQueryRequestIterator.hasNext()) {

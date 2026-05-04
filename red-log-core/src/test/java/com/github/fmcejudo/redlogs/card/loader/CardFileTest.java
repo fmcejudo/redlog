@@ -4,15 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.time.LocalTime;
-import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Map;
 
 import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import io.github.fmcejudo.redlogs.card.CardQuery;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import tools.jackson.databind.module.SimpleModule;
 import tools.jackson.dataformat.yaml.YAMLMapper;

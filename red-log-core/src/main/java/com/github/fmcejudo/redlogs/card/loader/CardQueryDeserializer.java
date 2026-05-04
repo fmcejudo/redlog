@@ -6,7 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Stream;
 
 import io.github.fmcejudo.redlogs.card.CardQuery;
 import tools.jackson.core.JsonParser;

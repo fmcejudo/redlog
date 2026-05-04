@@ -8,9 +8,14 @@ import java.util.Map;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.TestCardQueryRequest;
+import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.loader.CardFile;
+import io.github.fmcejudo.redlogs.card.CardMetadata;
 import io.github.fmcejudo.redlogs.card.CardQuery;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
+import io.github.fmcejudo.redlogs.card.converter.CardQueryConverter;
+import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
+import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator.CardQueryValidation;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -65,5 +70,61 @@ class DefaultCardConverterTest {
 
     //Then
     cardConverter.deregister(processor);
+  }
+
+  @Test
+  void shouldFailOnUnprocessableCardQueries() {
+    //Given
+    cardConverter.register("test", TestCardQueryRequest::new);
+    CardContext cardContext = CardContext.from("application", Map.of());
+    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0), "24h", List.of(
+        new CardQuery("id-one", "loki", "description-one", List.of(), Map.of()),
+        new CardQuery("id-two", "prometheus", "description-two", List.of(), Map.of())
+    ));
+
+    // When
+    Exception exception = Assertions.catchException(() -> cardConverter.convert(cardContext, cardFile));
+
+    // Then
+    Assertions.assertThat(exception).isInstanceOf(CardExecutionException.class)
+        .hasMessageContaining("There are card queries with unknown processors:")
+        .hasMessageContaining("(id -> 'id-one', processor -> 'loki')")
+        .hasMessageContaining("(id -> 'id-two', processor -> 'prometheus')");
+  }
+
+  @Test
+  void shouldFailWhenCardRequestValidationFails() {
+    // Given
+    CardQueryConverter cardQueryConverter = new CardQueryConverter() {
+      @Override
+      public CardQueryRequest convert(CardQuery cardQuery, CardMetadata cardMetadata) {
+        return new TestCardQueryRequest(cardQuery, cardMetadata);
+      }
+
+      @Override
+      public CardQueryValidator validator() {
+        return cqr -> {
+          if (cqr.id().equals("failCardQueryRequest")) {
+            return CardQueryValidation.failed();
+          } else {
+            return CardQueryValidation.success();
+          }
+        };
+      }
+    };
+    CardContext cardContext = CardContext.from("application", Map.of());
+    cardConverter.register("test", cardQueryConverter);
+    CardFile cardFile = new CardFile(List.of(), LocalTime.of(8, 0), "24h", List.of(
+        new CardQuery("failCardQueryRequest", "test", "description-one", List.of(), Map.of()),
+        new CardQuery("id-two", "test", "description-two", List.of(), Map.of())
+    ));
+
+    // When
+    Exception exception = Assertions.catchException(() -> cardConverter.convert(cardContext, cardFile));
+
+
+    // Then
+    Assertions.assertThat(exception).isInstanceOf(CardExecutionException.class)
+        .hasMessageContaining("validation for card requests have failed");
   }
 }

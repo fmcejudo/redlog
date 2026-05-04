@@ -1,8 +1,8 @@
 package com.github.fmcejudo.redlogs.card.runner;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 import com.github.fmcejudo.redlogs.card.CardContext;
 import com.github.fmcejudo.redlogs.card.converter.CardConverter;
+import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import com.github.fmcejudo.redlogs.card.loader.CardFile;
 import com.github.fmcejudo.redlogs.card.loader.CardFileLoader;
 import io.github.fmcejudo.redlogs.card.AbstractCardQueryRequest;
@@ -18,6 +19,7 @@ import io.github.fmcejudo.redlogs.card.CardQuery;
 import io.github.fmcejudo.redlogs.card.CardQueryRequest;
 import io.github.fmcejudo.redlogs.card.CardQueryResponse;
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
+import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator.CardQueryValidation;
 import io.github.fmcejudo.redlogs.card.writer.CardExecutionWriter;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import org.assertj.core.api.Assertions;
@@ -46,6 +48,26 @@ class CardRunnerTest {
     Assertions.assertThat(testReportWriter.getSaved()).isEqualTo(3);
     Assertions.assertThat(testReportWriter.getError()).isEqualTo(0);
     Assertions.assertThat(executionId).isNotNull().isNotEmpty();
+  }
+
+  @Test
+  void shouldFailWhenCardFileHasEmptyQueries() {
+    // Given
+    CardFileLoader cardFileLoader = cardExecutionContext -> new CardFile(List.of(), LocalTime.now(), "2h", List.of());
+
+    // When
+    Exception exception = Assertions.catchException(() -> CardRunner
+        .load(cardFileLoader)
+        .transform((cc, cf) -> Collections.emptyIterator())
+        .process(cqr -> null).run(new TestReportWriter(), new TestExecutionWriter())
+        .onCardContext(CardContext.from("TEST", Map.of()))
+    );
+
+    // Then
+    Assertions.assertThat(exception)
+        .isInstanceOf(CardExecutionException.class)
+        .hasMessageContaining("it can't run a report template with no queries");
+
   }
 
 }
@@ -84,10 +106,9 @@ class TestCardQueryRequest extends AbstractCardQueryRequest implements CardQuery
 
   @Override
   public CardQueryValidator cardQueryValidator() {
-    return cardQueryRequest -> {};
+    return cardQueryRequest -> CardQueryValidation.success();
   }
 }
-
 
 class TestCardProcessor implements Function<CardQueryRequest, CardQueryResponse> {
 
@@ -109,11 +130,12 @@ class TestExecutionWriter implements CardExecutionWriter {
 class TestReportWriter implements CardReportWriter {
 
   private int saved = 0;
+
   private int error = 0;
 
   @Override
   public void onNext(CardQueryResponse cardTaskResult) {
-      saved++;
+    saved++;
   }
 
   @Override

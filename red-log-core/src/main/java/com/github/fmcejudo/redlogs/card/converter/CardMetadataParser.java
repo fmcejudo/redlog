@@ -37,7 +37,7 @@ class CardMetadataParser {
       Integer amount = NumberUtils.parseNumber(amountString, Integer.class);
       return LocalDateTime.of(date, time).minus(amount, temporalUnit);
     } catch (NumberFormatException e) {
-      throw new RangeParseException("amount %s is not a valid number");
+      throw new RangeParseException("amount %s is not a valid number".formatted(amountString));
     }
   }
 

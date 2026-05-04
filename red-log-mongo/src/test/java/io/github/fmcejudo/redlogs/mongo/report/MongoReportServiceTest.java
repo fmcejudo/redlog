@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import io.github.fmcejudo.redlogs.mongo.MongoNamingUtils;
 import io.github.fmcejudo.redlogs.mongo.RedlogMongoProperties;
@@ -107,8 +108,8 @@ class MongoReportServiceTest {
       });
     });
 
-    Awaitility.await().atMost(Duration.ofMinutes(5))
-        .until(() -> reportService.findReport(executionId) == null);
+    Awaitility.waitAtMost(3, TimeUnit.SECONDS)
+        .until(() -> reportService.findReport(executionId)!=null);
 
   }
 }
