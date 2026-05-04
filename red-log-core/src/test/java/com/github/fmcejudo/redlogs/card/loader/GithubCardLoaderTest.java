@@ -1,6 +1,5 @@
 package com.github.fmcejudo.redlogs.card.loader;
 
-import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;

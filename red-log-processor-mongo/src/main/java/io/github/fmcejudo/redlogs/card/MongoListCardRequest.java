@@ -3,6 +3,7 @@ package io.github.fmcejudo.redlogs.card;
 import java.util.stream.Stream;
 
 import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator;
+import io.github.fmcejudo.redlogs.card.validator.CardQueryValidator.CardQueryValidation;
 
 public class MongoListCardRequest extends AbstractCardQueryRequest implements CardQueryRequest {
 
@@ -15,8 +16,7 @@ public class MongoListCardRequest extends AbstractCardQueryRequest implements Ca
 
   @Override
   public CardQueryValidator cardQueryValidator() {
-    return c -> {
-    };
+    return c -> CardQueryValidation.success();
   }
 
   public String[] fields() {

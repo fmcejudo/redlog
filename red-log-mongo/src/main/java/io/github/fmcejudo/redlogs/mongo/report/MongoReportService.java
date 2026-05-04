@@ -16,6 +16,9 @@ import org.springframework.data.mongodb.core.query.Query;
 
 class MongoReportService implements ReportService {
 
+  private static final Report FAILURE = new Report("Error", LocalDate.now(), Map.of(),
+      List.of(new ReportSection("error", "error", "No Report was found", null, List.of(), List.of())));
+
   private final MongoTemplate mongoTemplate;
 
   private final String executionsCollectionName;
@@ -41,7 +44,7 @@ class MongoReportService implements ReportService {
 
   private Report findReport(final Execution reportExecution) {
     if (reportExecution == null) {
-      return null;
+      return FAILURE;
     }
     String executionId = reportExecution.id();
     LocalDate reportDate = reportExecution.reportDate();
