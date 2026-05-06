@@ -44,11 +44,11 @@ class MongoCardQueryProcessorTest {
   @BeforeEach
   void setUp() {
     Map<String, String> properties = Map.of(
-        "mongo.host", container.getHost(),
-        "mongo.port", String.valueOf(container.getFirstMappedPort()),
-        "mongo.database", "characters",
-        "mongo.user", "test_container",
-        "mongo.pass", "test_container"
+        "mongo.default.host", container.getHost(),
+        "mongo.default.port", String.valueOf(container.getFirstMappedPort()),
+        "mongo.default.database", "characters",
+        "mongo.default.user", "test_container",
+        "mongo.default.pass", "test_container"
     );
 
     this.cardQueryProcessor = new MongoRedlogPluginProvider().createProcessor(properties);

@@ -29,6 +29,11 @@
       "type": "String",
       "description": "database name",
       "defaultValue": ""
+    },
+    {
+      "name": "redlog.processor.second.mongo",
+      "type" : "java.util.Map<java.lang.String, io.github.fmcejudo.redlogs.processor.MongoConnectionProperties>",
+      "description" : "mongo configuration"
     }
   ]
 }
