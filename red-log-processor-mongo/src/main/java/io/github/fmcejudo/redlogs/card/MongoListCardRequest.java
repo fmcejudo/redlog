@@ -30,4 +30,8 @@ public class MongoListCardRequest extends AbstractCardQueryRequest implements Ca
   public String query() {
     return cardQuery.properties().get("query");
   }
+
+  public String sourceId() {
+    return cardQuery.properties().getOrDefault("sourceId", "default");
+  }
 }
