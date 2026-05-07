@@ -1,7 +1,11 @@
 package io.github.fmcejudo.redlogs.processor;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
+import io.github.fmcejudo.redlogs.type.MongoConfig;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 final class MongoTemplateFactory {
@@ -12,21 +16,23 @@ final class MongoTemplateFactory {
     this.mongoTemplateMap = mongoTemplateMap;
   }
 
-  static MongoTemplateFactory init(Map<String, MongoTemplate> mongoTemplateMap) {
-    if (mongoTemplateMap == null || mongoTemplateMap.isEmpty()) {
-      throw new IllegalStateException("at least requires a mongo template");
+  static MongoTemplateFactory init(Map<String, MongoConnectionProperties> mongoConnectionPropertiesMap) {
+    if (mongoConnectionPropertiesMap == null || mongoConnectionPropertiesMap.isEmpty()) {
+      throw new IllegalStateException("at least requires a mongo configuration properties to connect to");
     }
-    return new MongoTemplateFactory(Map.copyOf(mongoTemplateMap));
+    Map<String, MongoTemplate> auxMap = new HashMap<>();
+    for (Entry<String, MongoConnectionProperties> entry : mongoConnectionPropertiesMap.entrySet()) {
+      auxMap.put(entry.getKey(), new MongoDBConfig(entry.getValue()).mongoTemplate());
+    }
+    return new MongoTemplateFactory(Map.copyOf(auxMap));
   }
 
-  MongoTemplate find(String mongoTemplateId) {
+  Optional<MongoTemplate> find(String mongoTemplateId) {
     if (mongoTemplateId == null || mongoTemplateId.isBlank()) {
       throw new IllegalArgumentException("mongo template id is mandatory and not to be blank");
     }
     MongoTemplate mongoTemplate = mongoTemplateMap.get(mongoTemplateId);
-    if (mongoTemplate == null) {
-      throw new IllegalStateException("it didn't find a mongo template for specified id: %s".formatted(mongoTemplateId));
-    }
-    return mongoTemplate;
+    return Optional.ofNullable(mongoTemplate);
   }
+
 }

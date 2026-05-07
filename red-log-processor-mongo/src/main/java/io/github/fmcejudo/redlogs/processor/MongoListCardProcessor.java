@@ -18,10 +18,10 @@ import org.springframework.util.Assert;
 
 class MongoListCardProcessor implements MongoCardQueryProcessor {
 
-  private final MongoTemplate mongoTemplate;
+  private final MongoTemplateFactory mongoTemplateFactory;
 
-  MongoListCardProcessor(final MongoTemplate mongoTemplate) {
-    this.mongoTemplate = mongoTemplate;
+  MongoListCardProcessor(final MongoTemplateFactory mongoTemplateFactory) {
+    this.mongoTemplateFactory = mongoTemplateFactory;
   }
 
   @Override
@@ -35,6 +35,7 @@ class MongoListCardProcessor implements MongoCardQueryProcessor {
   private List<CardQueryResponseEntry> retrieveList(final MongoListCardRequest mlcr) {
     Query query = new BasicQuery(mlcr.query());
     query.fields().include(mlcr.fields());
+    MongoTemplate mongoTemplate = mongoTemplateFactory.find(mlcr.sourceId()).orElseThrow();
     List<Document> documents = mongoTemplate.find(query, Document.class, mlcr.collection());
     List<CardQueryResponseEntry> result = new ArrayList<>();
     for (Document document : documents) {

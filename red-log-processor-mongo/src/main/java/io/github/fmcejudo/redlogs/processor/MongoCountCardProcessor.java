@@ -25,10 +25,10 @@ import org.springframework.util.Assert;
 
 class MongoCountCardProcessor implements CardQueryProcessor {
 
-  private final MongoTemplate mongoTemplate;
+  private final MongoTemplateFactory mongoTemplateFactory;
 
-  public MongoCountCardProcessor(final MongoTemplate mongoTemplate) {
-    this.mongoTemplate = mongoTemplate;
+  public MongoCountCardProcessor(final MongoTemplateFactory mongoTemplateFactory) {
+    this.mongoTemplateFactory = mongoTemplateFactory;
   }
 
   public CardQueryResponse process(CardQueryRequest request) {
@@ -48,6 +48,7 @@ class MongoCountCardProcessor implements CardQueryProcessor {
         createProjectAggregation(mccr.fields())
     );
 
+    MongoTemplate mongoTemplate = mongoTemplateFactory.find(mccr.sourceId()).orElseThrow();
     AggregationResults<Document> aggregate = mongoTemplate.aggregate(aggregation, mccr.collection(), Document.class);
 
     List<CardQueryResponseEntry> entries = new ArrayList<>();
