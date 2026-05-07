@@ -30,4 +30,8 @@ public class MongoCountCardRequest extends AbstractCardQueryRequest implements C
   public String[] fields() {
     return Stream.of(cardQuery.properties().getOrDefault("fields", "").split(",")).map(String::trim).toArray(String[]::new);
   }
+
+  public String sourceId() {
+    return cardQuery.properties().getOrDefault("sourceId", "default");
+  }
 }
