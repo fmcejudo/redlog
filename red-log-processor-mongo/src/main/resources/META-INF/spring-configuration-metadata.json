@@ -1,39 +1,31 @@
 {
+  "hints": [
+    {
+      "name": "redlog.processor.mongo.values.database",
+      "description": "MongoDB database name.",
+      "providers": [{"name": "any"}]
+    },
+    {
+      "name": "redlog.processor.mongo.values.url",
+      "description": "MongoDB connection string url.",
+      "providers": [{"name": "any"}]
+    },
+    {
+      "name": "redlog.processor.mongo.values.user",
+      "description": "MongoDB username.",
+      "providers": [{"name": "any"}]
+    },
+    {
+      "name": "redlog.processor.mongo.values.pass",
+      "description": "MongoDB password.",
+      "providers": [{"name": "any"}]
+    }
+  ],
   "properties": [
     {
-      "name": "redlog.processor.mongo.host",
-      "type": "String",
-      "description": "mongo host to connect",
-      "defaultValue": ""
-    },
-    {
-      "name": "redlog.processor.mongo.port",
-      "type": "String",
-      "description": "mongo port",
-      "defaultValue": ""
-    },
-    {
-      "name": "redlog.processor.mongo.user",
-      "type": "String",
-      "description": "connection user",
-      "defaultValue": ""
-    },
-    {
-      "name": "redlog.processor.mongo.pass",
-      "type": "String",
-      "description": "connection password",
-      "defaultValue": ""
-    },
-    {
-      "name": "redlog.processor.mongo.database",
-      "type": "String",
-      "description": "database name",
-      "defaultValue": ""
-    },
-    {
-      "name": "redlog.processor.second.mongo",
-      "type" : "java.util.Map<java.lang.String, io.github.fmcejudo.redlogs.processor.MongoConnectionProperties>",
-      "description" : "mongo configuration"
+      "name": "redlog.processor.mongo",
+      "type": "java.util.Map<java.lang.String,java.util.Map<java.lang.String,java.lang.String>>",
+      "description": "Named Mongo connection configurations (e.g. 'default')."
     }
   ]
 }

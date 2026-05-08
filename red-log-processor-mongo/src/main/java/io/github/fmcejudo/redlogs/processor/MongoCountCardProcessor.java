@@ -48,7 +48,7 @@ class MongoCountCardProcessor implements CardQueryProcessor {
         createProjectAggregation(mccr.fields())
     );
 
-    MongoTemplate mongoTemplate = mongoTemplateFactory.find(mccr.sourceId()).orElseThrow();
+    MongoTemplate mongoTemplate = mongoTemplateFactory.find(mccr.sourceId());
     AggregationResults<Document> aggregate = mongoTemplate.aggregate(aggregation, mccr.collection(), Document.class);
 
     List<CardQueryResponseEntry> entries = new ArrayList<>();

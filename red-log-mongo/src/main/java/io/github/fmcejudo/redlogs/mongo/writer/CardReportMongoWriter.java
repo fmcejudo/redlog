@@ -1,9 +1,14 @@
 package io.github.fmcejudo.redlogs.mongo.writer;
 
+import java.util.List;
+import java.util.Map;
+
 import io.github.fmcejudo.redlogs.card.CardQueryResponse;
+import io.github.fmcejudo.redlogs.card.CardQueryResponseEntry;
 import io.github.fmcejudo.redlogs.card.writer.CardReportWriter;
 import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import io.github.fmcejudo.redlogs.report.domain.ReportSectionBuilder;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -20,14 +25,22 @@ public class CardReportMongoWriter implements CardReportWriter {
 
   @Override
   public void onNext(CardQueryResponse response) {
-    log.info("next: {}", response);
-    ReportSection reportSection = ReportSectionBuilder
+
+    ReportSectionBuilder reportSectionBuilder = ReportSectionBuilder
         .fromExecutionIdAndReportId(response.executionId(), response.id())
-        .withDescription(response.description())
         .withLink(response.link())
+        .withDescription(response.description())
         .withItems(response.currentEntries())
-        .withTags(response.tags())
-        .build();
+        .withTags(response.tags());
+
+    if (StringUtils.isNotBlank(response.error())) {
+      reportSectionBuilder = reportSectionBuilder.withItems(List.of(new CardQueryResponseEntry(
+          Map.of("error", response.error()), 1
+      )));
+    }
+
+    log.info("next: {}", response);
+    ReportSection reportSection = reportSectionBuilder.build();
     mongoTemplate.save(reportSection, "redlogReports");
   }
 

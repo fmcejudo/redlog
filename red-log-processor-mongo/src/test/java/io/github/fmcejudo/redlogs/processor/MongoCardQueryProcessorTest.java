@@ -44,8 +44,7 @@ class MongoCardQueryProcessorTest {
   @BeforeEach
   void setUp() {
     Map<String, String> properties = Map.of(
-        "mongo.default.host", container.getHost(),
-        "mongo.default.port", String.valueOf(container.getFirstMappedPort()),
+        "mongo.default.url", "mongodb://%s:%d".formatted(container.getHost(), container.getMappedPort(27017)),
         "mongo.default.database", "characters",
         "mongo.default.user", "test_container",
         "mongo.default.pass", "test_container"

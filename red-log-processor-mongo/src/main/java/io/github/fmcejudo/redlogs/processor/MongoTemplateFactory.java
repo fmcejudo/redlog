@@ -26,12 +26,15 @@ final class MongoTemplateFactory {
     return new MongoTemplateFactory(Map.copyOf(auxMap));
   }
 
-  Optional<MongoTemplate> find(String mongoTemplateId) {
+  MongoTemplate find(String mongoTemplateId) {
     if (mongoTemplateId == null || mongoTemplateId.isBlank()) {
       throw new IllegalArgumentException("mongo template id is mandatory and not to be blank");
     }
     MongoTemplate mongoTemplate = mongoTemplateMap.get(mongoTemplateId);
-    return Optional.ofNullable(mongoTemplate);
+    if (mongoTemplate == null) {
+      throw new MongoTemplateNotFoundException("mongo connection details with id '%s' not found".formatted(mongoTemplateId));
+    }
+    return mongoTemplate;
   }
 
 }
