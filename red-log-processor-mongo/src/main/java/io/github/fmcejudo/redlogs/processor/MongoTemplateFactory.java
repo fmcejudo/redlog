@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
-import io.github.fmcejudo.redlogs.type.MongoConfig;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 final class MongoTemplateFactory {
