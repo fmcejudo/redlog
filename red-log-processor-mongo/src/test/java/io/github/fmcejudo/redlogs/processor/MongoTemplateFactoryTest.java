@@ -1,7 +1,6 @@
 package io.github.fmcejudo.redlogs.processor;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.assertj.core.api.Assertions;
@@ -23,12 +22,12 @@ class MongoTemplateFactoryTest {
     );
 
     //When
-    Optional<MongoTemplate> defaultMongoTemplateOpt = mongoTemplateFactory.find("default");
-    Optional<MongoTemplate> secondaryMongoTemplateOpt = mongoTemplateFactory.find("secondary");
+    MongoTemplate defaultMongoTemplate = mongoTemplateFactory.find("default");
+    MongoTemplate secondaryMongoTemplate = mongoTemplateFactory.find("secondary");
 
     //Then
-    Assertions.assertThat(defaultMongoTemplateOpt).isPresent();
-    Assertions.assertThat(secondaryMongoTemplateOpt).isPresent();
+    Assertions.assertThat(defaultMongoTemplate).isNotNull();
+    Assertions.assertThat(secondaryMongoTemplate).isNotNull();
   }
 
   @Test
@@ -53,10 +52,12 @@ class MongoTemplateFactoryTest {
     );
 
     //When
-    Optional<MongoTemplate> secondaryMongoTemplateOpt = mongoTemplateFactory.find("secondary");
+    Exception exception = Assertions.catchException(() -> mongoTemplateFactory.find("secondary"));
 
     //Then
-    Assertions.assertThat(secondaryMongoTemplateOpt).isNotPresent();
+    Assertions.assertThat(exception)
+        .isInstanceOf(MongoTemplateNotFoundException.class)
+        .hasMessageContaining("mongo connection details with id 'secondary' not found");
   }
 }
 
@@ -66,8 +67,7 @@ interface MongoConnectionPropertiesGenerator extends Supplier<MongoConnectionPro
   public static MongoConnectionPropertiesGenerator withConnectionDetails(String host, int port) {
     return () -> {
       Map<String, String> connectionsDetails = Map.of(
-          "host", host,
-          "port", String.valueOf(port),
+          "url", "mongodb://%s:%d".formatted(host, port),
           "user", "",
           "pass", "",
           "database", "test"
@@ -80,8 +80,7 @@ interface MongoConnectionPropertiesGenerator extends Supplier<MongoConnectionPro
     return () -> {
       MongoConnectionProperties mcp = this.get();
       Map<String, String> details = Map.of(
-          "host", mcp.host(),
-          "port", String.valueOf(mcp.port()),
+          "url", mcp.url(),
           "user", user,
           "pass", pass,
           "database", mcp.database()
@@ -94,8 +93,7 @@ interface MongoConnectionPropertiesGenerator extends Supplier<MongoConnectionPro
     return () -> {
       MongoConnectionProperties mcp = this.get();
       Map<String, String> details = Map.of(
-          "host", mcp.host(),
-          "port", String.valueOf(mcp.port()),
+          "url", mcp.url(),
           "user", mcp.user(),
           "pass", mcp.pass(),
           "database", databaseName
