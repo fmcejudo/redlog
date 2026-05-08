@@ -35,6 +35,6 @@ dropIndexes(reportsCollection);
 
 db.getCollection(reportsCollection).createIndex(
     { reportId: 1 }, // TTL index based on the reportId field
-    { expireAfterSeconds: 3 * 24 * 60 * 60 } // 3 days TTL
+    { expireAfterSeconds:  60 * 60 } // 1 hour TTL
 );
 print('TTL index created on redlogReports collection');

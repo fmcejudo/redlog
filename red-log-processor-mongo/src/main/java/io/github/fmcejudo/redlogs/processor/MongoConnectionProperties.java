@@ -1,20 +1,20 @@
 package io.github.fmcejudo.redlogs.processor;
 
 import java.util.Map;
-import java.util.Optional;
 
 class MongoConnectionProperties {
 
-  private final String host;
-  private final Integer port;
+  private final String url;
+
   private final String user;
+
   private final String pass;
+
   private final String database;
 
   private MongoConnectionProperties(Map<String, String> connectionDetails) {
     this.database = connectionDetails.get("database");
-    this.host = connectionDetails.get("host");
-    this.port = Optional.ofNullable(connectionDetails.get("port")).map(Integer::parseInt).orElse(27017);
+    this.url = connectionDetails.get("url");
     this.user = connectionDetails.get("user");
     this.pass = connectionDetails.get("pass");
   }
@@ -27,16 +27,12 @@ class MongoConnectionProperties {
     return database;
   }
 
-  public String host() {
-    return host;
+  public String url() {
+    return url;
   }
 
   public String pass() {
     return pass;
-  }
-
-  public Integer port() {
-    return port;
   }
 
   public String user() {
