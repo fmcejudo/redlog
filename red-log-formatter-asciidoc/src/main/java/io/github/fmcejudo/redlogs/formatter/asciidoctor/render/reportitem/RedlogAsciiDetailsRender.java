@@ -1,9 +1,11 @@
-package io.github.fmcejudo.redlogs.formatter.asciidoctor.render;
+package io.github.fmcejudo.redlogs.formatter.asciidoctor.render.reportitem;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.AsciiDetailsRender;
+import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiWriter;
 import io.github.fmcejudo.redlogs.report.domain.ReportItem;
 
 public class RedlogAsciiDetailsRender implements AsciiDetailsRender {
@@ -72,4 +74,8 @@ public class RedlogAsciiDetailsRender implements AsciiDetailsRender {
     );
   }
 
+  @Override
+  public boolean matching(ReportItem reportItem) {
+    return !reportItem.labels().containsKey("error");
+  }
 }

@@ -56,8 +56,9 @@ public final class RedlogAsciiSectionRender implements AsciiSectionRender {
     }
 
     for (ReportItem item : reportSection.items()) {
-      AsciiDetailsRender detailsRender = this.context.detailsRenderList.getFirst();
-      writer.addContent(detailsRender.content(item)).blankLine();
+      this.context.detailsRenderList.stream().filter(r -> r.matching(item)).findFirst().ifPresent(r -> {
+        writer.addContent(r.content(item)).blankLine();
+      });
     }
 
     return writer.toString();

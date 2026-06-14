@@ -2,8 +2,10 @@ package io.github.fmcejudo.redlogs.formatter;
 
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.RedlogAsciiDocument;
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiConfigBuilder;
-import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiDetailsRender;
+import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.reportitem.RedlogAsciiDetailsRender;
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiSectionRender;
+import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.reportitem.RedlogComposeReportItemRender;
+import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.reportitem.RedlogErrorDetailsRender;
 import io.github.fmcejudo.redlogs.report.domain.Report;
 import io.github.fmcejudo.redlogs.report.domain.ReportSection;
 import io.github.fmcejudo.redlogs.report.formatter.DocumentFormat;
@@ -22,7 +24,10 @@ public class AsciiDoctorDocumentFormat implements DocumentFormat {
           .withSectionRender(RedlogAsciiSectionRender.createSectionRender()
               .whenMatching(s -> true)
               .withTitle(ReportSection::description)
-              .withDetailsRender(RedlogAsciiDetailsRender.createDetailsRender())
+              .withDetailsRender(RedlogComposeReportItemRender.of(
+                  RedlogAsciiDetailsRender.createDetailsRender(),
+                  RedlogErrorDetailsRender.createDetailsRender()
+              ))
           ).build(report);
 
       return asciidoctor.convert(document, Options.builder().backend("html5")
