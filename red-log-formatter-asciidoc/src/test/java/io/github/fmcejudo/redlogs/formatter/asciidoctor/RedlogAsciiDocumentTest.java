@@ -6,7 +6,7 @@ import java.util.Map;
 
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.exception.SectionRenderException;
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiConfigBuilder;
-import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiDetailsRender;
+import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.reportitem.RedlogAsciiDetailsRender;
 import io.github.fmcejudo.redlogs.formatter.asciidoctor.render.RedlogAsciiSectionRender;
 import io.github.fmcejudo.redlogs.report.domain.Report;
 import io.github.fmcejudo.redlogs.report.domain.ReportItem;

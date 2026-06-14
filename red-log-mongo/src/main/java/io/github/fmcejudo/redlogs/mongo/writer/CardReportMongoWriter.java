@@ -35,7 +35,7 @@ public class CardReportMongoWriter implements CardReportWriter {
 
     if (StringUtils.isNotBlank(response.error())) {
       reportSectionBuilder = reportSectionBuilder.withItems(List.of(new CardQueryResponseEntry(
-          Map.of("error", response.error()), 1
+          Map.of("error", response.error()), 0
       )));
     }
 
