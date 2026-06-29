@@ -6,7 +6,6 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.github.fmcejudo.redlogs.card.exception.CardExecutionException;
 import io.github.fmcejudo.redlogs.card.CardQuery;
 
 @JsonSerialize
@@ -16,12 +15,6 @@ public record CardFile(List<String> parameters,
                 LocalTime time,
                 String range,
                 List<CardQuery> queries) {
-
-  public CardFile {
-    if (queries == null || queries.isEmpty()) {
-      throw new CardExecutionException("it can't run a report template with no queries");
-    }
-  }
 
 }
 
