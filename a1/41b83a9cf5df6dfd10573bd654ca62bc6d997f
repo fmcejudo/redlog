@@ -1,0 +1,23 @@
+.github/workflows/maven_pr_redlog_0x.yml
+  s_6f9db35bab0f65::t_a477c03b928f9f 17-39
+pom.xml
+  s_6f9db35bab0f65::t_092280aa6dfeb8 118-141
+.github/workflows/maven_pr.yml
+  s_6f9db35bab0f65::t_2240c62c976781 17-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.4",
+  "base_commit_sha": "a141b83a9cf5df6dfd10573bd654ca62bc6d997f",
+  "prompts": {},
+  "sessions": {
+    "s_6f9db35bab0f65": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_0ed910038ffeKRUG9XN8po3QWH",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "framcejudo <franciscocg@ext.inditex.com>"
+    }
+  }
+}
