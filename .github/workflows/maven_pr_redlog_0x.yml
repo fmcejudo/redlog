@@ -6,13 +6,13 @@
 # separate terms of service, privacy policy, and support
 # documentation.
 
-name: Java CI with Maven
+name: Java CI with Maven (maintenance/redlog_0x)
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "maintenance/redlog_0x" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "maintenance/redlog_0x" ]
 
 jobs:
   build:
