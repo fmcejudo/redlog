@@ -26,8 +26,8 @@ public class CardQueryDeserializer extends StdDeserializer<CardQuery> {
     JsonNode node = codec.readTree(parser);
 
     String id = node.get("id").asText();
-    String processor = node.has("processor") ? node.get("processor").asText() : null;
-    String description = node.has("description") ? node.get("description").asText() : null;
+    String processor = textOrNull(node, "processor");
+    String description = textOrNull(node, "description");
     JsonNode tagsNode = node.get("tags");
 
     Map<String, String> properties = new HashMap<>();
@@ -43,6 +43,13 @@ public class CardQueryDeserializer extends StdDeserializer<CardQuery> {
     }
 
     return new CardQuery(id, processor, description, List.of(), properties);
+  }
+
+  private String textOrNull(JsonNode node, String fieldName) {
+    if (node.has(fieldName)) {
+      return node.get(fieldName).asText();
+    }
+    return null;
   }
 
 }
