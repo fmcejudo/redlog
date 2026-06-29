@@ -47,7 +47,7 @@ public interface CardRunner {
       return cardContext -> {
         Iterator<CardQueryRequest> cardQueryRequestIterator = this.get(cardContext);
         if (!cardQueryRequestIterator.hasNext()) {
-          throw new CardExecutionException("card file does not have queries to execute");
+          throw new CardExecutionException("it can't run a report template with no queries");
         }
 
         List<CardQueryResponse> collector = new ArrayList<>();
