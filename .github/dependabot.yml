@@ -1,0 +1,23 @@
+version: 2
+updates:
+  # Maven dependencies — Spring Boot 4 line
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: weekly
+    target-branch: main
+    open-pull-requests-limit: 10
+
+  # Maven dependencies — Spring Boot 3 line
+  - package-ecosystem: maven
+    directory: "/"
+    schedule:
+      interval: weekly
+    target-branch: maintenance/redlog_0x
+    open-pull-requests-limit: 10
+
+  # GitHub Actions versions
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
