@@ -4,9 +4,12 @@ import static java.time.ZoneOffset.UTC;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.function.ToLongFunction;
+import java.util.Map;
 
-import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ArrayNode;
+import tools.jackson.databind.node.ObjectNode;
 
 final class LokiLinkBuilder {
 
@@ -44,50 +47,101 @@ final class LokiLinkBuilder {
     return this;
   }
 
+  private static final ObjectMapper MAPPER = new ObjectMapper();
+
   public String build() {
+    PanesParam panesParam =
+        new PanesParam("tm7", new LeftPart(dataSource, List.of(QueryPart.create("A", query, dataSource)), new RangePart(from, to)));
+    String panesSection = adjustEncoding(panesParam.toString());
 
-    String left = new LeftPart(dataSource, List.of(QueryPart.create("A", query, dataSource)), new RangePart(from, to)).toString();
-    String path = UriComponentsBuilder.fromPath(null).queryParam("schemaVersion", 1)
-        .queryParam("panes", "{\"tm7\":" + left + "}")
-        .queryParam("orgId", 1)
-        .build().encode().toUriString()
-        .substring(1);
+    String queryParams = """
+        schemaVersion=1&panes=%s&orgId=1""".formatted(panesSection);
 
-    String replacedPath = replaceSpecialCharacters(path);
-    return lokiExploreUrl + "?" + replacedPath;
+    return lokiExploreUrl + "?" + queryParams;
   }
 
-  private String replaceSpecialCharacters(String path) {
-    return path.replace("(", "%28")
+  private String adjustEncoding(String queryParam) {
+    return queryParam
+        .replace("\n", "%0A")
+        .replace("\r", "%0D")
+        .replace("=", "%3D")
+        .replace("|", "%7C")
+        .replace("&", "%26")
+        .replace("\\", "%5C")
+        .replace("\"","%22")
+        .replace(" ", "%20")
+        .replace("{", "%7B")
+        .replace("}", "%7D")
+        .replace("[", "%5B")
+        .replace("]", "%5D")
+        .replace("(", "%28")
         .replace(")", "%29")
-        .replace("?", "%3F")
         .replace("*", "%2A")
-        .replace("%0A", "%5Cn");
+        .replace("?", "%3F")
+        .replace("`", "%60")
+        .replace("'", "%27")
+        .replace("+", "%2B")
+        .replace("<", "%3C")
+        .replace(">", "%3E");
+  }
+
+  record PanesParam(String key, LeftPart leftPart) {
+
+    @Override
+    public String toString() {
+      try {
+        return MAPPER.writeValueAsString(Map.of(key, MAPPER.readTree(leftPart.toString())));
+      } catch (JacksonException e) {
+        throw new IllegalStateException("Failed to serialize PanesParam", e);
+      }
+    }
   }
 
   record LeftPart(String datasource, List<QueryPart> queries, RangePart range) {
 
     @Override
     public String toString() {
-      return """
-          {"datasource":"%s","queries":%s, "range": %s}""".formatted(datasource, queries, range);
+      try {
+        ArrayNode queriesNode = MAPPER.createArrayNode();
+        for (QueryPart q : queries) {
+          queriesNode.add(MAPPER.readTree(q.toString()));
+        }
+        ObjectNode node = MAPPER.createObjectNode();
+        node.put("datasource", datasource);
+        node.set("queries", queriesNode);
+        node.set("range", MAPPER.readTree(range.toString()));
+        node.put("compact", false);
+        return MAPPER.writeValueAsString(node);
+      } catch (JacksonException e) {
+        throw new IllegalStateException("Failed to serialize LeftPart", e);
+      }
     }
   }
 
   record QueryPart(String refId, String expr, String datasource) {
 
     static QueryPart create(String refId, String expr, String datasource) {
-      String formattedExpression = expr.replace("\\", "\\\\").replace("\"", "\\\"");
-      return new QueryPart(refId, formattedExpression, datasource);
+      return new QueryPart(refId, expr, datasource);
     }
 
     @Override
     public String toString() {
+      try {
+        ObjectNode datasourceNode = MAPPER.createObjectNode();
+        datasourceNode.put("type", "loki");
+        datasourceNode.put("uid", datasource);
 
-      return """
-          {"refId":"%s","expr":"%s","queryType":"range",\
-          "datasource":{"type":"loki","uid":"%s"},"editorMode":"code"}"""
-          .formatted(refId, expr, datasource);
+        ObjectNode node = MAPPER.createObjectNode();
+        node.put("refId", refId);
+        node.put("expr", expr);
+        node.put("queryType", "range");
+        node.set("datasource", datasourceNode);
+        node.put("editorMode", "code");
+        node.put("direction", "backward");
+        return MAPPER.writeValueAsString(node);
+      } catch (JacksonException e) {
+        throw new IllegalStateException("Failed to serialize QueryPart", e);
+      }
     }
   }
 
@@ -95,17 +149,19 @@ final class LokiLinkBuilder {
 
     @Override
     public String toString() {
-
-      if (from == null && to == null) {
-        return """
-            {"from":"now-1d", "to":"now"}""";
+      try {
+        ObjectNode node = MAPPER.createObjectNode();
+        if (from == null || to == null) {
+          node.put("from", "now-1d");
+          node.put("to", "now");
+        } else {
+          node.put("from", from.toInstant(UTC).toEpochMilli());
+          node.put("to", to.toInstant(UTC).toEpochMilli());
+        }
+        return MAPPER.writeValueAsString(node);
+      } catch (JacksonException e) {
+        throw new IllegalStateException("Failed to serialize RangePart", e);
       }
-
-      ToLongFunction<LocalDateTime> dateTimeConverter = dateTime -> dateTime.toInstant(UTC).toEpochMilli();
-
-      return """
-          {"from":"%s", "to":"%s"}"""
-          .formatted(dateTimeConverter.applyAsLong(from), dateTimeConverter.applyAsLong(to));
     }
   }
 }
