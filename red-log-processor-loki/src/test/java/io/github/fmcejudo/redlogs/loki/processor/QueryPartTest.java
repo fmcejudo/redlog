@@ -18,7 +18,7 @@ class QueryPartTest {
 
     final String expectedEncodedQuery = """
         sum by(reporter,name) (count_over_time(
-          {app=\\"event-tracker\\", level=\\"WARN\\"}
+          {app="event-tracker", level="WARN"}
           |~ `[expense]`
           | json | line_format `{{.message}}`[24h]
         ))""";
@@ -43,9 +43,10 @@ class QueryPartTest {
         ))""";
 
     final String expectedEncodedQuery = """
-        sum%20by%28reporter,name%29%20%28count_over_time%28%5Cn%20%20%7Bapp%3D%5C%22event-tracker%5C%22,\
+        :%22sum%20by%28reporter,name%29%20%28count_over_time%28%5Cn%20%20%7Bapp%3D%5C%22event-tracker%5C%22,\
         %20level%3D%5C%22WARN%5C%22%7D%5Cn%20%20%7C~%20%60%5Bexpense%5D%60%5Cn%20%20%7C%20json%20%7C%20\
-        line_format%20%60%7B%7B.message%7D%7D%60%5B24h%5D%5Cn%29%29""";
+        line_format%20%60%7B%7B.message%7D%7D%60%5B24h%5D%5Cn%29%29%22\
+        """;
 
     //When
     String link = LokiLinkBuilder.builder("http://localhost/loki", "default").query(query).build();
@@ -53,7 +54,7 @@ class QueryPartTest {
     //Then
     Assertions.assertThat(link).contains(expectedEncodedQuery)
         .contains("schemaVersion=1&panes=%7B%22")
-        .contains("%22:%7B%22datasource%22:%22");
+        .contains("%22datasource%22:%22default%22");
   }
 }
 
