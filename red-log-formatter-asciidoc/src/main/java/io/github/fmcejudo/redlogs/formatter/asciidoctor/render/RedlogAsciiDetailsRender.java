@@ -16,6 +16,11 @@ public class RedlogAsciiDetailsRender implements AsciiDetailsRender {
   }
 
   @Override
+  public boolean matching(ReportItem reportItem) {
+    return true;
+  }
+
+  @Override
   public String content(ReportItem reportItem) {
     var writer = RedlogAsciiWriter.instance()
         .addContent("[.shadow-box]")
